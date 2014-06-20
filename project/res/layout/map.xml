@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="match_parent">
+    
+    <fragment 
+		android:id="@+id/map"
+	  	android:layout_width="match_parent"
+	 	android:layout_height="match_parent"
+	  	class="com.google.android.gms.maps.SupportMapFragment"/>
+    
+    <fragment 
+        android:id="@+id/infoBoxFrag"
+	  	android:layout_width="match_parent"
+	 	android:layout_height="match_parent"
+	  	class="il.ac.technion.socialcampus.InfoBoxFragment"	/>
+	
+
+    <ImageView 
+        android:id="@+id/ProfilePic"
+	  	android:layout_width="60dp"
+	 	android:layout_height="60dp"
+	 	android:layout_alignParentLeft="true"
+	 	android:layout_alignParentTop="true"
+	 	android:layout_margin="20dp"	
+	 	android:src="@drawable/profie_anonymous" />
+   
+     <TextView 
+        android:id="@+id/userName"
+	  	android:layout_width="wrap_content"
+	 	android:layout_height="wrap_content"
+	 	android:layout_toRightOf="@id/ProfilePic"
+	 	android:layout_alignParentTop="true"	
+	 	android:text="anonymous"/>
+     
+    <ImageView 
+        android:id="@+id/Plus"
+	  	android:layout_width="60dp"
+	 	android:layout_height="60dp"
+	 	android:layout_alignParentLeft="true"
+	 	android:layout_alignParentTop="true"
+	 	android:layout_margin="20dp"	
+	 	android:src="@drawable/profie_anonymous"/>
+    
+    <ImageView 
+        android:id="@+id/Tag"
+	  	android:layout_width="60dp"
+	 	android:layout_height="60dp"
+	 	android:layout_toLeftOf="@+id/Plus"
+	 	android:layout_alignParentTop="true"
+	 	android:layout_margin="20dp"	
+	 	android:src="@drawable/profie_anonymous"/>
+    
+	
+</RelativeLayout>
+
+
