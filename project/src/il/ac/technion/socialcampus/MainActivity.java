@@ -3,6 +3,7 @@ package il.ac.technion.socialcampus;
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
 import il.ac.technion.logic.HotSpotManager.UiOnDone;
+import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
 
@@ -11,13 +12,10 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,7 +34,6 @@ public class MainActivity extends FragmentActivity implements
 	private final Context mContext = this;
 	private HotSpot mCurrSpot;
 	
-	
 	static final CameraPosition TECHNION =
             new CameraPosition.Builder().target(new LatLng(32.776778,35.023127))
                     .zoom(17f)
@@ -46,27 +43,28 @@ public class MainActivity extends FragmentActivity implements
 	
 	private HashMap<String,Long> mMarkersHotSpotsTrans = new HashMap<String,Long>();
 	
+	
 
     @Override
+	protected void onStart() {
+		super.onStart();
+		syncDb();
+	}
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        syncDb();
         FragmentManager fm = getSupportFragmentManager();
-        
-        InfoBoxFragment fr = (InfoBoxFragment)fm.findFragmentById(R.id.map);
-        
-        fm.beginTransaction()
-                 // .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                  .hide(fr).commit();
+        InfoBoxFragment fr = (InfoBoxFragment) fm.findFragmentById(R.id.map);
+        fm.beginTransaction().hide(fr).commit();
     }
     
-    void syncDb(){
+    private void syncDb(){
     	HotSpotManager.INSTANCE.syncHotSpots(new UiOnDone() {
 			@Override
 			public void execute() {
 				setUpMapIfNeeded();
-				
 			}
 		}, new UiOnError(this));
     	UserManager.INSTANCE.syncUsers(new UserManager.UiOnDone() {
@@ -75,10 +73,10 @@ public class MainActivity extends FragmentActivity implements
 				UserManager.INSTANCE.setCurrentUser(1L);
 			}
 		}, new UiOnError(this));
-//    	TagManager.INSTANCE.syncTags(new TagManager.UiOnDone() {
-//			@Override
-//			public void execute() {}
-//		}, new UiOnError(this));
+    	TagManager.INSTANCE.syncTags(new TagManager.UiOnDone() {
+			@Override
+			public void execute() {}
+		}, new UiOnError(this));
     }
 
     @Override
@@ -148,6 +146,10 @@ public class MainActivity extends FragmentActivity implements
 	        	Long hid = mMarkersHotSpotsTrans.get(m.getId());
 	        	
 	        	mCurrSpot = HotSpotManager.INSTANCE.getItemById(hid);
+	        	
+	        	FragmentManager fm = getSupportFragmentManager();
+	            InfoBoxFragment fr = (InfoBoxFragment) fm.findFragmentById(R.id.map);
+	            fm.beginTransaction().show(fr).commit();
 	        	
 //	        	RelativeLayout v = (RelativeLayout)findViewById(R.id.infoBox);
 //	        	v.setVisibility(View.VISIBLE);

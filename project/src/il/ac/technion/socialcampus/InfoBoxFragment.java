@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 public class InfoBoxFragment extends Fragment{
@@ -65,8 +66,8 @@ public class InfoBoxFragment extends Fragment{
 		
 		//TODO: get the inflater instead using mView
 		
-//		String name = mHotSpotData.getmName();
-//    	((TextView)mView.findViewById(R.id.name)).setText(name);
+		String name = mHotSpotData.getmName();
+    	((TextView) mView.findViewById(R.id.name)).setText(name);
 //    	
 //    	Long time = mHotSpotData.getmTime();
 //		String timeStr = (new SimpleDateFormat("dd/MM HH:mm").format(new Date(time)));
