@@ -32,7 +32,6 @@ public class MainActivity extends FragmentActivity implements
   
 	private GoogleMap mMap;
 	private final Context mContext = this;
-	private HotSpot mCurrSpot;
 	
 	static final CameraPosition TECHNION =
             new CameraPosition.Builder().target(new LatLng(32.776778,35.023127))
@@ -82,7 +81,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        ///setUpMapIfNeeded();
+        setUpMapIfNeeded();
     }
 
     /**
@@ -131,32 +130,35 @@ public class MainActivity extends FragmentActivity implements
     	}
     }
     
+    private void hideInfoBox(){
+    	FragmentManager fm = getSupportFragmentManager();
+        InfoBoxFragment fr = (InfoBoxFragment) fm.findFragmentById(R.id.map);
+        fm.beginTransaction().hide(fr).commit();
+    }
+    
+    private void ShowInfoBox(Long hid){
+    	FragmentManager fm = getSupportFragmentManager();
+        InfoBoxFragment fr = (InfoBoxFragment) fm.findFragmentById(R.id.map);
+        fr.resetInfoBox(hid);
+        fm.beginTransaction().show(fr).commit();
+    }
+    
     private void addMapListeners() {
     	mMap.setOnMapClickListener(new OnMapClickListener() {
 			@Override
 			public void onMapClick(LatLng arg0) {
-				RelativeLayout v = (RelativeLayout)findViewById(R.id.infoBox);
-	        	v.setVisibility(View.GONE);
-	        	mCurrSpot = null;
+				hideInfoBox();
 			}
 		});
 	    mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 	        @Override 
 	        public boolean onMarkerClick(final Marker m) {
-	        	Long hid = mMarkersHotSpotsTrans.get(m.getId());
-	        	
-	        	mCurrSpot = HotSpotManager.INSTANCE.getItemById(hid);
-	        	
-	        	FragmentManager fm = getSupportFragmentManager();
-	            InfoBoxFragment fr = (InfoBoxFragment) fm.findFragmentById(R.id.map);
-	            fm.beginTransaction().show(fr).commit();
-	        	
-//	        	RelativeLayout v = (RelativeLayout)findViewById(R.id.infoBox);
-//	        	v.setVisibility(View.VISIBLE);
-	        	
-	        	return true;
+	        	Long hid = mMarkersHotSpotsTrans.get(m.getId());	        	
+	        	ShowInfoBox(hid);
+	            return true;
 	        }
 	      });
+	    
 //	    findViewById(R.id.shareBtn).setOnClickListener(new OnClickListener() {
 //			
 //			@Override

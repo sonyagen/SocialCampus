@@ -2,6 +2,11 @@ package il.ac.technion.socialcampus;
 
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
+import il.ac.technion.logic.UserManager;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -65,22 +70,23 @@ public class InfoBoxFragment extends Fragment{
 		if (mHotSpotData == null) return;
 		
 		//TODO: get the inflater instead using mView
+		//View v = View.inflate(getActivity(), R.layout.fragment_info_box, container);
 		
 		String name = mHotSpotData.getmName();
     	((TextView) mView.findViewById(R.id.name)).setText(name);
-//    	
-//    	Long time = mHotSpotData.getmTime();
-//		String timeStr = (new SimpleDateFormat("dd/MM HH:mm").format(new Date(time)));
-//
-//    	((TextView)mView.findViewById(R.id.timeStr)).setText(timeStr);
-//    	
-//    	if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
-//    		mView.findViewById(R.id.joinBtn).setVisibility(View.GONE); 
-//    		mView.findViewById(R.id.leaveBtn).setVisibility(View.VISIBLE);
-//    	}else{
-//    		mView.findViewById(R.id.joinBtn).setVisibility(View.VISIBLE); 
-//    		mView.findViewById(R.id.leaveBtn).setVisibility(View.GONE);
-//    	}
+    	
+    	Long time = mHotSpotData.getmTime();
+		String timeStr = (new SimpleDateFormat("dd/MM HH:mm").format(new Date(time)));
+
+    	((TextView)mView.findViewById(R.id.timeStr)).setText(timeStr);
+    	
+    	if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
+    		mView.findViewById(R.id.joinBtn).setVisibility(View.GONE); 
+    		mView.findViewById(R.id.leaveBtn).setVisibility(View.VISIBLE);
+    	}else{
+    		mView.findViewById(R.id.joinBtn).setVisibility(View.VISIBLE); 
+    		mView.findViewById(R.id.leaveBtn).setVisibility(View.GONE);
+    	}
 	}
 	
 	public void onJoinBtnClick() {
