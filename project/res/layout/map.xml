@@ -12,11 +12,13 @@
     
     <fragment 
         android:id="@+id/infoBoxFrag"
-	  	android:layout_width="match_parent"
-	 	android:layout_height="match_parent"
+	  	android:layout_width="wrap_content"
+	 	android:layout_height="wrap_content"
+	 	android:layout_alignParentBottom="true"
+	 	android:layout_centerHorizontal="true"
+	 	android:layout_margin="10dp"
 	  	class="il.ac.technion.socialcampus.InfoBoxFragment"	/>
 	
-
     <ImageView 
         android:id="@+id/ProfilePic"
 	  	android:layout_width="60dp"
@@ -31,8 +33,9 @@
 	  	android:layout_width="wrap_content"
 	 	android:layout_height="wrap_content"
 	 	android:layout_toRightOf="@id/ProfilePic"
-	 	android:layout_alignParentTop="true"	
-	 	android:text="anonymous"/>
+	 	android:layout_alignTop="@+id/ProfilePic"
+	 	android:text="anonymous"
+	 		/>
      
     <ImageView 
         android:id="@+id/Plus"
@@ -51,8 +54,7 @@
 	 	android:layout_alignParentTop="true"
 	 	android:layout_margin="20dp"	
 	 	android:src="@drawable/profie_anonymous"/>
-    
-	
+
 </RelativeLayout>
 
 

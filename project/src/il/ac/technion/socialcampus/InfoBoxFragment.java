@@ -12,14 +12,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
 public class InfoBoxFragment extends Fragment{
 	private static final String HotSpotId = "id";
 
-	private HotSpot mHotSpotData;
+	//private HotSpot mHotSpotData;
+	private Long mHotSpotDataId;
 	private OnFragmentInteractionListener mListener;
 	//TODO don't use mView - get an inflater instead.
 	View mView;
@@ -40,8 +43,7 @@ public class InfoBoxFragment extends Fragment{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
-			Long Id = getArguments().getLong(HotSpotId);
-			mHotSpotData = HotSpotManager.INSTANCE.getItemById(Id);
+			mHotSpotDataId = getArguments().getLong(HotSpotId);
 		}
 	}
 
@@ -52,21 +54,51 @@ public class InfoBoxFragment extends Fragment{
 		 View v = inflater.inflate(R.layout.fragment_info_box, container, false);
 		 mView = v;
 		 setView();
+		 setListeners();
 		 return v;
 	}
 
+	public HotSpot getCurrHotSpot(){
+		return HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+	}
+	
 	public void resetInfoBox(){
 		setView();
 	}
 	
+	private boolean validateHotSpot(){
+		if (mHotSpotDataId == null) return false;
+		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+		if (mHotSpotData == null) return false;
+		
+		return true;
+	}
+	
+	public void resetInfoBoxBtn(){
+		if (!validateHotSpot()) return;
+		
+		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+		
+    	if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
+    		mView.findViewById(R.id.joinBtn).setVisibility(View.GONE); 
+    		mView.findViewById(R.id.leaveBtn).setVisibility(View.VISIBLE);
+    	}else{
+    		mView.findViewById(R.id.joinBtn).setVisibility(View.VISIBLE); 
+    		mView.findViewById(R.id.leaveBtn).setVisibility(View.GONE);
+    	}
+		
+	}
+	
 	public void resetInfoBox(Long newId){
 		if(HotSpotManager.INSTANCE.getItemById(newId) == null) return;
-		mHotSpotData = HotSpotManager.INSTANCE.getItemById(newId);
+		//mHotSpotData = HotSpotManager.INSTANCE.getItemById(newId);
+		mHotSpotDataId = newId;
 		resetInfoBox();
 	}
 	
 	protected void setView() {
-		
+		if (mHotSpotDataId == null) return;
+		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		if (mHotSpotData == null) return;
 		
 		//TODO: get the inflater instead using mView
@@ -89,6 +121,30 @@ public class InfoBoxFragment extends Fragment{
     	}
 	}
 	
+	protected void setListeners(){
+		((Button)mView.findViewById(R.id.shareBtn)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				onShareBtnClick();
+			}
+		});
+		((Button)mView.findViewById(R.id.joinBtn)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				onJoinBtnClick();
+			}
+		});
+		((Button)mView.findViewById(R.id.leaveBtn)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				onLeaveBtnClick();
+			}
+		});
+	}
+	
 	public void onJoinBtnClick() {
 		if (mListener != null) {
 			mListener.onJoinBtnClick();
@@ -98,6 +154,12 @@ public class InfoBoxFragment extends Fragment{
 	public void onLeaveBtnClick() {
 		if (mListener != null) {
 			mListener.onLeaveBtnClick();
+		}
+	}
+
+	public void onShareBtnClick() {
+		if (mListener != null) {
+			mListener.onShareBtnClick();
 		}
 	}
 
@@ -121,6 +183,7 @@ public class InfoBoxFragment extends Fragment{
 	public interface OnFragmentInteractionListener {
 		public void onJoinBtnClick();
 		public void onLeaveBtnClick();
+		public void onShareBtnClick();
 	}
 
 }
