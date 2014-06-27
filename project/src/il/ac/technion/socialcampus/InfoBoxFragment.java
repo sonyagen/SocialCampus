@@ -19,11 +19,11 @@ import android.widget.TextView;
 
 
 public class InfoBoxFragment extends Fragment{
-	private static final String HotSpotId = "id";
+	protected static final String HotSpotId = "id";
 
-	//private HotSpot mHotSpotData;
-	private Long mHotSpotDataId;
-	private OnFragmentInteractionListener mListener;
+	//protected HotSpot mHotSpotData;
+	protected Long mHotSpotDataId;
+	protected OnFragmentInteractionListener mListener;
 	//TODO don't use mView - get an inflater instead.
 	View mView;
 	
@@ -66,7 +66,7 @@ public class InfoBoxFragment extends Fragment{
 		setView();
 	}
 	
-	private boolean validateHotSpot(){
+	protected boolean validateHotSpot(){
 		if (mHotSpotDataId == null) return false;
 		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		if (mHotSpotData == null) return false;
