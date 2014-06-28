@@ -39,7 +39,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="il.ac.technion.socialcampus.ProfileActivity">
+            android:name="il.ac.technion.socialcampus.ProfileActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
     </application>
 
