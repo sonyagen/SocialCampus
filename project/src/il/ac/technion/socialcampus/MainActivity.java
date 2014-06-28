@@ -14,8 +14,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -158,6 +157,7 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void execute() {
 						getInfoBox().resetInfoBoxBtn();
+						Toast.makeText(mContext, "join", Toast.LENGTH_SHORT).show();
 					}
 				}, new UiOnError(mContext));
 		
@@ -173,6 +173,7 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void execute() {
 						getInfoBox().resetInfoBoxBtn();
+						Toast.makeText(mContext, "leave", Toast.LENGTH_SHORT).show();
 					}
 				}, new UiOnError(mContext));
 		
@@ -182,6 +183,20 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onShareBtnClick() {
 		// TODO for John??
+		Toast.makeText(this, "share", Toast.LENGTH_SHORT).show();
+		
+	}
+
+	@Override
+	public void onUnpinBtnClick() {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "Unpin", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onPinBtnClick() {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "pin", Toast.LENGTH_SHORT).show();
 		
 	}
 
