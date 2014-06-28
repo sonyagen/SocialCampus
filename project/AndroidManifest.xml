@@ -42,6 +42,10 @@
             android:name="il.ac.technion.socialcampus.ProfileActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+         <activity
+            android:name="il.ac.technion.socialcampus.HotSpotInfoActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
     </application>
 
 </manifest>

@@ -177,8 +177,7 @@ public class MainActivity extends FragmentActivity 	{
 				// else start activity
 				startActivity(new Intent(mContext, HotSpotInfoActivity.class).
 						putExtra("id",getInfoBox().getCurrHotSpotId()));
-				
-				
+
 			}
 		});
 
