@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,8 +42,6 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		//setGoing();
 	}
 
 	@Override
@@ -50,6 +50,17 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		// Inflate the layout for this fragment
 		View v = inflater.inflate(R.layout.fragment_hot_spot_details, container,
 				false);
+		mView = v;
+		share = ((ImageButton)mView.findViewById(R.id.shareImgBtn));
+		joinLeave = ((ImageButton)mView.findViewById(R.id.joinImgBtn));
+		pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
+		headline = ((TextView) mView.findViewById(R.id.name));
+		timeStr = ((TextView)mView.findViewById(R.id.timeStr));
+		
+		//super.onCreateView(inflater,container,savedInstanceState);
+		
+		setView();
+		
 		setMap();
 		return v;
 		

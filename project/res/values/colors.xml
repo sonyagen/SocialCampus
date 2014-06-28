@@ -8,7 +8,7 @@
     <drawable name="LightGray">#ECECEC</drawable>
     <drawable name="White">#FFFFFF</drawable>
     <drawable name="Black">#000000</drawable>
-    <drawable name="SkyBlue">#5EB4FF</drawable>
+    <drawable name="SkyBlue">#3172AB</drawable>
 
     <color name="holo_blue_bright">#ff00ddff</color>
     <color name="holo_green_light">#ff99cc00</color>
