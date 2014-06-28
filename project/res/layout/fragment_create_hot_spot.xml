@@ -2,10 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".CreateHotSpotFragment"
     android:background="#F6F6F6"
-    android:orientation="vertical"
-    android:padding="20dp"
-    tools:context=".HotSpotDetailsFragment" >
+     android:orientation="vertical" 
+     android:padding="20dp">
+
 
     <RelativeLayout
 	    android:layout_width="match_parent"
@@ -14,7 +15,7 @@
 	    android:id="@+id/infoBox" 
 	    android:layout_marginBottom="20dp" >
 
-	 	<ImageView 
+	 	<ImageButton
 		    android:id="@+id/image"
 	        android:layout_width="120dp"
 	    	android:layout_height="80dp" 
@@ -22,11 +23,11 @@
 	    	android:layout_marginRight="10dp"
 	    	android:layout_marginBottom="10dp"	/>
 		
-		<TextView 
+		<EditText 
 		    android:id="@+id/name"
 	        android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content" 
-	    	android:text="this is text"
+	    	android:hint="Choose a headline..."
 	    	android:layout_toRightOf="@+id/image"
 	    	android:layout_alignTop="@+id/image"
 	    	android:textColor="#373737"	
@@ -41,30 +42,16 @@
 	    	android:layout_toRightOf="@+id/image"
 	  		android:layout_below="@+id/name"
 	    	android:textColor="#5A5A5A"		/>
-		<Button
-		    android:id="@+id/joinBtn"
-		    android:layout_width="55dp"
-		    android:layout_height="30dp"
-		    android:layout_alignLeft="@id/image"
-		    android:layout_below="@id/image"
-		    android:text="Join!"
-		    android:textSize="8sp" />
-		<Button
-		    android:id="@+id/leaveBtn"
-		    android:layout_width="55dp"
-		    android:layout_height="30dp"
-		    android:layout_alignLeft="@id/image"
-		    android:layout_below="@id/image"
-		    android:text="Leave"
-		    android:textSize="8sp" />
-		<Button
-		    android:id="@+id/shareBtn"
-		    android:layout_width="55dp"
-		    android:layout_height="30dp"
-		    android:layout_alignRight="@id/image"
-		    android:layout_below="@id/image"
-		    android:text="Share"
-		    android:textSize="8sp" />
+		
+		<TextView 
+		    android:id="@+id/place"
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content" 
+	    	android:hint="Choose the place..."
+	    	android:layout_toRightOf="@+id/image"
+	  		android:layout_below="@+id/timeStr"
+	    	android:textColor="#5A5A5A"		/>
+		
 	</RelativeLayout>
 
 	<fragment 
@@ -86,3 +73,9 @@
 	    android:orientation="horizontal" 	/>
 
 </LinearLayout>
+    
+    
+    
+    
+    
+

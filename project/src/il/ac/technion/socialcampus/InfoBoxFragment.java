@@ -15,15 +15,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 
 public class InfoBoxFragment extends Fragment{
-	private static final String HotSpotId = "id";
+	protected static final String HotSpotId = "id";
 
-	//private HotSpot mHotSpotData;
-	private Long mHotSpotDataId;
-	private OnFragmentInteractionListener mListener;
+	//protected HotSpot mHotSpotData;
+	protected Long mHotSpotDataId;
+	protected OnFragmentInteractionListener mListener;
 	//TODO don't use mView - get an inflater instead.
 	View mView;
 	
@@ -54,7 +55,6 @@ public class InfoBoxFragment extends Fragment{
 		 View v = inflater.inflate(R.layout.fragment_info_box, container, false);
 		 mView = v;
 		 setView();
-		 setListeners();
 		 return v;
 	}
 
@@ -66,7 +66,7 @@ public class InfoBoxFragment extends Fragment{
 		setView();
 	}
 	
-	private boolean validateHotSpot(){
+	protected boolean validateHotSpot(){
 		if (mHotSpotDataId == null) return false;
 		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		if (mHotSpotData == null) return false;
@@ -79,14 +79,57 @@ public class InfoBoxFragment extends Fragment{
 		
 		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		
-    	if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
-    		mView.findViewById(R.id.joinBtn).setVisibility(View.GONE); 
-    		mView.findViewById(R.id.leaveBtn).setVisibility(View.VISIBLE);
+		//handle share
+		ImageButton share = ((ImageButton)mView.findViewById(R.id.shareImgBtn));
+		share.setVisibility(View.VISIBLE);
+		share.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onShareBtnClick();
+			}
+		});
+    	
+		//handle join-leave
+		ImageButton joinLeave = ((ImageButton)mView.findViewById(R.id.joinImgBtn));
+		if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
+			joinLeave.setImageResource(R.drawable.leave);
+			joinLeave.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onLeaveBtnClick();
+				}
+			});
     	}else{
-    		mView.findViewById(R.id.joinBtn).setVisibility(View.VISIBLE); 
-    		mView.findViewById(R.id.leaveBtn).setVisibility(View.GONE);
+    		joinLeave.setImageResource(R.drawable.join);
+    		joinLeave.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onJoinBtnClick();
+				}
+			});
+			
     	}
 		
+		//handle pin-unpin
+		ImageButton pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
+		if (UserManager.INSTANCE.getMyData().isPinned(mHotSpotData.getmId())){
+			pinUnpin.setImageResource(R.drawable.ic_pinned);
+			pinUnpin.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onUnpinBtnClick();
+				}
+			});
+    	}else{
+    		pinUnpin.setImageResource(R.drawable.ic_pin);
+    		pinUnpin.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onPinBtnClick();
+				}
+			});
+			
+    	}
 	}
 	
 	public void resetInfoBox(Long newId){
@@ -108,43 +151,14 @@ public class InfoBoxFragment extends Fragment{
     	((TextView) mView.findViewById(R.id.name)).setText(name);
     	
     	Long time = mHotSpotData.getmTime();
-		String timeStr = (new SimpleDateFormat("dd/MM HH:mm").format(new Date(time)));
+		String timeStr = (new SimpleDateFormat("HH:mm dd/MM/yyyy").format(new Date(time)));
 
     	((TextView)mView.findViewById(R.id.timeStr)).setText(timeStr);
     	
-    	if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
-    		mView.findViewById(R.id.joinBtn).setVisibility(View.GONE); 
-    		mView.findViewById(R.id.leaveBtn).setVisibility(View.VISIBLE);
-    	}else{
-    		mView.findViewById(R.id.joinBtn).setVisibility(View.VISIBLE); 
-    		mView.findViewById(R.id.leaveBtn).setVisibility(View.GONE);
-    	}
+    	resetInfoBoxBtn();
 	}
 	
-	protected void setListeners(){
-		((Button)mView.findViewById(R.id.shareBtn)).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				onShareBtnClick();
-			}
-		});
-		((Button)mView.findViewById(R.id.joinBtn)).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				onJoinBtnClick();
-			}
-		});
-		((Button)mView.findViewById(R.id.leaveBtn)).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				onLeaveBtnClick();
-			}
-		});
-	}
-	
+
 	public void onJoinBtnClick() {
 		if (mListener != null) {
 			mListener.onJoinBtnClick();
@@ -162,6 +176,17 @@ public class InfoBoxFragment extends Fragment{
 			mListener.onShareBtnClick();
 		}
 	}
+	public void onPinBtnClick() {
+		if (mListener != null) {
+			mListener.onPinBtnClick();
+		}
+	}
+	public void onUnpinBtnClick() {
+		if (mListener != null) {
+			mListener.onUnpinBtnClick();
+		}
+	}
+
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -184,6 +209,8 @@ public class InfoBoxFragment extends Fragment{
 		public void onJoinBtnClick();
 		public void onLeaveBtnClick();
 		public void onShareBtnClick();
+		public void onUnpinBtnClick();
+		public void onPinBtnClick();
 	}
 
 }
