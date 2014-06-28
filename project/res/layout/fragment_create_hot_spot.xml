@@ -6,7 +6,7 @@
     android:background="#F6F6F6"
      android:orientation="vertical" 
      android:padding="20dp">
-
+<!-- 
 
     <RelativeLayout
 	    android:layout_width="match_parent"
@@ -53,9 +53,13 @@
 	    	android:textColor="#5A5A5A"		/>
 		
 	</RelativeLayout>
+	
+	 -->
+
+	<include layout="@layout/fragment_info_box"/>
 
 	<fragment 
-		android:id="@+id/map"
+		android:id="@+id/mapView"
 	  	android:layout_width="match_parent"
 	 	android:layout_height="120dp"
 	  	class="com.google.android.gms.maps.SupportMapFragment"

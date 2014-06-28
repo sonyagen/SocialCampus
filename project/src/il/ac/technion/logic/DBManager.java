@@ -44,7 +44,8 @@ public enum DBManager  {
 		User u3 = new User("3L","","Jim Maricondo");
 		User u4 = new User("4L","","Xin Song");
 		User u5 = new User("5L","","Victoria Bellotti");
-		User u6 = new User("6L","","Yaron Kanza");
+		User u6 = new User("","","anonym temp");
+		
 		
 		
 		//Set<Long> mTags, Set<Long> mUseres

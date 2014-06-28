@@ -2,29 +2,32 @@ package il.ac.technion.socialcampus;
 
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
+import il.ac.technion.logic.UiOnDone;
+import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-public class InfoBoxFragment extends Fragment{
+public class InfoBoxFragment extends Fragment {
 	protected static final String HotSpotId = "id";
+	Context mContext;
 
 	//protected HotSpot mHotSpotData;
 	protected Long mHotSpotDataId;
-	protected OnFragmentInteractionListener mListener;
+//	protected OnFragmentInteractionListener mListener;
 	//TODO don't use mView - get an inflater instead.
 	View mView;
 	
@@ -43,6 +46,7 @@ public class InfoBoxFragment extends Fragment{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mContext = getActivity(); 
 		if (getArguments() != null) {
 			mHotSpotDataId = getArguments().getLong(HotSpotId);
 		}
@@ -60,6 +64,10 @@ public class InfoBoxFragment extends Fragment{
 
 	public HotSpot getCurrHotSpot(){
 		return HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+	}
+	
+	public Long getCurrHotSpotId(){
+		return mHotSpotDataId;
 	}
 	
 	public void resetInfoBox(){
@@ -160,57 +168,67 @@ public class InfoBoxFragment extends Fragment{
 	
 
 	public void onJoinBtnClick() {
-		if (mListener != null) {
-			mListener.onJoinBtnClick();
-		}
+		
+		HotSpot mCurrSpot = getCurrHotSpot();
+		HotSpotManager.INSTANCE.joinUserHotSpot(mCurrSpot, 
+			UserManager.INSTANCE.getMyID(), new UiOnDone() {
+				@Override
+				public void execute() {
+					resetInfoBoxBtn();
+				}
+			}, new UiOnError(mContext));
 	}
 	
 	public void onLeaveBtnClick() {
-		if (mListener != null) {
-			mListener.onLeaveBtnClick();
-		}
+		HotSpot mCurrSpot = getCurrHotSpot();
+		HotSpotManager.INSTANCE.breakUserHotSpot(mCurrSpot, 
+				UserManager.INSTANCE.getMyID(), new UiOnDone() {
+					@Override
+					public void execute() {
+						resetInfoBoxBtn();
+					}
+				}, new UiOnError(mContext));
 	}
 
 	public void onShareBtnClick() {
-		if (mListener != null) {
-			mListener.onShareBtnClick();
-		}
+		//TODO share
+		Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
 	}
 	public void onPinBtnClick() {
-		if (mListener != null) {
-			mListener.onPinBtnClick();
-		}
+		HotSpotManager.INSTANCE.PinUserHotSpotToUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
+		resetInfoBoxBtn();
 	}
 	public void onUnpinBtnClick() {
-		if (mListener != null) {
-			mListener.onUnpinBtnClick();
-		}
+		HotSpotManager.INSTANCE.UnpinUserHotSpotFromUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
+		resetInfoBoxBtn();
 	}
 
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (OnFragmentInteractionListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnFragmentInteractionListener");
-		}
-	}
+//	@Override
+//	public void onAttach(Activity activity) {
+//		super.onAttach(activity);
+//		try {
+//			mListener = (OnFragmentInteractionListener) activity;
+//		} catch (ClassCastException e) {
+//			throw new ClassCastException(activity.toString()
+//					+ " must implement OnFragmentInteractionListener");
+//		}
+//	}
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListener = null;
-	}
+//	@Override
+//	public void onDetach() {
+//		super.onDetach();
+//		mListener = null;
+//	}
 
-	public interface OnFragmentInteractionListener {
-		public void onJoinBtnClick();
-		public void onLeaveBtnClick();
-		public void onShareBtnClick();
-		public void onUnpinBtnClick();
-		public void onPinBtnClick();
-	}
+	
+	
+//	public interface OnFragmentInteractionListener {
+//		public void onJoinBtnClick();
+//		public void onLeaveBtnClick();
+//		public void onShareBtnClick();
+//		public void onUnpinBtnClick();
+//		public void onPinBtnClick();
+//	}
 
 }

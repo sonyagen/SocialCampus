@@ -252,6 +252,17 @@ public enum HotSpotManager {
 			}
 		}.run();
 	}
+		
+		
+	public void PinUserHotSpotToUser(final Long hotSpotId, final String uid){
+		//TODO: write lo local DB
+		UserManager.INSTANCE.getItemById(uid).pinHotSpot(hotSpotId);
+	}
+	
+	public void UnpinUserHotSpotFromUser(final Long hotSpotId, final String uid){
+		//TODO: write lo local DB
+		UserManager.INSTANCE.getItemById(uid).unpinHotSpot(hotSpotId);
+	}
 }
 
 

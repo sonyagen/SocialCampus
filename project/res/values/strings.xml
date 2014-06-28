@@ -2,5 +2,9 @@
 <resources>
 
     <string name="app_name">SocialCampusProject</string>
-	<string name="app_connection_erro_msg">An error occurred while trying to contact the server. Please try again.</string>
+    <string name="app_connection_erro_msg">An error occurred while trying to contact the server. Please try again.</string>
+    <string name="title_activity_hot_spot_info">HotSpotInfoActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

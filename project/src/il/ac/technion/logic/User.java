@@ -110,6 +110,15 @@ public class User {
 		mHotSpots.add(hotSpotId);
 	}
 
+	public void unpinHotSpot(long hotSpotId){
+		if(mPinnedSpots.contains(hotSpotId)){
+			mPinnedSpots.remove(hotSpotId);
+		}
+	}
+	public void pinHotSpot(long hotSpotId){
+		mPinnedSpots.add(hotSpotId);
+	}
+	
 	public void removeTag(long tId){
 		if(mTags.contains(tId)){
 			mTags.remove(tId);

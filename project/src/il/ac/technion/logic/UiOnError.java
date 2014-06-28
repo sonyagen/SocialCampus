@@ -12,7 +12,7 @@ public class UiOnError{
 	
 	public UiOnError(Context c){
 		this.c = c;
-		c.getResources().getString(R.string.app_connection_erro_msg);
+		msg = c.getResources().getString(R.string.app_connection_erro_msg);
 	}
 	
 	public UiOnError(Context c, String msg){
@@ -26,7 +26,7 @@ public class UiOnError{
 	}
 	public void execute(){
 		if(resid==0)
-			Toast.makeText(c, R.string.app_connection_erro_msg , Toast.LENGTH_SHORT).show();
+			Toast.makeText(c, msg , Toast.LENGTH_SHORT).show();
 		else
 			Toast.makeText(c, resid , Toast.LENGTH_SHORT).show();
 	}

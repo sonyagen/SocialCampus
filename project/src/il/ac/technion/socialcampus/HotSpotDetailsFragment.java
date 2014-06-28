@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -26,12 +27,20 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 	public HotSpotDetailsFragment() {
 		// Required empty public constructor
 	}
-
+	
+	public static HotSpotDetailsFragment newInstance(Long mHotSpotId) {
+		HotSpotDetailsFragment fragment = new HotSpotDetailsFragment();
+		Bundle args = new Bundle();
+		args.putLong(HotSpotId, mHotSpotId);
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setMap();
-		setGoing();
+		//setGoing();
 	}
 
 	@Override
@@ -51,10 +60,12 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 	}
 
 	private void setMap() {
+		if(mHotSpotDataId==null) return;
+		
 		HotSpot hs = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		LatLng ll = new LatLng( hs.getLangt(),hs.getLongt());
 		
-		mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+		mMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.mapView)).getMap();
 
 		CameraPosition CurrPos = new CameraPosition.Builder().target(ll).zoom(17f).bearing(300).tilt(50).build();
         if (mMap != null) {
@@ -63,4 +74,10 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
         }
 	}
 
+	public void refresh(Long id){
+		if (id==null)return;
+		resetInfoBox(id);
+		setMap();
+		
+	}
 }
