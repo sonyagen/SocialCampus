@@ -126,7 +126,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 	protected void onStart() {
 		super.onStart();
 
-		if(!UserManager.INSTANCE.isLoggedIn()){
+		if(!UserManager.isLoggedIn(mContext)){
 			mGoogleApiClient.connect();
 		}else{
 			updateUI(true);
@@ -216,7 +216,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 			//Set the current logged user
 			//in case of illegal ID the current user will stay the anonymous
 			UserManager.INSTANCE.setCurrentUser(u.getmId());
-			UserManager.setLoggedIn(getApplicationContext(), u.getmId());
+			UserManager.setLoggedIn(mContext, u.getmId());
 			if(progressDialog!=null){
 				progressDialog.dismiss();
 			}
@@ -229,7 +229,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 
 					// Update the UI after signin
 					UserManager.INSTANCE.setCurrentUser(u.getmId());
-					UserManager.setLoggedIn(getApplicationContext(), u.getmId());
+					UserManager.setLoggedIn(mContext, u.getmId());
 					updateUI(true);
 
 					// Indicate that the sign in process is complete.
@@ -355,7 +355,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 			// Signout button clicked
 			progressDialog.setMessage(this.getResources().getString(R.string.log_out_msg));
 			progressDialog.show();
-			UserManager.INSTANCE.logout(getApplicationContext());
+			UserManager.INSTANCE.logout(mContext);
 			signOutFromGplus();
 			progressDialog.dismiss();
 			break;

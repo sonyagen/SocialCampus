@@ -26,6 +26,12 @@ public enum UserManager{
 	public  boolean isLoggedIn(){
 		return !currentUser.getmId().equals(anonymousUID);
 	}
+	public static boolean isLoggedIn(Context appContext){
+		SharedPreferences prefs = appContext.getSharedPreferences(
+				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
+		return !prefs.getString("il.ac.technion.socialcampus.LoggedIn",UserManager.anonymousUID)
+				.equals(UserManager.anonymousUID);
+	}
 	User getItemById(String id){
 		return mData.get(id);
 
@@ -52,8 +58,7 @@ public enum UserManager{
 	public static void setLoggedIn(Context appContext, String uID){
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
-		prefs.edit().putString("il.ac.technion.socialcampus.LoggedIn", 
-				new Gson().toJson(uID)).commit();
+		prefs.edit().putString("il.ac.technion.socialcampus.LoggedIn", uID).commit();
 	}
 
 	User createAnonymous(){

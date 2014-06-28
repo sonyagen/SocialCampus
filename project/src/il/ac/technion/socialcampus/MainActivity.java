@@ -88,12 +88,16 @@ public class MainActivity extends FragmentActivity 	{
 				startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
 			}
 		});
+        
         hideInfoBox();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if(UserManager.isLoggedIn(mContext)){
+        	UserManager.INSTANCE.getMyData().setUserPhoto(imgProfilePic);
+        }
     }
 
     private void resetMarkers(){

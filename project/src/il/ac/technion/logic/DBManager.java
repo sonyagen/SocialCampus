@@ -38,14 +38,14 @@ public enum DBManager  {
 		Tag t7 = new Tag(7L,"Colloquium");
 		Tag t8 = new Tag(8L,"Salsa");
 		Tag t9 = new Tag(9L,"Clear Hall");
-		
-		User u1 = new User("1L","","Sonya Gendelman");
-		User u2 = new User("2L","","Hanna-John Jadon");
-		User u3 = new User("3L","","Jim Maricondo");
-		User u4 = new User("4L","","Xin Song");
-		User u5 = new User("5L","","Victoria Bellotti");
-		User u6 = new User("","","anonym temp");
-		
+//		
+//		User u1 = new User("1L","","Sonya Gendelman");
+//		User u2 = new User("2L","","Hanna-John Jadon");
+//		User u3 = new User("3L","","Jim Maricondo");
+//		User u4 = new User("4L","","Xin Song");
+//		User u5 = new User("5L","","Victoria Bellotti");
+//		User u6 = new User("","","anonym temp");
+//		
 		
 		
 		//Set<Long> mTags, Set<Long> mUseres
@@ -58,13 +58,13 @@ public enum DBManager  {
 		HS.add(h2);
 		HS.add(h3);
 		HS.add(h4);
-		
-		USR.add(u1);
-		USR.add(u2);
-		USR.add(u3);
-		USR.add(u4);
-		USR.add(u5);
-		USR.add(u6);
+//		
+//		USR.add(u1);
+//		USR.add(u2);
+//		USR.add(u3);
+//		USR.add(u4);
+//		USR.add(u5);
+//		USR.add(u6);
 
 		TAG.add(t1);
 		TAG.add(t2);
