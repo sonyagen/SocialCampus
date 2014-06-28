@@ -42,9 +42,11 @@
             android:name="il.ac.technion.socialcampus.ProfileActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
-         <activity
-            android:name="il.ac.technion.socialcampus.HotSpotInfoActivity"
->
+        <activity android:name="il.ac.technion.socialcampus.HotSpotInfoActivity" >
+        </activity>
+        <activity
+            android:name="il.ac.technion.socialcampus.CreateNewHotSpotActivity"
+            android:label="@string/title_activity_create_new_hot_spot" >
         </activity>
     </application>
 

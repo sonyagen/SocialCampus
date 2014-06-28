@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity 	{
 	private ImageView imgProfilePic;
+	private ImageButton addNewBtn;
 	private GoogleMap mMap;
 	private final Context mContext = this;
 	
@@ -80,24 +82,33 @@ public class MainActivity extends FragmentActivity 	{
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        imgProfilePic = (ImageView) findViewById(R.id.ProfilePic);
+        setListeners();
+        hideInfoBox();
+    }
+
+    private void setListeners(){
+    	imgProfilePic = (ImageView) findViewById(R.id.ProfilePic);
         imgProfilePic.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
 			}
 		});
-        
-        hideInfoBox();
+        addNewBtn = (ImageButton) findViewById(R.id.addNewBtn);
+        addNewBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(getApplicationContext(), CreateNewHotSpotActivity.class));
+			}
+		});
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         if(UserManager.isLoggedIn(mContext)){
         	UserManager.INSTANCE.getMyData().setUserPhoto(imgProfilePic);
         }
+        resetMarkers();
     }
 
     private void resetMarkers(){
