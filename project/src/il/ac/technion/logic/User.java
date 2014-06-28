@@ -144,7 +144,7 @@ public class User {
 	}
 
 	public void setUserPhoto(ImageView bmImage){
-		if(mImage!=null && !mImage.isEmpty()){
+		if(mImage ==null || mImage.isEmpty()){
 			return;
 		}
 		if(m_iconBitmap == null){

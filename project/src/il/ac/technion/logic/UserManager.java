@@ -190,7 +190,7 @@ public enum UserManager{
 				for(Long i: hots){
 					((HotSpot)mHotSpotManager.getItemById(i)).leaveHotSpot(user.getmId());
 				}
-				mData.remove(user);
+				mData.remove(user.getmId());
 				uiOnDone.execute();
 				return null;
 			}
