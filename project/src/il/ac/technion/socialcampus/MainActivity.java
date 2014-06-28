@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity implements
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
+        imgProfilePic = (ImageView) findViewById(R.id.ProfilePic);
         imgProfilePic.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -202,6 +202,18 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onShareBtnClick() {
 		// TODO for John??
+		
+	}
+
+	@Override
+	public void onUnpinBtnClick() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPinBtnClick() {
+		// TODO Auto-generated method stub
 		
 	}
 

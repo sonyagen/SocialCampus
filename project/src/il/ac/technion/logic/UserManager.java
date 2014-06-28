@@ -23,6 +23,9 @@ public enum UserManager{
 
 	protected HashMap<String,User> mData = new HashMap<String,User>();
 
+	public  boolean isLoggedIn(){
+		return !currentUser.getmId().equals(anonymousUID);
+	}
 	User getItemById(String id){
 		return mData.get(id);
 
@@ -45,7 +48,7 @@ public enum UserManager{
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		return prefs.getString("il.ac.technion.socialcampus.LoggedIn",UserManager.anonymousUID);
 	}
-	
+
 	public static void setLoggedIn(Context appContext, String uID){
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
@@ -207,7 +210,7 @@ public enum UserManager{
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		prefs.edit().remove("il.ac.technion.socialcampus.LoggedIn").commit();
-		
+
 	}
 
 

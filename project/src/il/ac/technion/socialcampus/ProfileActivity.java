@@ -5,24 +5,17 @@ import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.User;
 import il.ac.technion.logic.UserManager;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,17 +32,14 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-import com.google.gson.Gson;
 
 public class ProfileActivity extends FragmentActivity implements OnClickListener,
 ConnectionCallbacks, OnConnectionFailedListener {
-	SharedPreferences prefs ;
 
 	private static final int STATE_DEFAULT = 0;
 	private static final int STATE_SIGN_IN = 1;
 	private static final int STATE_IN_PROGRESS = 2;
 	private  ProgressDialog progressDialog;
-	private boolean isCreateFlow = false;
 
 	// We use mSignInProgress to track whether user has clicked sign in.
 	// mSignInProgress can be one of three values:
@@ -97,39 +87,30 @@ ConnectionCallbacks, OnConnectionFailedListener {
 	private Button btnSignOut, btnRevokeAccess;
 	private ImageView imgProfilePic;
 	private TextView txtName;
-	
-	private CheckBox kosherInput;
-	private CheckBox vegInput;
-	private CheckBox veganInput;
-	private CheckBox sffInput;
-	private CheckBox gffInput;
-	private EditText headline;
 	private LinearLayout all;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		prefs = getApplicationContext().getSharedPreferences(
-				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
+
 		progressDialog = new ProgressDialog(this);
 		setContentView(R.layout.activity_profile);
-		//getActionBar().setDisplayShowHomeEnabled(false);
 		btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
 		btnSignOut = (Button) findViewById(R.id.btn_sign_out);
 		btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
 		imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 		txtName = (TextView) findViewById(R.id.txtName);
-		
 
-		
+
+
 		all = (LinearLayout) findViewById(R.id.all);
 
 		// Button click listeners
 		btnSignIn.setOnClickListener(this);
 		btnSignOut.setOnClickListener(this);
 		btnRevokeAccess.setOnClickListener(this);
-		
-		
+
+
 
 		if (savedInstanceState != null) {
 			mSignInProgress = savedInstanceState
@@ -144,13 +125,13 @@ ConnectionCallbacks, OnConnectionFailedListener {
 
 	protected void onStart() {
 		super.onStart();
-		
-		if(UserManager.INSTANCE.getMyData()==null){
+
+		if(!UserManager.INSTANCE.isLoggedIn()){
 			mGoogleApiClient.connect();
 		}else{
 			updateUI(true);
 		}
-		
+
 	}
 
 	protected void onStop() {
@@ -230,7 +211,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		// Get user's information
 		final User u = getProfileInformation();
 		//Get the currently logged in user
-		
+
 		if(UserManager.INSTANCE.isRegistered(u.getmId())){
 			//Set the current logged user
 			//in case of illegal ID the current user will stay the anonymous
@@ -247,9 +228,10 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				public void execute() {
 
 					// Update the UI after signin
-					
+					UserManager.INSTANCE.setCurrentUser(u.getmId());
+					UserManager.setLoggedIn(getApplicationContext(), u.getmId());
 					updateUI(true);
-			
+
 					// Indicate that the sign in process is complete.
 					mSignInProgress = STATE_DEFAULT;
 					progressDialog.dismiss();
@@ -265,27 +247,27 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		}
 	}
 
-	
-	
-	
+
+
+
 
 	Context mContext = this;
-	
 
-//	@Override
-//	public void onBackPressed(){
-//		if(isCreateFlow){
-//			startActivity(new Intent(this, CreateDelivery.class));
-//			prefs.edit().remove("com.technion2014.letseat.CreateDelFlow").commit();
-//		}else{
-//			finish();
-//		}
-//		
-//	}
-	
 
-	
-	
+	//	@Override
+	//	public void onBackPressed(){
+	//		if(isCreateFlow){
+	//			startActivity(new Intent(this, CreateDelivery.class));
+	//			prefs.edit().remove("com.technion2014.letseat.CreateDelFlow").commit();
+	//		}else{
+	//			finish();
+	//		}
+	//		
+	//	}
+
+
+
+
 	/**
 	 * Updating the UI, showing/hiding buttons and profile layout
 	 * */
@@ -294,31 +276,22 @@ ConnectionCallbacks, OnConnectionFailedListener {
 			progressDialog.dismiss();
 		}
 		if (isSignedIn) {
-			UserData currentU = UserManager.INSTANCE.getMyData();
+			User currentU = UserManager.INSTANCE.getMyData();
 			// Update the UI after signin
-			txtName.setText(currentU.getM_nick());
+			txtName.setText(currentU.getmName());
 			currentU.setUserPhoto(imgProfilePic);
-			
+
 			btnSignIn.setVisibility(View.GONE);
 			//btnSignOut.setVisibility(View.VISIBLE);
 			//btnRevokeAccess.setVisibility(View.VISIBLE);
 			all.setVisibility(View.VISIBLE);
 			//if(getActionBar()!=null)
-			if(edit!=null)
-				edit.setVisible(true);
-			if(ok!=null)
-				ok.setVisible(false);
-			setDataToFields();
-			closeFilds();
 		} else {
 			btnSignIn.setVisibility(View.VISIBLE);
 			//btnSignOut.setVisibility(View.GONE);
 			//tnRevokeAccess.setVisibility(View.GONE);
 			all.setVisibility(View.GONE);
-			if(edit!=null)
-				edit.setVisible(false);
-			if(ok!=null)
-				ok.setVisible(false);
+
 		}
 	}
 
@@ -339,7 +312,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				u.setmId(currentPerson.getId());
 				u.setmName(personName);
 				u.setmImage(personPhotoUrl);
-				
+
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Person information is null", Toast.LENGTH_LONG).show();
@@ -369,14 +342,14 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		progressDialog.setCancelable(false);
 		progressDialog.setCanceledOnTouchOutside(false);
 		switch (v.getId()) {
-		
+
 		case R.id.btn_sign_in:
 			// Signin button clicked
-//			mGoogleApiClient.connect();
+			//			mGoogleApiClient.connect();
 			progressDialog.setMessage(this.getResources().getString(R.string.log_in_msg));
 			progressDialog.show();
 			signInWithGplus();
-	
+
 			break;
 		case R.id.btn_sign_out:
 			// Signout button clicked
@@ -390,22 +363,25 @@ ConnectionCallbacks, OnConnectionFailedListener {
 			// Revoke access button clicked
 			progressDialog.setMessage(this.getResources().getString(R.string.revoke_access_msg));
 			progressDialog.show();
-			UserManager.INSTANCE.removeUser( new UiOnDone() {
-				@Override
-				public void execute() {
-					revokeGplusAccess();
+			UserManager.INSTANCE.removeUser( 
+					UserManager.INSTANCE.getMyData(),
+					new UiOnDone() {
+						@Override
+						public void execute() {
+							revokeGplusAccess();
+							UserManager.INSTANCE.logout(mContext);
 
-				}
-			}, new UiOnError(getApplicationContext()){
-				@Override
-				public void execute() {
-			
-				}
-			});
-			
+						}
+					}, new UiOnError(getApplicationContext()){
+						@Override
+						public void execute() {
+
+						}
+					});
+
 			break;
 		}
-		
+
 	}
 
 	/**
@@ -426,9 +402,9 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		if (mGoogleApiClient.isConnected()) {
 			Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
 			mGoogleApiClient.disconnect();
-			
-			
-		//	updateUI(false);
+
+
+			//	updateUI(false);
 		}
 		updateUI(false);
 	}
