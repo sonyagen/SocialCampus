@@ -2,8 +2,8 @@ package il.ac.technion.socialcampus;
 
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
-import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.TagManager;
+import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
 
@@ -18,7 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,8 +31,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MainActivity extends FragmentActivity implements 
-	InfoBoxFragment.OnFragmentInteractionListener{
+public class MainActivity extends FragmentActivity 	{
 	private ImageView imgProfilePic;
 	private GoogleMap mMap;
 	private final Context mContext = this;
@@ -81,7 +80,7 @@ public class MainActivity extends FragmentActivity implements
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
+        imgProfilePic = (ImageView) findViewById(R.id.ProfilePic);
         imgProfilePic.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -166,43 +165,23 @@ public class MainActivity extends FragmentActivity implements
 	            return true;
 	        }
 	      });
+	    findViewById(R.id.infoBoxFrag).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				//TODO: check if large view - set fragmet nearby
+				//FragmentManager fm = getSupportFragmentManager();
+				//fm.beginTransaction().add...().comit();
+				
+				// else start activity
+				startActivity(new Intent(mContext, HotSpotInfoActivity.class).
+						putExtra("id",getInfoBox().getCurrHotSpotId()));
+				
+				
+			}
+		});
 
     }
-
-	@Override
-	public void onJoinBtnClick() {
-		HotSpot mCurrSpot = getInfoBox().getCurrHotSpot();
-		HotSpotManager.INSTANCE.joinUserHotSpot(mCurrSpot, 
-				UserManager.INSTANCE.getMyID(), new UiOnDone() {
-					
-					@Override
-					public void execute() {
-						getInfoBox().resetInfoBoxBtn();
-					}
-				}, new UiOnError(mContext));
-		
-	}
-	
-
-	@Override
-	public void onLeaveBtnClick() {
-		HotSpot mCurrSpot = getInfoBox().getCurrHotSpot();
-		HotSpotManager.INSTANCE.breakUserHotSpot(mCurrSpot, 
-				UserManager.INSTANCE.getMyID(), new UiOnDone() {
-					
-					@Override
-					public void execute() {
-						getInfoBox().resetInfoBoxBtn();
-					}
-				}, new UiOnError(mContext));
-		
-	}
-
-	
-	@Override
-	public void onShareBtnClick() {
-		// TODO for John??
-		
-	}
 
 }
