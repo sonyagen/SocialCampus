@@ -52,12 +52,26 @@ public class InfoBoxFragment extends Fragment {
 		}
 	}
 
+	//	TODO------
+	ImageButton share ;
+	ImageButton joinLeave;
+	ImageButton pinUnpin;
+	TextView headline;
+	TextView timeStr;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 		 View v = inflater.inflate(R.layout.fragment_info_box, container, false);
 		 mView = v;
+		 
+		 share = ((ImageButton)mView.findViewById(R.id.shareImgBtn));
+		 joinLeave = ((ImageButton)mView.findViewById(R.id.joinImgBtn));
+		 pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
+		 headline = ((TextView) mView.findViewById(R.id.name));
+		 timeStr = ((TextView)mView.findViewById(R.id.timeStr));
+		 
 		 setView();
 		 return v;
 	}
@@ -88,7 +102,7 @@ public class InfoBoxFragment extends Fragment {
 		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		
 		//handle share
-		ImageButton share = ((ImageButton)mView.findViewById(R.id.shareImgBtn));
+		
 		share.setVisibility(View.VISIBLE);
 		share.setOnClickListener(new OnClickListener() {
 			@Override
@@ -98,7 +112,6 @@ public class InfoBoxFragment extends Fragment {
 		});
     	
 		//handle join-leave
-		ImageButton joinLeave = ((ImageButton)mView.findViewById(R.id.joinImgBtn));
 		if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
 			joinLeave.setImageResource(R.drawable.leave);
 			joinLeave.setOnClickListener(new OnClickListener() {
@@ -119,7 +132,6 @@ public class InfoBoxFragment extends Fragment {
     	}
 		
 		//handle pin-unpin
-		ImageButton pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
 		if (UserManager.INSTANCE.getMyData().isPinned(mHotSpotData.getmId())){
 			pinUnpin.setImageResource(R.drawable.ic_pinned);
 			pinUnpin.setOnClickListener(new OnClickListener() {
@@ -156,12 +168,10 @@ public class InfoBoxFragment extends Fragment {
 		//View v = View.inflate(getActivity(), R.layout.fragment_info_box, container);
 		
 		String name = mHotSpotData.getmName();
-    	((TextView) mView.findViewById(R.id.name)).setText(name);
+    	headline.setText(name);
     	
     	Long time = mHotSpotData.getmTime();
-		String timeStr = (new SimpleDateFormat("HH:mm dd/MM/yyyy").format(new Date(time)));
-
-    	((TextView)mView.findViewById(R.id.timeStr)).setText(timeStr);
+    	timeStr.setText(new SimpleDateFormat("HH:mm dd/MM").format(new Date(time)));
     	
     	resetInfoBoxBtn();
 	}
