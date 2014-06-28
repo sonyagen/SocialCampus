@@ -12,49 +12,76 @@ import android.location.Location;
 public class HotSpot {
 	private Long mId;
 	private Long mTime;
-	private Location mLocation;
+	private Long mEndTime;
 	private String mName;
-	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
-	private Set<String> mUsers = new TreeSet<String>();	
 	private double mLong;
 	private double mLat;
+
+	private String mLocation;
+	private String mdescription;
+	private Long mTimeZone;
+	private String mAdminId;
+	private String mImageURL;
+	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
+	private Set<String> mUsers = new TreeSet<String>();	
 
 	
 
 	
 	public HotSpot(HotSpot hs) {
-		this.mId = hs.mId;
-		this.mTime = hs.mTime;
-		this.mLocation = hs.mLocation;
-		this.mName = hs.mName;
-		this.mTags.addAll(hs.mTags);
-		this.mUsers.addAll( hs.mUsers);
-		this.mLat = hs.mLat;
-		this.mLong = hs.mLong;
+		  mId = hs.mId;
+		  mTime = hs.mTime;
+		  mEndTime = hs.mEndTime;
+		  mName = hs.mName;
+		  mLong = hs.mLong;
+		  mLat = hs.mLat;
+
+		  mLocation = hs.mLocation;
+		  mdescription = hs.mdescription;
+		  mTimeZone = hs.mTimeZone;
+		  mAdminId = hs.mAdminId;
+		  mImageURL = hs.mImageURL;
+		 mTags .addAll(hs.mTags);
+		  mUsers .addAll(hs.mUsers);
 	
 	}	
 
-	public HotSpot(Long mId, Long mTime, Location mLocation, Double lat, Double lon, String mName) {
-		super();
-		this.mId = mId;
-		this.mTime = mTime;
-		this.mLocation = mLocation;
-		this.mName = mName;
-		this.mLat = lat;
-		this.mLong = lon;
+	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
+			String mLocation,String mdescription , Long mTimeZone ,String mAdminId,String mImageURL) {
+		  this.mId = mId;
+		  this.mTime = mTime;
+		  this.mEndTime = mEndTime;
+		  this.mName = mName;
+		  this.mLong = lon;
+		  this.mLat = lat;
+
+		  this.mLocation = mLocation;
+		  this.mdescription = mdescription;
+		  this.mTimeZone = mTimeZone;
+		  this. mAdminId = mAdminId;
+		  this.mImageURL = mImageURL;
+	
+
 	}
 		
-	public HotSpot(Long mId, Long mTime, Location mLocation, Double lat, Double lon, String mName,
+	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
+			String mLocation,String mdescription , Long mTimeZone ,String mAdminId,String mImageURL,
 			Set<Long> mTags, Set<String> mUseres) {
-		super();
-		this.mId = mId;
-		this.mTime = mTime;
-		this.mLocation = mLocation;
-		this.mName = mName;
+		  this.mId = mId;
+		  this.mTime = mTime;
+		  this.mEndTime = mEndTime;
+		  this.mName = mName;
+		  this.mLong = lon;
+		  this.mLat = lat;
+
+		  this.mLocation = mLocation;
+		  this.mdescription = mdescription;
+		  this.mTimeZone = mTimeZone;
+		  this. mAdminId = mAdminId;
+		  this.mImageURL = mImageURL;
 		this.mTags.addAll(mTags);
 		this.mUsers.addAll( mUseres);
-		this.mLat = lat;
-		this.mLong = lon;
+
 
 	}
 
@@ -104,11 +131,11 @@ public class HotSpot {
 		this.mTime = mTime;
 	}
 
-	public Location getmLocation() {
+	public String getmLocation() {
 		return mLocation;
 	}
 
-	public void setmLocation(Location mLocation) {
+	public void setmLocation(String mLocation) {
 		this.mLocation = mLocation;
 	}
 
