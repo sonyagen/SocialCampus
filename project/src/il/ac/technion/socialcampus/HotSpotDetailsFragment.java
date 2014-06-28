@@ -7,6 +7,7 @@ import il.ac.technion.logic.HotSpotManager;
 import il.ac.technion.logic.User;
 import il.ac.technion.logic.UserManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setMap();
+		
 		//setGoing();
 	}
 
@@ -47,8 +48,11 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_hot_spot_details, container,
+		View v = inflater.inflate(R.layout.fragment_hot_spot_details, container,
 				false);
+		setMap();
+		return v;
+		
 	}
 	
 	private void setGoing() {
@@ -64,8 +68,8 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		
 		HotSpot hs = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		LatLng ll = new LatLng( hs.getLangt(),hs.getLongt());
-		
-		mMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.mapView)).getMap();
+		SupportMapFragment f = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.My_map));
+		mMap = f.getMap();
 
 		CameraPosition CurrPos = new CameraPosition.Builder().target(ll).zoom(17f).bearing(300).tilt(50).build();
         if (mMap != null) {

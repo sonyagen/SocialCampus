@@ -10,7 +10,7 @@
     <include layout="@layout/fragment_info_box" />
 
 	<fragment 
-		android:id="@+id/map"
+		android:id="@+id/My_map"
 	  	android:layout_width="match_parent"
 	 	android:layout_height="120dp"
 	  	class="com.google.android.gms.maps.SupportMapFragment"
