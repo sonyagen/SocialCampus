@@ -15,7 +15,7 @@ public class HotSpot {
 	private Location mLocation;
 	private String mName;
 	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
-	private Set<Long> mUsers = new TreeSet<Long>();	
+	private Set<String> mUsers = new TreeSet<String>();	
 	private double mLong;
 	private double mLat;
 
@@ -45,7 +45,7 @@ public class HotSpot {
 	}
 		
 	public HotSpot(Long mId, Long mTime, Location mLocation, Double lat, Double lon, String mName,
-			Set<Long> mTags, Set<Long> mUseres) {
+			Set<Long> mTags, Set<String> mUseres) {
 		super();
 		this.mId = mId;
 		this.mTime = mTime;
@@ -63,11 +63,11 @@ public class HotSpot {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Set<Long> getmUsers() {
+	public Set<String> getmUsers() {
 		return mUsers;
 	}
 
-	public void setmUsers(Set<Long> mUsers) {
+	public void setmUsers(Set<String> mUsers) {
 		this.mUsers = mUsers;
 	}
 
@@ -128,11 +128,11 @@ public class HotSpot {
 		this.mTags = mTags;
 	}
 
-	public Set<Long> getmUseres() {
+	public Set<String> getmUseres() {
 		return mUsers;
 	}
 
-	public void setmUseres(Set<Long> mUseres) {
+	public void setmUseres(Set<String> mUseres) {
 		this.mUsers = mUseres;
 	}
 
@@ -161,12 +161,12 @@ public class HotSpot {
 
 	
 
-	public void leaveHotSpot(long userId){
+	public void leaveHotSpot(String userId){
 		if(mUsers.contains(userId)){
 			mUsers.remove(userId);
 		}
 	}
-	public void joinHotSpot(long userId){
+	public void joinHotSpot(String userId){
 		mUsers.add(userId);
 	}
 	

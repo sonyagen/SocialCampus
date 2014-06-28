@@ -2,7 +2,7 @@ package il.ac.technion.socialcampus;
 
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
-import il.ac.technion.logic.HotSpotManager.UiOnDone;
+import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
@@ -11,11 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,9 +30,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
 public class MainActivity extends FragmentActivity implements 
 	InfoBoxFragment.OnFragmentInteractionListener{
-  
+	private ImageView imgProfilePic;
 	private GoogleMap mMap;
 	private final Context mContext = this;
 	
@@ -57,13 +61,16 @@ public class MainActivity extends FragmentActivity implements
 				setUpMapIfNeeded();
 			}
 		}, new UiOnError(this));
-    	UserManager.INSTANCE.syncUsers(new UserManager.UiOnDone() {
+    	UserManager.INSTANCE.syncUsers(new UiOnDone() {
 			@Override
 			public void execute() {
-				UserManager.INSTANCE.setCurrentUser(1L);
+				
+				UserManager.INSTANCE.setCurrentUser(
+						UserManager.getLoggedIn(getApplicationContext() )
+				);
 			}
 		}, new UiOnError(this));
-    	TagManager.INSTANCE.syncTags(new TagManager.UiOnDone() {
+    	TagManager.INSTANCE.syncTags(new UiOnDone() {
 			@Override
 			public void execute() {}
 		}, new UiOnError(this));
@@ -71,8 +78,17 @@ public class MainActivity extends FragmentActivity implements
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
+        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
+        imgProfilePic.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+			}
+		});
         hideInfoBox();
     }
 
@@ -97,6 +113,10 @@ public class MainActivity extends FragmentActivity implements
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setZoomControlsEnabled(false);
+            mMap.getUiSettings().setCompassEnabled(false);
+
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
@@ -153,7 +173,7 @@ public class MainActivity extends FragmentActivity implements
 	public void onJoinBtnClick() {
 		HotSpot mCurrSpot = getInfoBox().getCurrHotSpot();
 		HotSpotManager.INSTANCE.joinUserHotSpot(mCurrSpot, 
-				UserManager.INSTANCE.getMyID(), new HotSpotManager.UiOnDone() {
+				UserManager.INSTANCE.getMyID(), new UiOnDone() {
 					
 					@Override
 					public void execute() {
@@ -168,7 +188,7 @@ public class MainActivity extends FragmentActivity implements
 	public void onLeaveBtnClick() {
 		HotSpot mCurrSpot = getInfoBox().getCurrHotSpot();
 		HotSpotManager.INSTANCE.breakUserHotSpot(mCurrSpot, 
-				UserManager.INSTANCE.getMyID(), new HotSpotManager.UiOnDone() {
+				UserManager.INSTANCE.getMyID(), new UiOnDone() {
 					
 					@Override
 					public void execute() {

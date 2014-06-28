@@ -16,9 +16,6 @@ public enum TagManager {
 	UserManager mUserManager = UserManager.INSTANCE;
 	HotSpotManager mHotSpotManager = HotSpotManager.INSTANCE;
 	
-	public static interface UiOnDone{
-		public void execute();
-	}
 	
 	protected HashMap<Long,Tag> mData = new HashMap<Long,Tag>();
 	
@@ -138,8 +135,8 @@ public enum TagManager {
 					uiOnError.execute();
 					return null;
 				}
-				Set<Long> users = tag.getmUsers();
-				for(Long i: users){
+				Set<String> users = tag.getmUsers();
+				for(String i: users){
 					((User)mUserManager.getItemById(i)).removeTag(tag.getmId());
 				}
 				Set<Long> hots = tag.getmHotSpots();
@@ -163,7 +160,7 @@ public enum TagManager {
 
 	
 	//user - tag
-	public  void breakUserTag(final Tag tag, final Long uid,
+	public  void breakUserTag(final Tag tag, final String uid,
 			final UiOnDone uiOnDone, final UiOnError uiOnError){
 		
 		new SCAsyncRequest(SCPriority.IMMEDIATELY) {
@@ -185,13 +182,13 @@ public enum TagManager {
 			@Override
 			public Void actionOnServer(Void... params) throws IOException,
 			ConnectException {
-				DBManager.INSTANCE.breakUserTag(tag.getmId(), uid);
+				DBManager.INSTANCE.breakUserTag(uid, tag.getmId());
 				return null;
 			}
 		}.run();
 	}
 	//user - tag
-	public  void joinUserTag(final Tag tag, final Long uid,
+	public  void joinUserTag(final Tag tag, final String uid,
 			final UiOnDone uiOnDone, final UiOnError uiOnError){
 		
 		new SCAsyncRequest(SCPriority.IMMEDIATELY) {
@@ -214,7 +211,7 @@ public enum TagManager {
 			@Override
 			public Void actionOnServer(Void... params) throws IOException,
 			ConnectException {
-				DBManager.INSTANCE.joinUserTag(tag.getmId(), uid);
+				DBManager.INSTANCE.joinUserTag(uid, tag.getmId());
 			return null;
 			}
 		}.run();
@@ -245,7 +242,7 @@ public enum TagManager {
 			@Override
 			public Void actionOnServer(Void... params) throws IOException,
 			ConnectException {
-				DBManager.INSTANCE.breakSpotTag(tag.getmId(), hsid);
+				DBManager.INSTANCE.breakSpotTag( hsid,tag.getmId());
 				return null;
 			}
 		}.run();
@@ -273,7 +270,7 @@ public enum TagManager {
 			@Override
 			public Void actionOnServer(Void... params) throws IOException,
 			ConnectException {
-				DBManager.INSTANCE.joinSpotTag(tag.getmId(), hsid);
+				DBManager.INSTANCE.joinSpotTag(hsid,tag.getmId());
 			return null;
 			}
 		}.run();

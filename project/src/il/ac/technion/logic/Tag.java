@@ -8,7 +8,7 @@ import android.location.Location;
 public class Tag {
 	private Long mId;
 	private String mName;
-	private Set<Long> mUsers = new TreeSet<Long>();//tag ids 
+	private Set<String> mUsers = new TreeSet<String>(); 
 	private Set<Long> mHotSpots = new TreeSet<Long>();
 
 
@@ -20,7 +20,7 @@ public class Tag {
 	}	
 
 	public Tag(Long mId, String mName,
-			Set<Long> mUsers, Set<Long> mSpots) {
+			Set<String> mUsers, Set<Long> mSpots) {
 		super();
 		this.mId = mId;
 		this.mName = mName;
@@ -55,11 +55,11 @@ public class Tag {
 		this.mId = mId;
 	}
 	
-	public Set<Long> getmUsers() {
+	public Set<String> getmUsers() {
 		return mUsers;
 	}
 
-	public void setmUsers(Set<Long> mUsers) {
+	public void setmUsers(Set<String> mUsers) {
 		this.mUsers = mUsers;
 	}
 
@@ -85,12 +85,12 @@ public class Tag {
 		mHotSpots.add(userId);
 	}
 	
-	public void removeUser(long tId){
+	public void removeUser(String tId){
 		if(mUsers.contains(tId)){
 			mUsers.remove(tId);
 		}
 	}
-	public void addUser(long tId){
+	public void addUser(String tId){
 		mUsers.add(tId);
 	}
 

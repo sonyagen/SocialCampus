@@ -7,7 +7,7 @@ import android.location.Location;
 
 
 public class User {
-	private Long mId;
+	private String mId;
 	private String mImage;
 	private String mName;
 	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
@@ -18,19 +18,20 @@ public class User {
 	public User(User hs) {
 		this.mId = hs.mId;
 		this.mName = hs.mName;
+		this.mImage = hs.mImage;
 		this.mTags.addAll(hs.mTags);
+		this.mPinnedSpots.addAll(hs.mPinnedSpots);
 		this.mHotSpots.addAll( hs.mHotSpots);
-	
 	}	
 
-	public User(Long mId, String mImage, String mName) {
+	public User(String mId, String mImage, String mName) {
 		super();
 		this.mId = mId;
 		this.mImage = mImage;
 		this.mName = mName;
 	}
 
-	public User(Long mId, String mImage, String mName,
+	public User(String mId, String mImage, String mName,
 			Set<Long> mTags, Set<Long> mSpots) {
 		super();
 		this.mId = mId;
@@ -52,6 +53,8 @@ public class User {
 	public void setmImage(String mIm) {
 		this.mImage = mIm;
 	}
+	
+
 
 	public String getmName() {
 		return mName;
@@ -61,11 +64,11 @@ public class User {
 		this.mName = mName;
 	}
 
-	public Long getmId() {
+	public String getmId() {
 		return mId;
 	}
 
-	public void setmId(Long mId) {
+	public void setmId(String mId) {
 		this.mId = mId;
 	}
 	

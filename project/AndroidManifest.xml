@@ -39,8 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="il.ac.technion.socialcampus.ProfileActivity"
-            android:label="@string/title_activity_profile" >
+            android:name="il.ac.technion.socialcampus.ProfileActivity">
         </activity>
     </application>
 

@@ -15,10 +15,7 @@ public enum HotSpotManager {
 	
 	UserManager mUserManager = UserManager.INSTANCE;
 	TagManager mTagManager = TagManager.INSTANCE;
-	
-	public static interface UiOnDone{
-		public void execute();
-	}
+
 	
 	protected HashMap<Long,HotSpot> mData = new HashMap<Long,HotSpot>();
 	
@@ -179,8 +176,8 @@ public enum HotSpotManager {
 					uiOnError.execute();
 					return null;
 				}
-				Set<Long> users = hotSpot.getmUseres();
-				for(Long i: users){
+				Set<String> users = hotSpot.getmUseres();
+				for(String i: users){
 					((User)mUserManager.getItemById(i)).leaveHotSpot(hotSpot.getmId());
 				}
 				Set<Long> tags = hotSpot.getmTags();
@@ -202,7 +199,7 @@ public enum HotSpotManager {
 		}.run();
 	}
 	
-	public void breakUserHotSpot(final HotSpot hotSpot, final Long uid,
+	public void breakUserHotSpot(final HotSpot hotSpot, final String uid,
 			final UiOnDone uiOnDone, final UiOnError uiOnError){
 		
 		new SCAsyncRequest(SCPriority.IMMEDIATELY) {
@@ -230,7 +227,7 @@ public enum HotSpotManager {
 		}.run();
 	}
 	
-	public void joinUserHotSpot(final HotSpot hotSpot, final Long uid,
+	public void joinUserHotSpot(final HotSpot hotSpot, final String uid,
 			final UiOnDone uiOnDone, final UiOnError uiOnError){
 		
 		new SCAsyncRequest(SCPriority.IMMEDIATELY) {

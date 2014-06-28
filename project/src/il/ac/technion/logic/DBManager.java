@@ -39,12 +39,12 @@ public enum DBManager  {
 		Tag t8 = new Tag(8L,"Salsa");
 		Tag t9 = new Tag(9L,"Clear Hall");
 		
-		User u1 = new User(1L,"","Sonya Gendelman");
-		User u2 = new User(2L,"","Hanna-John Jadon");
-		User u3 = new User(3L,"","Jim Maricondo");
-		User u4 = new User(4L,"","Xin Song");
-		User u5 = new User(5L,"","Victoria Bellotti");
-		User u6 = new User(6L,"","Yaron Kanza");
+		User u1 = new User("1L","","Sonya Gendelman");
+		User u2 = new User("2L","","Hanna-John Jadon");
+		User u3 = new User("3L","","Jim Maricondo");
+		User u4 = new User("4L","","Xin Song");
+		User u5 = new User("5L","","Victoria Bellotti");
+		User u6 = new User("6L","","Yaron Kanza");
 		
 		
 		//Set<Long> mTags, Set<Long> mUseres
@@ -85,7 +85,7 @@ public enum DBManager  {
 		}
 		return null;
 	}
-	private User getUser(Long id){
+	private User getUser(String id){
 		for(User t:USR){
 			if (t.getmId().equals(id))
 				return t;
@@ -152,20 +152,20 @@ public enum DBManager  {
 	}
 	
 	//join/break 
-	void breakUserHotSpot(Long hid, Long uid){
+	void breakUserHotSpot(Long hid, String uid){
 		getSpot(hid).getmUsers().remove(uid);
 		getUser(uid).getmHotSpots().remove(hid);
 	}
-	void joinUserHotSpot(Long hid, Long uid){
+	void joinUserHotSpot(Long hid, String uid){
 		getSpot(hid).getmUsers().add(uid);
 		getUser(uid).getmHotSpots().add(hid);
 	}
 	
-	void breakUserTag(Long uid, Long tid){
+	void breakUserTag(String uid, Long tid){
 		getTag(tid).getmUsers().remove(uid);
 		getUser(uid).getmTags().remove(tid);
 	}
-	void joinUserTag(Long uid, Long tid){
+	void joinUserTag(String uid, Long tid){
 		getTag(tid).getmUsers().add(uid);
 		getUser(uid).getmTags().add(tid);
 	}
