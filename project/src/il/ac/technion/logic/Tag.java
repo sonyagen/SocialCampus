@@ -1,4 +1,5 @@
 package il.ac.technion.logic;
+import java.util.Calendar;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -8,6 +9,7 @@ import android.location.Location;
 public class Tag {
 	private Long mId;
 	private String mName;
+	private Long mTime;
 	private Set<String> mUsers = new TreeSet<String>(); 
 	private Set<Long> mHotSpots = new TreeSet<Long>();
 
@@ -15,6 +17,7 @@ public class Tag {
 	public Tag(Tag hs) {
 		this.mId = hs.mId;
 		this.mName = hs.mName;
+		this.mTime = hs.mTime;
 		this.mUsers.addAll(hs.mUsers);
 		this.mHotSpots.addAll( hs.mHotSpots);
 	}	
@@ -22,16 +25,25 @@ public class Tag {
 	public Tag(Long mId, String mName,
 			Set<String> mUsers, Set<Long> mSpots) {
 		super();
+		this.mTime = Calendar.getInstance().getTimeInMillis();
 		this.mId = mId;
 		this.mName = mName;
 		this.mUsers.addAll(mUsers);
 		this.mHotSpots.addAll(mSpots);
 	}
 	
+	public Tag(Long mId, String mName,Long mTime) {
+		super();
+		this.mTime = mTime;
+		this.mId = mId;
+		this.mName = mName;
+	}
+	
 	public Tag(Long mId, String mName) {
 		super();
 		this.mId = mId;
 		this.mName = mName;
+		this.mTime = Calendar.getInstance().getTimeInMillis();
 	}
 
 	public Tag() {
@@ -55,6 +67,11 @@ public class Tag {
 		this.mId = mId;
 	}
 	
+	public Long getmTime() {
+		return mTime;
+	}
+
+
 	public Set<String> getmUsers() {
 		return mUsers;
 	}

@@ -1,12 +1,9 @@
 package il.ac.technion.logic;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import android.location.Location;
 
 
 public class HotSpot {
@@ -19,7 +16,6 @@ public class HotSpot {
 
 	private String mLocation;
 	private String mdescription;
-	private Long mTimeZone;
 	private String mAdminId;
 	private String mImageURL;
 	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
@@ -38,7 +34,6 @@ public class HotSpot {
 
 		  mLocation = hs.mLocation;
 		  mdescription = hs.mdescription;
-		  mTimeZone = hs.mTimeZone;
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
 		 mTags .addAll(hs.mTags);
@@ -47,7 +42,7 @@ public class HotSpot {
 	}	
 
 	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
-			String mLocation,String mdescription , Long mTimeZone ,String mAdminId,String mImageURL) {
+			String mLocation,String mdescription  ,String mAdminId,String mImageURL) {
 		  this.mId = mId;
 		  this.mTime = mTime;
 		  this.mEndTime = mEndTime;
@@ -57,7 +52,6 @@ public class HotSpot {
 
 		  this.mLocation = mLocation;
 		  this.mdescription = mdescription;
-		  this.mTimeZone = mTimeZone;
 		  this. mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 	
@@ -65,7 +59,7 @@ public class HotSpot {
 	}
 		
 	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
-			String mLocation,String mdescription , Long mTimeZone ,String mAdminId,String mImageURL,
+			String mLocation,String mdescription ,String mAdminId,String mImageURL,
 			Set<Long> mTags, Set<String> mUseres) {
 		  this.mId = mId;
 		  this.mTime = mTime;
@@ -76,7 +70,6 @@ public class HotSpot {
 
 		  this.mLocation = mLocation;
 		  this.mdescription = mdescription;
-		  this.mTimeZone = mTimeZone;
 		  this. mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 		this.mTags.addAll(mTags);
