@@ -2,6 +2,7 @@ package il.ac.technion.socialcampus;
 
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
+import il.ac.technion.logic.LocationFactury;
 import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
@@ -38,16 +39,9 @@ public class MainActivity extends FragmentActivity 	{
 	private GoogleMap mMap;
 	private final Context mContext = this;
 	
-	static final CameraPosition TECHNION =
-            new CameraPosition.Builder().target(new LatLng(32.776778,35.023127))
-                    .zoom(17f)
-                    .bearing(300)
-                    .tilt(50)
-                    .build();
+	CameraPosition TECHNION = LocationFactury.TECHNION;
 	
 	private HashMap<String,Long> mMarkersHotSpotsTrans = new HashMap<String,Long>();
-	
-	
 
     @Override
 	protected void onStart() {

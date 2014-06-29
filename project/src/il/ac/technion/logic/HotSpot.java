@@ -19,7 +19,6 @@ public class HotSpot {
 
 	private String mLocation;
 	private String mdescription;
-	private Long mTimeZone;
 	private String mAdminId;
 	private String mImageURL;
 	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
@@ -38,10 +37,9 @@ public class HotSpot {
 
 		  mLocation = hs.mLocation;
 		  mdescription = hs.mdescription;
-		  mTimeZone = hs.mTimeZone;
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
-		 mTags .addAll(hs.mTags);
+		  mTags .addAll(hs.mTags);
 		  mUsers .addAll(hs.mUsers);
 	
 	}	
@@ -57,7 +55,6 @@ public class HotSpot {
 
 		  this.mLocation = mLocation;
 		  this.mdescription = mdescription;
-		  this.mTimeZone = mTimeZone;
 		  this. mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 	
@@ -76,11 +73,10 @@ public class HotSpot {
 
 		  this.mLocation = mLocation;
 		  this.mdescription = mdescription;
-		  this.mTimeZone = mTimeZone;
 		  this. mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
-		this.mTags.addAll(mTags);
-		this.mUsers.addAll( mUseres);
+		  this.mTags.addAll(mTags);
+		  this.mUsers.addAll(mUseres);
 
 
 	}
@@ -130,6 +126,14 @@ public class HotSpot {
 	public void setmTime(Long mTime) {
 		this.mTime = mTime;
 	}
+	
+	public Long getEndTime() {
+		return mEndTime;
+	}
+
+	public void setEndTime(Long mTime) {
+		this.mEndTime = mTime;
+	}
 
 	public String getmLocation() {
 		return mLocation;
@@ -146,6 +150,15 @@ public class HotSpot {
 	public void setmName(String mName) {
 		this.mName = mName;
 	}
+	
+	public String getmDesc() {
+		return mdescription;
+	}
+
+	public void setmDesc(String mdescription) {
+		this.mdescription = mdescription;
+	}
+
 
 	public Set<Long> getmTags() {
 		return mTags;

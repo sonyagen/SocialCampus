@@ -1,12 +1,42 @@
 package il.ac.technion.socialcampus;
 
+import il.ac.technion.logic.HotSpot;
+import il.ac.technion.logic.HotSpotManager;
+import il.ac.technion.logic.LocationFactury;
+import il.ac.technion.logic.TimeDateStringFactory;
+import il.ac.technion.logic.UiOnDone;
+import il.ac.technion.logic.UiOnError;
+import il.ac.technion.logic.UserManager;
+
+import java.util.Calendar;
+import java.util.Set;
+import java.util.TreeSet;
+
 import android.app.Activity;
-import android.net.Uri;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TimePicker;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Activities that
@@ -17,33 +47,39 @@ import android.view.ViewGroup;
  * 
  */
 public class CreateHotSpotFragment extends Fragment {
-	// TODO: Rename parameter arguments, choose names that match
-	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-	private static final String ARG_PARAM1 = "param1";
-	private static final String ARG_PARAM2 = "param2";
-
-	// TODO: Rename and change types of parameters
-	private String mParam1;
-	private String mParam2;
-
-	private OnFragmentInteractionListener mListener;
-
-	/**
-	 * Use this factory method to create a new instance of this fragment using
-	 * the provided parameters.
-	 * 
-	 * @param param1
-	 *            Parameter 1.
-	 * @param param2
-	 *            Parameter 2.
-	 * @return A new instance of fragment CreateHotSpotFragment.
-	 */
-	// TODO: Rename and change types and number of parameters
-	public static CreateHotSpotFragment newInstance(String param1, String param2) {
+	
+	final private String START_TIME_PICKER_HEDLINE = "Choose Start Time";
+	final private String END_TIME_PICKER_HEDLINE = "Choose End Time";
+	final private String START_DATE_PICKER_HEDLINE = "Choose Start Date";
+	final private String END_DATE_PICKER_HEDLINE = "Choose Date Time";
+	
+	private Long mCurrHotSpotId;
+	private HotSpot mCurrHotSpotData;
+	private GoogleMap mMap;
+	private ImageButton ok;
+	private ImageButton cancel;
+	private EditText headline;
+	private EditText timeInput;
+	private EditText dateInput;
+	private EditText endTimeInput;
+	private EditText endDateInput;
+	private EditText place;
+	private EditText description;
+	private ImageView userImage1;
+	private ImageView userImage2;
+	private ImageView userImage3;
+	private boolean isEdit;
+	private static Long defHotSpotID = -1L;
+	
+	private CameraPosition chosenPos;
+	
+  	public static CreateHotSpotFragment newInstance(Long hsid) {
+  		if(hsid==null){
+  			hsid=defHotSpotID;
+  		}
 		CreateHotSpotFragment fragment = new CreateHotSpotFragment();
 		Bundle args = new Bundle();
-		args.putString(ARG_PARAM1, param1);
-		args.putString(ARG_PARAM2, param2);
+		args.putLong("id", hsid);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -56,55 +92,279 @@ public class CreateHotSpotFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
-			mParam1 = getArguments().getString(ARG_PARAM1);
-			mParam2 = getArguments().getString(ARG_PARAM2);
+			
+			mCurrHotSpotId = getArguments().getLong("id");
+			mCurrHotSpotData = HotSpotManager.INSTANCE.getItemById(mCurrHotSpotId);
+			if(mCurrHotSpotData == null || mCurrHotSpotId == defHotSpotID ) {
+				isEdit = false;
+			}
+			else{ 
+				isEdit = true;
+			}
 		}
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_create_hot_spot, container,
-				false);
+		View v = inflater.inflate(R.layout.fragment_create_hot_spot, container, false);
+		
+		//btn
+		ok = (ImageButton)v.findViewById(R.id.okBtn);
+		cancel = (ImageButton)v.findViewById(R.id.cancelBtn);
+		
+		//text views
+		headline = (EditText)v.findViewById(R.id.name);
+		timeInput = (EditText)v.findViewById(R.id.timeStr);
+		dateInput = (EditText)v.findViewById(R.id.dateeStr);
+		endTimeInput = (EditText)v.findViewById(R.id.endtimeStr);
+		endDateInput = (EditText)v.findViewById(R.id.enddateeStr);
+		place = (EditText)v.findViewById(R.id.place);
+		description = (EditText)v.findViewById(R.id.desc);
+		
+		//going user pics
+		userImage1 = (ImageView)v.findViewById(R.id.usr1);
+		userImage2 = (ImageView)v.findViewById(R.id.usr2);
+		userImage3 = (ImageView)v.findViewById(R.id.usr3);
+		
+		//init view
+		initTextFilds();
+		initMap();
+		initGoing();
+		setListeners();
+		return v;
 	}
+	
+	//init fielsds foe new or edit
+	private void initTextFilds(){
+		if(isEdit){
+			headline.setText(mCurrHotSpotData.getmName());
+			timeInput.setText(TimeDateStringFactory.getTimeStr(mCurrHotSpotData.getmTime()));
+			dateInput.setText(TimeDateStringFactory.getDateStr(mCurrHotSpotData.getmTime()));
+			endTimeInput.setText(TimeDateStringFactory.getTimeStr(mCurrHotSpotData.getEndTime()));
+			endDateInput.setText(TimeDateStringFactory.getDateStr(mCurrHotSpotData.getEndTime()));
+			description.setText(mCurrHotSpotData.getmDesc());
+		}
+		else{
+			
+			Calendar now = Calendar.getInstance();
+			Calendar soon = Calendar.getInstance();
+			soon.roll(Calendar.MINUTE, 30);
 
-	// TODO: Rename method, update argument and hook method into UI event
-	public void onButtonPressed(Uri uri) {
-		if (mListener != null) {
-			mListener.onFragmentInteraction(uri);
+			timeInput.setText(TimeDateStringFactory.getTimeStr(now));
+			dateInput.setText(TimeDateStringFactory.getDateStr(now));
+			endTimeInput.setText(TimeDateStringFactory.getTimeStr(soon));
+			endDateInput.setText(TimeDateStringFactory.getDateStr(soon));
 		}
 	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (OnFragmentInteractionListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnFragmentInteractionListener");
+	
+	private void initMap() {
+		SupportMapFragment f = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.My_map));
+		mMap = f.getMap();
+		
+		if(!isEdit){
+			chosenPos = LocationFactury.TECHNION;
+			if (mMap != null) 
+	        	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(chosenPos));
+		}else{
+			LatLng ll = new LatLng( mCurrHotSpotData.getLangt(),mCurrHotSpotData.getLongt());
+			
+			chosenPos = new CameraPosition.Builder().target(ll).zoom(17f).bearing(300).tilt(50).build();
+	        if (mMap != null) {
+	        	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(chosenPos));
+	        	mMap.addMarker(new MarkerOptions().position(ll));
+	        }
+			
 		}
 	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListener = null;
+	
+	private void initGoing(){
+		if(!isEdit){
+			//set imge me: userImage1.set...
+			UserManager.INSTANCE.getMyData().setUserPhoto(userImage1);
+			userImage2.setVisibility(View.GONE);
+			userImage3.setVisibility(View.GONE);
+		}
+		else{
+			//set 3 imges of users
+		}
+		
+	}
+	
+	private void setListeners(){
+		timeInput.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {	
+				Calendar now = Calendar.getInstance();
+				TimePickerDialog tm = new TimePickerDialog(
+						(Context)getActivity(), new innerFirstTime(), 
+						now.get(Calendar.HOUR_OF_DAY),
+						now.get(Calendar.MINUTE), true);
+				tm.setTitle(START_TIME_PICKER_HEDLINE);
+				tm.show();
+			}
+		});
+		dateInput.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {	
+				Calendar now = Calendar.getInstance();
+				DatePickerDialog tm = new DatePickerDialog(
+						(Context)getActivity(),  new innerFirstDate(), 
+						now.get(Calendar.YEAR),
+						now.get(Calendar.MONTH), 
+						now.get(Calendar.DAY_OF_MONTH));
+				tm.setTitle(START_DATE_PICKER_HEDLINE);
+				tm.show();
+			}
+		});
+		endTimeInput.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {	
+				Calendar now = Calendar.getInstance();
+				TimePickerDialog tm = new TimePickerDialog(
+						(Context)getActivity(), new secondInnerTime(), 
+						now.get(Calendar.HOUR_OF_DAY),
+						now.get(Calendar.MINUTE), true);
+				tm.setTitle(START_TIME_PICKER_HEDLINE);
+				tm.show();
+			}
+		});
+		endDateInput.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {	
+				Calendar now = Calendar.getInstance();
+				DatePickerDialog tm = new DatePickerDialog(
+						(Context)getActivity(),  new secondInnerDate(), 
+						now.get(Calendar.YEAR),
+						now.get(Calendar.MONTH), 
+						now.get(Calendar.DAY_OF_MONTH));
+				tm.setTitle(START_DATE_PICKER_HEDLINE);
+				tm.show();
+			}
+		});
+		cancel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				getActivity().finish();
+				
+			}
+		});
+		ok.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+								
+				HotSpot fromView = createHotSpotFromView();
+				
+				if (isEdit){
+					HotSpotManager.INSTANCE.editHotSpot(fromView, new UiOnDone() {
+						@Override
+						public void execute() {
+							getActivity().finish();
+						}
+					}, new UiOnError(getActivity()));
+				}else{
+					//create new: 
+					HotSpotManager.INSTANCE.addNewHotSpot(fromView, new UiOnDone() {
+						@Override
+						public void execute() {
+							getActivity().finish();
+						}
+					}, new UiOnError(getActivity()));
+				}
+				
+			}
+		});
+		mMap.setOnMapClickListener(new OnMapClickListener() {
+			
+			@Override
+			public void onMapClick(LatLng arg0) {
+				double lat = chosenPos.target.latitude;
+				double lng = chosenPos.target.longitude;
+				startActivityForResult(new Intent(getActivity(),MapPickerActivity.class).
+						putExtra("lat", lat).putExtra("lng", lng),requestCodeMap);
+			}
+		});
 	}
 
-	/**
-	 * This interface must be implemented by activities that contain this
-	 * fragment to allow an interaction in this fragment to be communicated to
-	 * the activity and potentially other fragments contained in that activity.
-	 * <p>
-	 * See the Android Training lesson <a href=
-	 * "http://developer.android.com/training/basics/fragments/communicating.html"
-	 * >Communicating with Other Fragments</a> for more information.
-	 */
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		public void onFragmentInteraction(Uri uri);
+	int requestCodeMap = 100;
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		getActivity();
+		if (requestCode == requestCodeMap && 
+				resultCode == Activity.RESULT_OK) {
+			 
+			 //resetCamera on mMap 
+			 Double lat = data.getExtras().getDouble("lat");
+			 Double lng = data.getExtras().getDouble("lng");
+			 chosenPos = LocationFactury.buildCameraPosition(lat,lng);
+					
+			 mMap.clear();
+			 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(chosenPos));
+			 mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)));
+		 }
+		 
+	 }
+
+	//on time date selected
+	Calendar startTime = Calendar.getInstance();
+	Calendar endTime = Calendar.getInstance();
+	
+	class innerFirstDate implements DatePickerDialog.OnDateSetListener{
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        	startTime.set(Calendar.YEAR, year);
+    		startTime.set(Calendar.MONTH, monthOfYear);
+    		startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        }
+	}
+	class secondInnerDate implements DatePickerDialog.OnDateSetListener{
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        	endTime.set(Calendar.YEAR, year);
+        	endTime.set(Calendar.MONTH, monthOfYear);
+        	endTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        }
+	}
+	class innerFirstTime implements OnTimeSetListener{
+		@Override
+		public void onTimeSet(TimePicker arg0, int hour, int minets) {
+			startTime.set(Calendar.HOUR_OF_DAY, hour);
+			startTime.set(Calendar.MINUTE, minets);
+		}
+        
+	}
+	class secondInnerTime implements OnTimeSetListener{
+		@Override
+		public void onTimeSet(TimePicker arg0, int hour, int minets) {
+			endTime.set(Calendar.HOUR_OF_DAY, hour);
+			endTime.set(Calendar.MINUTE, minets);
+		}
+	}
+	
+	
+	//generate obj from view
+	private HotSpot createHotSpotFromView(){
+		
+		Long mId = isEdit ? mCurrHotSpotData.getmId(): 0L;
+		Long mTime = startTime.getTimeInMillis();
+		Long mEndTime = endTime.getTimeInMillis();
+		String mLocation = place.getText().toString();
+		String mName = headline.getText().toString();
+		double lat = chosenPos.target.latitude;
+		double lon = chosenPos.target.longitude;
+		String mdescription = description.getText().toString();
+		Long mTimeZone = 0L;
+		String mAdminId = UserManager.INSTANCE.getMyID();
+		//TODO: if edit, was the picture changed? no get from mCurrHotSpotData
+		String mImageURL = isEdit ? "" : "";
+		Set<Long> mTags = new TreeSet<Long>();
+		if(isEdit) mTags.addAll(mCurrHotSpotData.getmTags());
+		Set<String> mUseres = new TreeSet<String>();
+		if(isEdit) mUseres.addAll(mCurrHotSpotData.getmUseres());
+		
+		return new HotSpot(mId, mTime, mEndTime, mName, lat, lon, 
+				mLocation, mdescription, mTimeZone, mAdminId, mImageURL, mTags, mUseres);
 	}
 
 }

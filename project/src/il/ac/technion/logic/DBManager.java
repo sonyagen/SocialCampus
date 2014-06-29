@@ -49,15 +49,15 @@ public enum DBManager  {
 		
 		
 		//Set<Long> mTags, Set<Long> mUseres
-		HotSpot h1 = new HotSpot(1L,0L,null,32.777261, 35.0230416,"Ultimate Frisbee");
-		HotSpot h2 = new HotSpot(2L,0L,null,32.777929, 35.021593,"Social Campus Meeting #5");
-		HotSpot h3 = new HotSpot(3L,0L,null,32.776448, 35.022885,"Colloquium Prof Jan Vite");
-		HotSpot h4 = new HotSpot(4L,0L,null,32.776449, 35.022886,"Cubban Salasa Party");
+		//HotSpot h1 = new HotSpot(1L,0L,null,32.777261, 35.0230416,"Ultimate Frisbee");
+		//HotSpot h2 = new HotSpot(2L,0L,null,32.777929, 35.021593,"Social Campus Meeting #5");
+		//HotSpot h3 = new HotSpot(3L,0L,null,32.776448, 35.022885,"Colloquium Prof Jan Vite");
+		//HotSpot h4 = new HotSpot(4L,0L,null,32.776449, 35.022886,"Cubban Salasa Party");
 		
-		HS.add(h1);
-		HS.add(h2);
-		HS.add(h3);
-		HS.add(h4);
+		//HS.add(h1);
+		//HS.add(h2);
+		//HS.add(h3);
+		//HS.add(h4);
 //		
 //		USR.add(u1);
 //		USR.add(u2);
