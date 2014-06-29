@@ -1,26 +1,34 @@
 package il.ac.technion.socialcampus;
 
 
+import il.ac.technion.logic.Tag;
+import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.User;
 import il.ac.technion.logic.UserManager;
+
+import java.util.Set;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -32,9 +40,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+//import com.google.android.gms.tagmanager.TagManager;
 
 public class ProfileActivity extends FragmentActivity implements OnClickListener,
-ConnectionCallbacks, OnConnectionFailedListener {
+ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
 
 	private static final int STATE_DEFAULT = 0;
 	private static final int STATE_SIGN_IN = 1;
@@ -56,14 +65,14 @@ ConnectionCallbacks, OnConnectionFailedListener {
 	//   STATE_IN_PROGRESS: This state indicates that we have started an intent to
 	//                      resolve an error, and so we should not start further
 	//                      intents until the current intent completes.
+	
 	private int mSignInProgress;
 	private static final String SAVED_PROGRESS = "sign_in_progress";
 	private static final int RC_SIGN_IN = 0;
 	// Logcat tag
 	private static final String TAG = "MainActivity";
 
-
-
+	Context mContext = this;
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
 
@@ -72,46 +81,48 @@ ConnectionCallbacks, OnConnectionFailedListener {
 	 * from starting further intents.
 	 */
 	private boolean mIntentInProgress;
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
+	
 	private boolean mSignInClicked;
-
 	private ConnectionResult mConnectionResult;
-
 	private SignInButton btnSignIn;
 	private Button btnSignOut, btnRevokeAccess;
 	private ImageView imgProfilePic;
 	private TextView txtName;
 	private LinearLayout all;
+	private TextView tagsView;
+	private ImageButton editTags;
 
+	// lifecycle 
+	//=====================================================
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		progressDialog = new ProgressDialog(this);
 		setContentView(R.layout.activity_profile);
+		//signed in view
+		all = (LinearLayout) findViewById(R.id.all);
+		//google btn
 		btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
 		btnSignOut = (Button) findViewById(R.id.btn_sign_out);
 		btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
+		//1st area: pic & name
 		imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 		txtName = (TextView) findViewById(R.id.txtName);
-
-
-
-		all = (LinearLayout) findViewById(R.id.all);
+		//2nd area: tags
+		tagsView = (TextView) findViewById(R.id.tags);
+		editTags = (ImageButton) findViewById(R.id.editBtn);
+		
+		//3nd area: pinned events
+		
+		
 
 		// Button click listeners
 		btnSignIn.setOnClickListener(this);
 		btnSignOut.setOnClickListener(this);
 		btnRevokeAccess.setOnClickListener(this);
-
-
-
+		editTags.setOnClickListener(this);
+		
 		if (savedInstanceState != null) {
 			mSignInProgress = savedInstanceState
 					.getInt(SAVED_PROGRESS, STATE_DEFAULT);
@@ -131,7 +142,6 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		}else{
 			updateUI(true);
 		}
-
 	}
 
 	protected void onStop() {
@@ -141,46 +151,19 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		}
 	}
 
-	/**
-	 * Method to resolve any signin errors
-	 * */
-	private void resolveSignInError() {
-
-		if (mConnectionResult!= null && mConnectionResult.hasResolution()) {
-			try {
-				mIntentInProgress = true;
-				mSignInProgress = STATE_IN_PROGRESS;
-				mConnectionResult.startResolutionForResult(this, RC_SIGN_IN);
-			} catch (SendIntentException e) {
-				mIntentInProgress = false;
-				mSignInProgress = STATE_SIGN_IN;
-				mGoogleApiClient.connect();
-			}
-		}
+	@Override
+	protected void onResume() {
+		super.onResume();
 	}
 
 	@Override
-	public void onConnectionFailed(ConnectionResult result) {
-		if (!result.hasResolution()) {
-			GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this,
-					0).show();
-			return;
-		}
-
-		if (!mIntentInProgress) {
-			// Store the ConnectionResult for later usage
-			mConnectionResult = result;
-
-			if (mSignInClicked) {
-				// The user has already clicked 'sign-in' so we attempt to
-				// resolve all
-				// errors until the user is signed in, or they cancel.
-				resolveSignInError();
-			}
-		}
-
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(SAVED_PROGRESS, mSignInProgress);
 	}
-
+	
+	// handle connection 
+	//=====================================================
 	@Override
 	protected void onActivityResult(int requestCode, int responseCode,
 			Intent intent) {
@@ -247,27 +230,53 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		}
 	}
 
+	@Override
+	public void onConnectionSuspended(int arg0) {
+		mGoogleApiClient.connect();
+		updateUI(false);
+	}
+	
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		if (!result.hasResolution()) {
+			GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this,
+					0).show();
+			return;
+		}
 
+		if (!mIntentInProgress) {
+			// Store the ConnectionResult for later usage
+			mConnectionResult = result;
 
+			if (mSignInClicked) {
+				// The user has already clicked 'sign-in' so we attempt to
+				// resolve all
+				// errors until the user is signed in, or they cancel.
+				resolveSignInError();
+			}
+		}
 
+	}
 
-	Context mContext = this;
+	/**
+	 * Method to resolve any signin errors
+	 * */
+	private void resolveSignInError() {
 
+		if (mConnectionResult!= null && mConnectionResult.hasResolution()) {
+			try {
+				mIntentInProgress = true;
+				mSignInProgress = STATE_IN_PROGRESS;
+				mConnectionResult.startResolutionForResult(this, RC_SIGN_IN);
+			} catch (SendIntentException e) {
+				mIntentInProgress = false;
+				mSignInProgress = STATE_SIGN_IN;
+				mGoogleApiClient.connect();
+			}
+		}
+	}
 
-	//	@Override
-	//	public void onBackPressed(){
-	//		if(isCreateFlow){
-	//			startActivity(new Intent(this, CreateDelivery.class));
-	//			prefs.edit().remove("com.technion2014.letseat.CreateDelFlow").commit();
-	//		}else{
-	//			finish();
-	//		}
-	//		
-	//	}
-
-
-
-
+	
 	/**
 	 * Updating the UI, showing/hiding buttons and profile layout
 	 * */
@@ -276,20 +285,19 @@ ConnectionCallbacks, OnConnectionFailedListener {
 			progressDialog.dismiss();
 		}
 		if (isSignedIn) {
+			btnSignIn.setVisibility(View.GONE);
+			all.setVisibility(View.VISIBLE);
+			
 			User currentU = UserManager.INSTANCE.getMyData();
-			// Update the UI after signin
+	
 			txtName.setText(currentU.getmName());
 			currentU.setUserPhoto(imgProfilePic);
-
-			btnSignIn.setVisibility(View.GONE);
-			//btnSignOut.setVisibility(View.VISIBLE);
-			//btnRevokeAccess.setVisibility(View.VISIBLE);
-			all.setVisibility(View.VISIBLE);
-			//if(getActionBar()!=null)
+			buildTags();
+			
+			
+			
 		} else {
 			btnSignIn.setVisibility(View.VISIBLE);
-			//btnSignOut.setVisibility(View.GONE);
-			//tnRevokeAccess.setVisibility(View.GONE);
 			all.setVisibility(View.GONE);
 
 		}
@@ -323,16 +331,69 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		return u;
 	}
 
-	@Override
-	public void onConnectionSuspended(int arg0) {
-		mGoogleApiClient.connect();
-		updateUI(false);
+	
+	// SpannableString - into a factory
+	//=====================================================
+	
+	private SpannableString makeLinkSpan(CharSequence text, View.OnClickListener listener) {
+	    SpannableString link = new SpannableString(text);
+	    link.setSpan(new ClickableString(listener), 0, text.length(), 
+	        SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+	    return link;
 	}
 
+	private void makeLinksFocusable(TextView tv) {
+	    MovementMethod m = tv.getMovementMethod();  
+	    if ((m == null) || !(m instanceof LinkMovementMethod)) {  
+	        if (tv.getLinksClickable()) {  
+	            tv.setMovementMethod(LinkMovementMethod.getInstance());  
+	        }  
+	    }  
+	}
+	
+	private static class ClickableString extends ClickableSpan {  
+	    private View.OnClickListener mListener;          
+	    public ClickableString(View.OnClickListener listener) {              
+	        mListener = listener;  
+	    }          
+	    @Override  
+	    public void onClick(View v) {  
+	        mListener.onClick(v);  
+	    }        
+	}
+	
+	// usin the SpannableString methods - can go to factory
+	//=====================================================
+
+	private void buildTags(){
+		
+		tagsView.setText("");
+		
+		Set<Long> tagIds = UserManager.INSTANCE.getMyData().getmTags();
+		Set<Tag> Tags = TagManager.INSTANCE.getItemsbyIds(tagIds);
+		for(Tag t:Tags){
+			t.setListener(this);
+			SpannableString link = makeLinkSpan(t.getmName(), t);
+			tagsView.append("#");
+			tagsView.append(link);
+			tagsView.append("	");
+		}
+		
+		makeLinksFocusable(tagsView);
+		
+	}
+
+	@Override
+	public void onTagClick(Long tid) {
+		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
+		//TODO intent to View Tag activity
+		Toast.makeText(mContext, t.getmName(), Toast.LENGTH_SHORT).show();
+	}
+	
 
 
-
-
+	// google+ account: login/logout/revoke
+	//=====================================================
 	/**
 	 * Button on click listener
 	 * */
@@ -343,6 +404,9 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		progressDialog.setCanceledOnTouchOutside(false);
 		switch (v.getId()) {
 
+		case R.id.editBtn:
+			//TODO intent to manage Tags Activity/Dialog?
+			break;
 		case R.id.btn_sign_in:
 			// Signin button clicked
 			//			mGoogleApiClient.connect();
@@ -429,9 +493,4 @@ ConnectionCallbacks, OnConnectionFailedListener {
 	}
 
 
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt(SAVED_PROGRESS, mSignInProgress);
-	}
 }

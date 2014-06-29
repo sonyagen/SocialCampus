@@ -4,9 +4,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import android.location.Location;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 
-public class Tag {
+public class Tag implements OnClickListener,Comparable<Tag>{
 	private Long mId;
 	private String mName;
 	private Long mTime;
@@ -109,6 +111,29 @@ public class Tag {
 	}
 	public void addUser(String tId){
 		mUsers.add(tId);
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (mListener!=null)
+			mListener.onTagClick(mId);
+	}
+	
+	public void setListener(onTagClickListener listener){
+		mListener = listener;
+	}
+	
+	public onTagClickListener mListener;
+	
+	public interface onTagClickListener{
+		void onTagClick(Long tid);
+	}
+
+	@Override
+	public int compareTo(Tag another) {
+		if(mId.equals(another.getmId()))
+			return 0;
+		return 1;
 	}
 
 }

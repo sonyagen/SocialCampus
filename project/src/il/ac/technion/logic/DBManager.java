@@ -38,33 +38,33 @@ public enum DBManager  {
 		Tag t7 = new Tag(7L,"Colloquium");
 		Tag t8 = new Tag(8L,"Salsa");
 		Tag t9 = new Tag(9L,"Clear Hall");
-//		
-//		User u1 = new User("1L","","Sonya Gendelman");
-//		User u2 = new User("2L","","Hanna-John Jadon");
-//		User u3 = new User("3L","","Jim Maricondo");
-//		User u4 = new User("4L","","Xin Song");
-//		User u5 = new User("5L","","Victoria Bellotti");
-//		User u6 = new User("","","anonym temp");
-//		
+		
+		User u1 = new User("1L","","Sonya Gendelman");
+		User u2 = new User("2L","","Hanna-John Jadon");
+		User u3 = new User("3L","","Jim Maricondo");
+		User u4 = new User("4L","","Xin Song");
+		User u5 = new User("5L","","Victoria Bellotti");
+		User u6 = new User("","","anonym temp");
+		
 		
 		
 		//Set<Long> mTags, Set<Long> mUseres
-//		HotSpot h1 = new HotSpot(1L,0L,null,32.777261, 35.0230416,"Ultimate Frisbee");
-//		HotSpot h2 = new HotSpot(2L,0L,null,32.777929, 35.021593,"Social Campus Meeting #5");
-//		HotSpot h3 = new HotSpot(3L,0L,null,32.776448, 35.022885,"Colloquium Prof Jan Vite");
-//		HotSpot h4 = new HotSpot(4L,0L,null,32.776449, 35.022886,"Cubban Salasa Party");
-//		
-//		HS.add(h1);
-//		HS.add(h2);
-//		HS.add(h3);
-//		HS.add(h4);
-////		
-//		USR.add(u1);
-//		USR.add(u2);
-//		USR.add(u3);
-//		USR.add(u4);
-//		USR.add(u5);
-//		USR.add(u6);
+		HotSpot h1 = new HotSpot(1L,0L,0L,"Ultimate Frisbee",32.777261, 35.0230416,"at taub 5","Ultimate Frisbee","1L","");
+		HotSpot h2 = new HotSpot(2L,0L,0L,"Social Campus Meeting #5",32.777929, 35.021593,"at taub 5","Social Campus Meeting #5","2L","");
+		HotSpot h3 = new HotSpot(3L,0L,0L,"Colloquium Prof Jan Vitek",32.776448, 35.022885,"at taub 5","Colloquium Prof Jan Vitek","1L","");
+		HotSpot h4 = new HotSpot(4L,0L,0L,"Cubban Salasa Party",32.776449, 35.022886,"at taub 5","Cubban Salasa Party","2L","");
+		
+		HS.add(h1);
+		HS.add(h2);
+		HS.add(h3);
+		HS.add(h4);
+		
+		USR.add(u1);
+		USR.add(u2);
+		USR.add(u3);
+		USR.add(u4);
+		USR.add(u5);
+		USR.add(u6);
 
 		TAG.add(t1);
 		TAG.add(t2);
@@ -75,6 +75,15 @@ public enum DBManager  {
 		TAG.add(t7);
 		TAG.add(t8);
 		TAG.add(t9);
+		
+		joinUserHotSpot(3L,"");
+		joinUserTag("",6L);
+		joinUserTag("",7L);
+		joinUserTag("",2L);
+		joinUserTag("",1L);
+		joinUserTag("",3L);
+		joinUserTag("",4L);
+		joinUserTag("",5L);
 		
 		
 	}
@@ -141,7 +150,6 @@ public enum DBManager  {
 	}
 
 	//update
-	
 	void updateHotSpot(HotSpot hotSpot){
 		
 	}

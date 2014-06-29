@@ -10,24 +10,26 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:visibility="visible"
-        android:layout_marginTop="70dp"/>
+        android:layout_marginTop="70dp"	/>
 
 
-<LinearLayout 
-    android:id="@+id/all"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp" 
-    android:visibility="gone" >
+	<LinearLayout 
+	    android:id="@+id/all"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical"
+	    android:padding="16dp" 
+	    android:visibility="gone" >
 
-        <ImageView
+	    <RelativeLayout
+	        android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+      	<ImageView
             android:id="@+id/imgProfilePic"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:contentDescription="User's photo"
-            android:background="@drawable/HotPink"
-            android:layout_gravity="center"/>
+            android:background="@drawable/HotPink"	/>
  
         <TextView
             android:id="@+id/txtName"
@@ -36,7 +38,8 @@
             android:padding="5dp"
             android:textSize="20sp" 
             android:text="Sonya Gendelman"
-            android:layout_gravity="center"/>
+            android:layout_toRightOf="@+id/imgProfilePic"   />
+        </RelativeLayout>
        
         <View
          	android:layout_width="fill_parent"
@@ -45,12 +48,30 @@
          	android:layout_marginTop="10dp"
          	android:background="@android:color/darker_gray" />
       
-      
-	    
-        <!-- Checks -->
-	    
-	  <!-- Checks -->
-	    
+        <!-- TAGS -->
+      	<LinearLayout 
+      	    android:layout_width="fill_parent"
+         	android:layout_height="wrap_content"
+         	android:orientation="horizontal">
+      	    
+      	    <TextView 
+	      	    android:id="@+id/tags"
+	      	    android:layout_width="0dp"
+	         	android:layout_height="wrap_content" 
+        		android:layout_weight="1"
+        		android:layout_gravity="center_vertical"/>
+      	    
+      	    <ImageButton 
+      	    	android:id="@+id/editBtn"
+	      	    android:layout_width="40dp"
+	         	android:layout_height="40dp"
+	         	android:layout_marginLeft="10dp"
+	         	android:layout_gravity="center_vertical"
+	         	android:background="@drawable/circ"
+	         	android:src="@drawable/ic_action_edit" />
+      	    
+      	</LinearLayout> 
+
         <View
          	android:layout_width="fill_parent"
          	android:layout_height="1dp"

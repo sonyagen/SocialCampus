@@ -35,6 +35,10 @@ public enum TagManager {
 		}
 		return $;
 	}
+	
+	public  Tag getItemsbyId(long Id) {
+		return mData.get(Id);
+	}
 
 	
 	
