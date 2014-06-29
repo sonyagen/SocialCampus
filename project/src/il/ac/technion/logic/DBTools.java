@@ -2,26 +2,18 @@ package il.ac.technion.logic;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
 
 public class DBTools extends SQLiteOpenHelper {
 
-	private String primaySort;
-	private String secondarySort;
 
 	public DBTools(Context applicationContext) {
 
 		super(applicationContext, "socialcampus_technion.db", null, 1);
-		primaySort = "firstName";//TODO change sorting
-		secondarySort = "lastName";
 
 	}
 
@@ -41,8 +33,9 @@ public class DBTools extends SQLiteOpenHelper {
 		String createUserHotspotRTB = "CREATE TABLE IF NOT EXISTS userHotSpotRelation (userID TEXT, hotspotID INTEGER)";
 		String createUserTagRTB =  "CREATE TABLE IF NOT EXISTS userTagRelation (userID TEXT, tagID INTEGER)";
 		String createTagHotspotRTB = "CREATE TABLE IF NOT EXISTS tagHotSpotRelation (tagID INTEGER, hotspotID INTEGER)";
-
+		String createPinnedHotspotsRTB = "CREATE TABLE IF NOT EXISTS pinnedHotSpots (userID TEXT, hotspotID INTEGER)";
 		database.execSQL(createUsersTB);
+		database.execSQL(createPinnedHotspotsRTB);
 		database.execSQL(createHotSpotTB);
 		database.execSQL(createTagTB);
 		database.execSQL(createUserHotspotRTB);
@@ -172,7 +165,7 @@ public class DBTools extends SQLiteOpenHelper {
 	 */
 	public enum HotspotsFeilds{
 		ID("hotspotId","INTEGER"), NAME("name","TEXT"),IMAGEURL("imageUrl","TEXT"),
-		TIME("time","INTEGER"), ENDTIME("endTime", "INTEGER"), LATITUDE("latitude","REAL"), lontitude("lontitude","REAL"),
+		TIME("time","INTEGER"), ENDTIME("endTime", "INTEGER"), LATITUDE("latitude","REAL"), LONTITUDE("lontitude","REAL"),
 		LOCATION("location","TEXT"),DESCTIPTION("description","TEXT"), ADMIN("ADMINID","TEXT");
 		
 		private final String value;
@@ -280,10 +273,16 @@ public class DBTools extends SQLiteOpenHelper {
 	 * @param values
 	 */
 	private void setHotSpotData(HotSpot hs, ContentValues values) {
-		values.put(UsersFeilds.ID.value(), hs.getmId());
-		values.put(UsersFeilds.NAME.value(), hs.getmName());
-		values.put(UsersFeilds.IMAGEURL.value(), hs.getmImage());
-		
+		values.put(HotspotsFeilds.ID.value(), hs.getmId());
+		values.put(HotspotsFeilds.NAME.value(), hs.getmName());
+		values.put(HotspotsFeilds.IMAGEURL.value(), hs.getImageURL());
+		values.put(HotspotsFeilds.ADMIN.value(), hs.getAdminId());
+		values.put(HotspotsFeilds.LATITUDE.value(), hs.getLangt());
+		values.put(HotspotsFeilds.LONTITUDE.value(), hs.getAdminId());
+		values.put(HotspotsFeilds.DESCTIPTION.value(), hs.getmDesc());
+		values.put(HotspotsFeilds.ENDTIME.value(), hs.getEndTime());
+		values.put(HotspotsFeilds.TIME.value(), hs.getmTime());
+		values.put(HotspotsFeilds.LOCATION.value(), hs.getmLocation());
 	}
 
 
@@ -361,12 +360,9 @@ public class DBTools extends SQLiteOpenHelper {
 	private HotSpot readHotSpot(Cursor cursor) {
 		HotSpot $ = null;
 		if (cursor != null && cursor.moveToFirst()) {
-			ID("hotspotId","INTEGER"), NAME("name","TEXT"),IMAGEURL("imageUrl","TEXT"),
-			TIME("time","INTEGER"), ENDTIME("endTime", "INTEGER"), LATITUDE("latitude","REAL"), lontitude("lontitude","REAL"),
-			LOCATION("location","TEXT");
-			$ = new HotSpot(cursor.getLong(1),cursor.getLong(4),cursor.getLong(5),
-					cursor.getString(2),cursor.getDouble(6),cursor.getDouble(7),
-					cursor.getString(3),cursor.getString(8),cursor.getString(3));
+			
+			$ = new HotSpot(cursor.getLong(0), cursor.getLong(3), cursor.getLong(4), cursor.getString(1), cursor.getDouble(5) ,
+					cursor.getDouble(6), cursor.getString(7), cursor.getString(8), cursor.getString(9), cursor.getString(2));
 		} 
 		return $;
 	}
@@ -509,9 +505,9 @@ public class DBTools extends SQLiteOpenHelper {
 		User $ = null;
 		if (cursor != null && cursor.moveToFirst()) {
 	
-			$ = new User(cursor.getString(1),
-					cursor.getString(3), 
-					cursor.getString(2));
+			$ = new User(cursor.getString(0),
+					cursor.getString(2), 
+					cursor.getString(1));
 		} 
 		return $;
 	}
@@ -601,9 +597,9 @@ public class DBTools extends SQLiteOpenHelper {
 	private Tag readTag(Cursor cursor) {
 		Tag $ = null;
 		if (cursor != null && cursor.moveToFirst()) {
-			$ = new Tag(cursor.getLong(1),
-					cursor.getString(2), 
-					cursor.getLong(3));
+			$ = new Tag(cursor.getLong(0),
+					cursor.getString(1), 
+					cursor.getLong(2));
 		} 
 		return $;
 	}
@@ -635,12 +631,113 @@ public class DBTools extends SQLiteOpenHelper {
 
 	}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	//join/break 
+	void breakUserHotSpot(Long hid, String uid){
+
+		SQLiteDatabase database = getWritableDatabase();
+
+		String deleteQuery = "DELETE FROM userHotSpotRelation WHERE userID='" + uid + "' AND hotspotID='"+hid+"'";
+
+		database.execSQL(deleteQuery);
+		database.close();
+		
+	}
+	void joinUserHotSpot(Long hid, String uid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+
+		values.put("userID", uid);
+		values.put("hotspotID", hid);
+		database.insertWithOnConflict("userHotSpotRelation", null, values,
+				SQLiteDatabase.CONFLICT_IGNORE);
+
+		database.close();
+
+	}
+	
+	void breakUserTag(String uid, Long tid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		String deleteQuery = "DELETE FROM userTagRelation WHERE userID='" + uid + "' AND tagID='"+tid+"'";
+
+		database.execSQL(deleteQuery);
+		database.close();
+	}
+	void joinUserTag(String uid, Long tid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+
+		values.put("userID", uid);
+		values.put("tagID", tid);
+		database.insertWithOnConflict("userTagRelation", null, values,
+				SQLiteDatabase.CONFLICT_IGNORE);
+
+		database.close();
+	}
+	
+	void breakSpotTag(Long hid, Long tid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		String deleteQuery = "DELETE FROM tagHotSpotRelation WHERE hotspotID='" + hid + "' AND tagID='"+tid+"'";
+
+		database.execSQL(deleteQuery);
+		database.close();
+	}
+	void joinSpotTag(Long hid, Long tid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+
+		values.put("userID", hid);
+		values.put("tagID", tid);
+		database.insertWithOnConflict("tagHotSpotRelation", null, values,
+				SQLiteDatabase.CONFLICT_IGNORE);
+
+		database.close();
+	}
+
+	void deletePinnedHotSpotTag(Long hid, String uid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		String deleteQuery = "DELETE FROM pinnedHotSpots WHERE hotspotID='" + hid + "' AND userID='"+uid+"'";
+
+		database.execSQL(deleteQuery);
+		database.close();
+	}
+	void addPinnedHotSpots(Long hid, String uid){
+		SQLiteDatabase database = getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+
+		values.put("userID", uid);
+		values.put("hotspotID", hid);
+		database.insertWithOnConflict("pinnedHotSpots", null, values,
+				SQLiteDatabase.CONFLICT_IGNORE);
+
+		database.close();
+	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public void clearTables() {
+		SQLiteDatabase database = getWritableDatabase();
+		String deletePinnedHotSpots = "DROP TABLE IF EXISTS pinnedHotSpots";
+		database.execSQL(deletePinnedHotSpots);
+
+		database.close();
+		clearSyncedTables();
+
+	}
+
+	public void clearSyncedTables() {
 
 		SQLiteDatabase database = getWritableDatabase();
 
 		String deleteUsers = "DROP TABLE IF EXISTS users";
-		String deleteHotspots = "DROP TABLE IF EXISTS hotspots";
+		String deleteHotspots = "DROP TABLE IF EXISTS hotSpots";
 		String deleteTags = "DROP TABLE IF EXISTS tags";
 		String deleteUserHotSpotRelation = "DROP TABLE IF EXISTS userHotSpotRelation";
 		String deleteUserTagRelation = "DROP TABLE IF EXISTS userTagRelation";
@@ -656,6 +753,5 @@ public class DBTools extends SQLiteOpenHelper {
 		database.close();
 
 	}
-
 
 }

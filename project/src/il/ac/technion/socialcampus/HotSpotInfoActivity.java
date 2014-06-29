@@ -11,10 +11,11 @@ public class HotSpotInfoActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_hot_spot_info);
 		
-
-		HotSpotDetailsFragment f = (HotSpotDetailsFragment) 
-				HotSpotDetailsFragment.newInstance(getIntent().getExtras().getLong("id"));
-		getSupportFragmentManager().beginTransaction().add(R.id.frame, f).commit();
+		if(savedInstanceState==null){
+			HotSpotDetailsFragment f = (HotSpotDetailsFragment) 
+					HotSpotDetailsFragment.newInstance(getIntent().getExtras().getLong("id"));
+			getSupportFragmentManager().beginTransaction().add(R.id.frame, f).commit();
+		}
 	}
 
 

@@ -36,7 +36,7 @@ public class HotSpot {
 		  mdescription = hs.mdescription;
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
-		 mTags .addAll(hs.mTags);
+		  mTags .addAll(hs.mTags);
 		  mUsers .addAll(hs.mUsers);
 	
 	}	
@@ -72,8 +72,8 @@ public class HotSpot {
 		  this.mdescription = mdescription;
 		  this. mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
-		this.mTags.addAll(mTags);
-		this.mUsers.addAll( mUseres);
+		  this.mTags.addAll(mTags);
+		  this.mUsers.addAll(mUseres);
 
 
 	}
@@ -107,7 +107,14 @@ public class HotSpot {
 		this.mLat = langt;
 	}
 
+	public String getAdminId() {
+		return mAdminId;
+	}
 
+	public void setAdmind(String mId) {
+		this.mAdminId = mId;
+	}
+	
 	public Long getmId() {
 		return mId;
 	}
@@ -123,11 +130,26 @@ public class HotSpot {
 	public void setmTime(Long mTime) {
 		this.mTime = mTime;
 	}
+	
+	public Long getEndTime() {
+		return mEndTime;
+	}
+
+	public void setEndTime(Long mTime) {
+		this.mEndTime = mTime;
+	}
 
 	public String getmLocation() {
 		return mLocation;
 	}
 
+	
+	public String getImageURL() {
+		return mImageURL;
+	}
+	public void setImageURL(String mImageURL) {
+		this.mImageURL = mImageURL;
+	}
 	public void setmLocation(String mLocation) {
 		this.mLocation = mLocation;
 	}
@@ -139,6 +161,15 @@ public class HotSpot {
 	public void setmName(String mName) {
 		this.mName = mName;
 	}
+	
+	public String getmDesc() {
+		return mdescription;
+	}
+
+	public void setmDesc(String mdescription) {
+		this.mdescription = mdescription;
+	}
+
 
 	public Set<Long> getmTags() {
 		return mTags;
