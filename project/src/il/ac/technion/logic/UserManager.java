@@ -163,6 +163,8 @@ public enum UserManager{
 					uiOnError.execute();
 					return null;
 				}
+				mData.remove(user.getmId());
+				mData.put(user.getmId(), user);
 				uiOnDone.execute();
 				return null;
 			}

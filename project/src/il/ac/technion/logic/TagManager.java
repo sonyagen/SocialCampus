@@ -111,6 +111,8 @@ public enum TagManager {
 					uiOnError.execute();
 					return null;
 				}
+				mData.remove(tag.getmId());
+				mData.put(tag.getmId(), tag);
 				uiOnDone.execute();
 				return null;
 			}

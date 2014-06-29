@@ -152,6 +152,8 @@ public enum HotSpotManager {
 					uiOnError.execute();
 					return null;
 				}
+				mData.remove(hotSpot.getmId());
+				mData.put(hotSpot.getmId(),hotSpot);
 				uiOnDone.execute();
 				return null;
 			}
