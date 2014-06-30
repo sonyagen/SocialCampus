@@ -136,18 +136,21 @@ public class User {
 		this.mPinnedSpots = mPinnedSpots;
 	}
 
-	public boolean isJoined(long hid){
+	public boolean isJoined(Long hid){
 		for(Long h: mHotSpots){
-			if(h.equals(hid));
-			return true;
+			if(h.equals(hid)){
+				return true;
+			}
+				
 		}
 		return false;
 	}
 
-	public boolean isPinned(long hid){
+	public boolean isPinned(Long hid){
 		for(Long h: mPinnedSpots){
-			if(h.equals(hid));
-			return true;
+			if(h.equals(hid)){
+				return true;
+			}
 		}
 		return false;
 	}

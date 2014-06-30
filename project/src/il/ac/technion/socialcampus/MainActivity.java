@@ -102,6 +102,7 @@ public class MainActivity extends FragmentActivity 	{
         if(UserManager.isLoggedIn(mContext)){
         	UserManager.INSTANCE.getMyData().setUserPhoto(imgProfilePic);
         }
+        hideInfoBox();
         resetMarkers();
     }
 

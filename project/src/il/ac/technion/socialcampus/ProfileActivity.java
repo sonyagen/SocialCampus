@@ -16,15 +16,11 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -283,12 +279,31 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 			txtName.setText(currentU.getmName());
 			currentU.setUserPhoto(imgProfilePic);
 			tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
-
+			inflatePinned();
 			
+
 		} else {
 			btnSignIn.setVisibility(View.VISIBLE);
 			all.setVisibility(View.GONE);
 
+		}
+	}
+	
+	private void inflatePinned(){
+		LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		
+		Set<Long> ids = UserManager.INSTANCE.getMyData().getmPinnedSpots();
+		for(long id:ids){
+			View frameLayout = inflater.inflate(R.layout.wide_frag_frame,all);
+			InfoBoxFragment box = InfoBoxFragment.newInstance(id);
+			getSupportFragmentManager().beginTransaction().add(R.id.frameElement,box).commit();
+		}
+		
+		ids = UserManager.INSTANCE.getMyData().getmHotSpots();
+		for(long id:ids){
+			View frameLayout = inflater.inflate(R.layout.wide_frag_frame,all);
+			InfoBoxFragment box = InfoBoxFragment.newInstance(id);
+			getSupportFragmentManager().beginTransaction().add(R.id.frameElement,box).commit();
 		}
 	}
 

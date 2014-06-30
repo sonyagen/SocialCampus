@@ -5,7 +5,7 @@
     <drawable name="DerkGreen">#4F9148</drawable>
     <drawable name="MediumGreen">#6DC663</drawable>
     <drawable name="LightGreen">#99EF8F</drawable>
-    <drawable name="LightGray">#ECECEC</drawable>
+    <drawable name="LightGray">#F6F6F6</drawable>
     <drawable name="White">#FFFFFF</drawable>
     <drawable name="Black">#000000</drawable>
     <drawable name="SkyBlue">#3172AB</drawable>
