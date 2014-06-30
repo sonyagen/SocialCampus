@@ -58,6 +58,7 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
 		headline = ((TextView) mView.findViewById(R.id.name));
 		timeStr = ((TextView)mView.findViewById(R.id.timeStr));
+		desc = ((TextView)mView.findViewById(R.id.description));
 		
 		TagsBoxFragment tagsBox = (TagsBoxFragment)getActivity().getSupportFragmentManager()
 				.findFragmentById(R.id.hsTagBox);

@@ -58,6 +58,7 @@ public class InfoBoxFragment extends Fragment {
 	ImageButton pinUnpin;
 	TextView headline;
 	TextView timeStr;
+	TextView desc;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +72,7 @@ public class InfoBoxFragment extends Fragment {
 		 pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
 		 headline = ((TextView) mView.findViewById(R.id.name));
 		 timeStr = ((TextView)mView.findViewById(R.id.timeStr));
+		 //desc = ((TextView)mView.findViewById(R.id.description));
 		 
 		 setView();
 		 return v;
@@ -172,6 +174,8 @@ public class InfoBoxFragment extends Fragment {
     	
     	Long time = mHotSpotData.getmTime();
     	timeStr.setText(new SimpleDateFormat("HH:mm dd/MM").format(new Date(time)));
+    	
+    	if (desc!=null)desc.setText(mHotSpotData.getmDesc());
     	
     	resetInfoBoxBtn();
 	}
