@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -81,11 +83,14 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	private boolean mSignInClicked;
 	private ConnectionResult mConnectionResult;
 	private SignInButton btnSignIn;
-	private Button btnSignOut, btnRevokeAccess;
+	private MenuItem btnSignOut, btnRevokeAccess;
 	private ImageView imgProfilePic;
 	private TextView txtName;
 	private LinearLayout all;
 	private TagsBoxFragment tagsBox;
+	private LinearLayout pinBoard;
+	private LinearLayout joinBoard;
+	private LinearLayout myBoard;
 
 	// lifecycle 
 	//=====================================================
@@ -98,16 +103,13 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 
 		all = (LinearLayout) findViewById(R.id.all);
 		btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
-		btnSignOut = (Button) findViewById(R.id.btn_sign_out);
-		btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
 		imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 		txtName = (TextView) findViewById(R.id.txtName);
 		tagsBox = (TagsBoxFragment)getSupportFragmentManager().findFragmentById(R.id.tagBox);
-
-		// Button click listeners
+		pinBoard = (LinearLayout) findViewById(R.id.infoBoxesHolderPinned); 
+		joinBoard = (LinearLayout) findViewById(R.id.infoBoxesHolderJoined); 
+		myBoard = (LinearLayout) findViewById(R.id.myboard); 
 		btnSignIn.setOnClickListener(this);
-		btnSignOut.setOnClickListener(this);
-		btnRevokeAccess.setOnClickListener(this);
 		
 		if (savedInstanceState != null) {
 			mSignInProgress = savedInstanceState
@@ -118,6 +120,17 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		.addConnectionCallbacks(this)
 		.addOnConnectionFailedListener(this).addApi(Plus.API)
 		.addScope(Plus.SCOPE_PLUS_LOGIN).build();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.profile, menu);
+		btnSignOut = menu.findItem(R.id.signout);
+		btnRevokeAccess = menu.findItem( R.id.revoke);
+		
+		//onPrepare(menu);
+		return true;
 	}
 
 	protected void onStart() {
@@ -273,13 +286,15 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		if (isSignedIn) {
 			btnSignIn.setVisibility(View.GONE);
 			all.setVisibility(View.VISIBLE);
+			if(btnSignOut!=null) btnSignOut.setVisible(true);
+			if(btnRevokeAccess!=null) btnRevokeAccess.setVisible(true);
 			
 			User currentU = UserManager.INSTANCE.getMyData();
 	
 			txtName.setText(currentU.getmName());
 			currentU.setUserPhoto(imgProfilePic);
 			tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
-			inflatePinned();
+			inflateBoard();
 			
 
 		} else {
@@ -289,21 +304,43 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		}
 	}
 	
-	private void inflatePinned(){
+	private void inflateBoard(){
 		LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
-		Set<Long> ids = UserManager.INSTANCE.getMyData().getmPinnedSpots();
-		for(long id:ids){
-			View frameLayout = inflater.inflate(R.layout.wide_frag_frame,all);
-			InfoBoxFragment box = InfoBoxFragment.newInstance(id);
-			getSupportFragmentManager().beginTransaction().add(R.id.frameElement,box).commit();
+		Set<Long> joinIds = UserManager.INSTANCE.getMyData().getmHotSpots();
+		Set<Long> pinIds = UserManager.INSTANCE.getMyData().getmPinnedSpots();
+		
+		if(joinIds.size()==0 && pinIds.size()==0){
+			myBoard.setVisibility(View.GONE);
+			return;
+		} else {
+			myBoard.setVisibility(View.VISIBLE);
+		}
+		if(joinIds.size()!=0 ){
+			joinBoard.setVisibility(View.VISIBLE);
+			joinBoard.removeAllViews();
+			for(Long id:joinIds){
+				InfoBoxFragment box = InfoBoxFragment.newInstance(id);
+				getSupportFragmentManager().beginTransaction().add(R.id.infoBoxesHolderJoined,box,id.toString()).commit();
+			}
+		}
+		else{
+			joinBoard.setVisibility(View.GONE);
 		}
 		
-		ids = UserManager.INSTANCE.getMyData().getmHotSpots();
-		for(long id:ids){
-			View frameLayout = inflater.inflate(R.layout.wide_frag_frame,all);
-			InfoBoxFragment box = InfoBoxFragment.newInstance(id);
-			getSupportFragmentManager().beginTransaction().add(R.id.frameElement,box).commit();
+		if(pinIds.size()!=0 ){
+			pinBoard.setVisibility(View.VISIBLE);
+			pinBoard.removeAllViews();
+			for(Long id:pinIds){
+				InfoBoxFragment box = InfoBoxFragment.newInstance(id);
+				getSupportFragmentManager().beginTransaction().add(R.id.infoBoxesHolderPinned,box,id.toString()).commit();
+			}
+			//this works too, but with no background
+//			View frameLayout = inflater.inflate(R.layout.wide_frag_frame,all);
+//			InfoBoxFragment box = InfoBoxFragment.newInstance(id);
+//			getSupportFragmentManager().beginTransaction().add(R.id.frameElement,box).commit();
+		}else{
+			pinBoard.setVisibility(View.GONE);
 		}
 	}
 
@@ -335,65 +372,6 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		return u;
 	}
 
-//	
-//	// SpannableString - into a factory
-//	//=====================================================
-//	
-//	private SpannableString makeLinkSpan(CharSequence text, View.OnClickListener listener) {
-//	    SpannableString link = new SpannableString(text);
-//	    link.setSpan(new ClickableString(listener), 0, text.length(), 
-//	        SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-//	    return link;
-//	}
-//
-//	private void makeLinksFocusable(TextView tv) {
-//	    MovementMethod m = tv.getMovementMethod();  
-//	    if ((m == null) || !(m instanceof LinkMovementMethod)) {  
-//	        if (tv.getLinksClickable()) {  
-//	            tv.setMovementMethod(LinkMovementMethod.getInstance());  
-//	        }  
-//	    }  
-//	}
-//	
-//	private static class ClickableString extends ClickableSpan {  
-//	    private View.OnClickListener mListener;          
-//	    public ClickableString(View.OnClickListener listener) {              
-//	        mListener = listener;  
-//	    }          
-//	    @Override  
-//	    public void onClick(View v) {  
-//	        mListener.onClick(v);  
-//	    }        
-//	}
-//	
-//	// usin the SpannableString methods - can go to factory
-//	//=====================================================
-//
-//	private void buildTags(){
-//		
-//		tagsView.setText("");
-//		
-//		Set<Long> tagIds = UserManager.INSTANCE.getMyData().getmTags();
-//		Set<Tag> Tags = TagManager.INSTANCE.getItemsbyIds(tagIds);
-//		for(Tag t:Tags){
-//			t.setListener(this);
-//			SpannableString link = makeLinkSpan(t.getmName(), t);
-//			tagsView.append("#");
-//			tagsView.append(link);
-//			tagsView.append("	");
-//		}
-//		
-//		makeLinksFocusable(tagsView);
-//		
-//	}
-//
-//	@Override
-//	public void onTagClick(Long tid) {
-//		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
-//		//TODO intent to View Tag activity
-//		Toast.makeText(mContext, t.getmName(), Toast.LENGTH_SHORT).show();
-//	}
-//	
 
 	// showing tags
 	//=====================================================
@@ -419,24 +397,28 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		progressDialog.setCancelable(false);
 		progressDialog.setCanceledOnTouchOutside(false);
 		switch (v.getId()) {
-
 		case R.id.btn_sign_in:
 			// Signin button clicked
-			//			mGoogleApiClient.connect();
+			// mGoogleApiClient.connect();
 			progressDialog.setMessage(this.getResources().getString(R.string.log_in_msg));
 			progressDialog.show();
 			signInWithGplus();
-
 			break;
-		case R.id.btn_sign_out:
+		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.signout:
 			// Signout button clicked
 			progressDialog.setMessage(this.getResources().getString(R.string.log_out_msg));
 			progressDialog.show();
 			UserManager.INSTANCE.logout(mContext);
 			signOutFromGplus();
 			progressDialog.dismiss();
-			break;
-		case R.id.btn_revoke_access:
+			return true;
+		case R.id.revoke:
 			// Revoke access button clicked
 			progressDialog.setMessage(this.getResources().getString(R.string.revoke_access_msg));
 			progressDialog.show();
@@ -456,9 +438,9 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 						}
 					});
 
-			break;
+			return true;
 		}
-
+		return false;
 	}
 
 	/**

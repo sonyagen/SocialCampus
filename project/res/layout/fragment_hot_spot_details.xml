@@ -69,6 +69,14 @@
 	    </RelativeLayout>
 	</LinearLayout>
 
+	<fragment 
+	        android:id="@+id/hsTagBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            class="il.ac.technion.socialcampus.TagsBoxFragment"/>
+	
 	<!-- time: hedline and value -->
     <RelativeLayout
         android:layout_width="wrap_content"

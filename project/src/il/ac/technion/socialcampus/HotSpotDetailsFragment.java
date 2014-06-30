@@ -1,22 +1,24 @@
 package il.ac.technion.socialcampus;
 
-import java.util.Set;
-
 import il.ac.technion.logic.HotSpot;
 import il.ac.technion.logic.HotSpotManager;
+import il.ac.technion.logic.Tag;
+import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.User;
 import il.ac.technion.logic.UserManager;
+
+import java.util.Set;
+
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -56,7 +58,11 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		pinUnpin = ((ImageButton)mView.findViewById(R.id.pinImgBtn));
 		headline = ((TextView) mView.findViewById(R.id.name));
 		timeStr = ((TextView)mView.findViewById(R.id.timeStr));
-				
+		
+		TagsBoxFragment tagsBox = (TagsBoxFragment)getActivity().getSupportFragmentManager()
+				.findFragmentById(R.id.hsTagBox);
+		tagsBox.buildTags(HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getmTags());
+			
 		setView();
 		setMap();
 		return v;
@@ -92,4 +98,12 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		setMap();
 		
 	}
+
+//	@Override
+//	public void onTagClick(long tid) {
+//		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
+//		// TODO Auto-generated method stub
+//		Toast.makeText(mContext, t.getmName(), Toast.LENGTH_SHORT).show();
+//		
+//	}
 }

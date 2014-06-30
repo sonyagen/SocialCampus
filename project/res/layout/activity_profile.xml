@@ -9,17 +9,19 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_marginTop="70dp"	/>
 
-
+	<ScrollView
+    	android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
 	<LinearLayout 
 	    android:id="@+id/all"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:orientation="vertical"
 	    android:padding="16dp" 
-	    android:visibility="gone" >
+	    android:visibility="visible" >
 
 	    <RelativeLayout
 	        android:layout_width="wrap_content"
@@ -37,8 +39,9 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textSize="20sp" 
-            android:text="Sonya Gendelman"
-            android:layout_toRightOf="@+id/imgProfilePic"   />
+            android:text="My Name"
+            android:layout_toRightOf="@+id/imgProfilePic"
+			android:layout_centerVertical="true"  />
         </RelativeLayout>
         
 	    <fragment 
@@ -48,24 +51,30 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             class="il.ac.technion.socialcampus.TagsBoxFragment"/>
-
-    <Button
-        android:id="@+id/btn_sign_out"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_marginBottom="7dp"
-        android:text="@string/btn_logout_from_google"
-        android:textSize="14sp"
-        android:visibility="visible" />
- 
-    <Button
-        android:id="@+id/btn_revoke_access"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:text="@string/btn_revoke_access"
-        android:visibility="visible" 
-         android:textSize="14sp"/>
- 
-</LinearLayout>
+	   
+	    <LinearLayout
+	        android:id="@+id/myboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >	    
+	    <LinearLayout 
+		    android:id="@+id/infoBoxesHolderJoined"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:background="@drawable/hot_spot_info_box_backround_dark"
+		    android:padding="10dp" ></LinearLayout>     
+	    <LinearLayout 
+		    android:id="@+id/infoBoxesHolderPinned"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:background="@drawable/hot_spot_info_box_backround_dark"
+		    android:padding="10dp" ></LinearLayout>
+	     
+	     </LinearLayout>
+	    
+	</LinearLayout>
+	</ScrollView>
 
 </RelativeLayout>

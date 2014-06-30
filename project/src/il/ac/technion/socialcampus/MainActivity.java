@@ -120,7 +120,7 @@ public class MainActivity extends FragmentActivity 	{
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.maimMap))
                     .getMap();
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setZoomControlsEnabled(false);

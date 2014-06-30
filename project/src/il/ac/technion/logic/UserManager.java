@@ -195,7 +195,7 @@ public enum UserManager{
 				}
 				Set<Long> hots = user.getmHotSpots();
 				for(Long i: hots){
-					((HotSpot)mHotSpotManager.getItemById(i)).leaveHotSpot(user.getmId());
+					((HotSpot)HotSpotManager.INSTANCE.getItemById(i)).leaveHotSpot(user.getmId());
 				}
 				mData.remove(user.getmId());
 				uiOnDone.execute();
