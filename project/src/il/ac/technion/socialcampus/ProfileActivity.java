@@ -43,7 +43,7 @@ import com.google.android.gms.plus.model.people.Person;
 //import com.google.android.gms.tagmanager.TagManager;
 
 public class ProfileActivity extends FragmentActivity implements OnClickListener,
-ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
+ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListener {
 
 	private static final int STATE_DEFAULT = 0;
 	private static final int STATE_SIGN_IN = 1;
@@ -89,8 +89,7 @@ ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
 	private ImageView imgProfilePic;
 	private TextView txtName;
 	private LinearLayout all;
-	private TextView tagsView;
-	private ImageButton editTags;
+	private TagsBoxFragment tagsBox;
 
 	// lifecycle 
 	//=====================================================
@@ -100,28 +99,19 @@ ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
 
 		progressDialog = new ProgressDialog(this);
 		setContentView(R.layout.activity_profile);
-		//signed in view
+
 		all = (LinearLayout) findViewById(R.id.all);
-		//google btn
 		btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
 		btnSignOut = (Button) findViewById(R.id.btn_sign_out);
 		btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
-		//1st area: pic & name
 		imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 		txtName = (TextView) findViewById(R.id.txtName);
-		//2nd area: tags
-		tagsView = (TextView) findViewById(R.id.tags);
-		editTags = (ImageButton) findViewById(R.id.editBtn);
-		
-		//3nd area: pinned events
-		
-		
+		tagsBox = (TagsBoxFragment)getSupportFragmentManager().findFragmentById(R.id.tagBox);
 
 		// Button click listeners
 		btnSignIn.setOnClickListener(this);
 		btnSignOut.setOnClickListener(this);
 		btnRevokeAccess.setOnClickListener(this);
-		editTags.setOnClickListener(this);
 		
 		if (savedInstanceState != null) {
 			mSignInProgress = savedInstanceState
@@ -292,9 +282,8 @@ ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
 	
 			txtName.setText(currentU.getmName());
 			currentU.setUserPhoto(imgProfilePic);
-			buildTags();
-			
-			
+			tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
+
 			
 		} else {
 			btnSignIn.setVisibility(View.VISIBLE);
@@ -331,66 +320,78 @@ ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
 		return u;
 	}
 
-	
-	// SpannableString - into a factory
+//	
+//	// SpannableString - into a factory
+//	//=====================================================
+//	
+//	private SpannableString makeLinkSpan(CharSequence text, View.OnClickListener listener) {
+//	    SpannableString link = new SpannableString(text);
+//	    link.setSpan(new ClickableString(listener), 0, text.length(), 
+//	        SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+//	    return link;
+//	}
+//
+//	private void makeLinksFocusable(TextView tv) {
+//	    MovementMethod m = tv.getMovementMethod();  
+//	    if ((m == null) || !(m instanceof LinkMovementMethod)) {  
+//	        if (tv.getLinksClickable()) {  
+//	            tv.setMovementMethod(LinkMovementMethod.getInstance());  
+//	        }  
+//	    }  
+//	}
+//	
+//	private static class ClickableString extends ClickableSpan {  
+//	    private View.OnClickListener mListener;          
+//	    public ClickableString(View.OnClickListener listener) {              
+//	        mListener = listener;  
+//	    }          
+//	    @Override  
+//	    public void onClick(View v) {  
+//	        mListener.onClick(v);  
+//	    }        
+//	}
+//	
+//	// usin the SpannableString methods - can go to factory
+//	//=====================================================
+//
+//	private void buildTags(){
+//		
+//		tagsView.setText("");
+//		
+//		Set<Long> tagIds = UserManager.INSTANCE.getMyData().getmTags();
+//		Set<Tag> Tags = TagManager.INSTANCE.getItemsbyIds(tagIds);
+//		for(Tag t:Tags){
+//			t.setListener(this);
+//			SpannableString link = makeLinkSpan(t.getmName(), t);
+//			tagsView.append("#");
+//			tagsView.append(link);
+//			tagsView.append("	");
+//		}
+//		
+//		makeLinksFocusable(tagsView);
+//		
+//	}
+//
+//	@Override
+//	public void onTagClick(Long tid) {
+//		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
+//		//TODO intent to View Tag activity
+//		Toast.makeText(mContext, t.getmName(), Toast.LENGTH_SHORT).show();
+//	}
+//	
+
+	// showing tags
 	//=====================================================
 	
-	private SpannableString makeLinkSpan(CharSequence text, View.OnClickListener listener) {
-	    SpannableString link = new SpannableString(text);
-	    link.setSpan(new ClickableString(listener), 0, text.length(), 
-	        SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-	    return link;
-	}
-
-	private void makeLinksFocusable(TextView tv) {
-	    MovementMethod m = tv.getMovementMethod();  
-	    if ((m == null) || !(m instanceof LinkMovementMethod)) {  
-	        if (tv.getLinksClickable()) {  
-	            tv.setMovementMethod(LinkMovementMethod.getInstance());  
-	        }  
-	    }  
-	}
-	
-	private static class ClickableString extends ClickableSpan {  
-	    private View.OnClickListener mListener;          
-	    public ClickableString(View.OnClickListener listener) {              
-	        mListener = listener;  
-	    }          
-	    @Override  
-	    public void onClick(View v) {  
-	        mListener.onClick(v);  
-	    }        
-	}
-	
-	// usin the SpannableString methods - can go to factory
-	//=====================================================
-
-	private void buildTags(){
-		
-		tagsView.setText("");
-		
-		Set<Long> tagIds = UserManager.INSTANCE.getMyData().getmTags();
-		Set<Tag> Tags = TagManager.INSTANCE.getItemsbyIds(tagIds);
-		for(Tag t:Tags){
-			t.setListener(this);
-			SpannableString link = makeLinkSpan(t.getmName(), t);
-			tagsView.append("#");
-			tagsView.append(link);
-			tagsView.append("	");
-		}
-		
-		makeLinksFocusable(tagsView);
-		
-	}
-
 	@Override
-	public void onTagClick(Long tid) {
+	public void onTagClick(long tid) {
 		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
 		//TODO intent to View Tag activity
 		Toast.makeText(mContext, t.getmName(), Toast.LENGTH_SHORT).show();
+		
 	}
 	
-
+	
 
 	// google+ account: login/logout/revoke
 	//=====================================================
@@ -404,9 +405,6 @@ ConnectionCallbacks, OnConnectionFailedListener, Tag.onTagClickListener {
 		progressDialog.setCanceledOnTouchOutside(false);
 		switch (v.getId()) {
 
-		case R.id.editBtn:
-			//TODO intent to manage Tags Activity/Dialog?
-			break;
 		case R.id.btn_sign_in:
 			// Signin button clicked
 			//			mGoogleApiClient.connect();

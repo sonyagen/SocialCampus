@@ -125,6 +125,12 @@ public class Tag implements OnClickListener,Comparable<Tag>{
 	
 	public onTagClickListener mListener;
 	
+	/*
+	 * to be implemented in a ui object
+	 * the cottect use it to implement the interface
+	 * and to set the listener using: setListener(this);
+	 * (equivalent to fragment's onAttach()) 
+	 */
 	public interface onTagClickListener{
 		void onTagClick(Long tid);
 	}

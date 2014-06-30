@@ -31,15 +31,15 @@ public enum DBManager  {
 	DBManager(){
 		Tag t1 = new Tag(1L,"Frisbee");
 		Tag t2 = new Tag(2L,"Sports");
-		Tag t3 = new Tag(3L,"Team Sports");
-		Tag t4 = new Tag(4L,"Central Lawn");
+		Tag t3 = new Tag(3L,"TeamSports");
+		Tag t4 = new Tag(4L,"CentralLawn");
 		Tag t5 = new Tag(5L,"Study");
 		Tag t6 = new Tag(6L,"SocialCampusProj");
 		Tag t7 = new Tag(7L,"Colloquium");
 		Tag t8 = new Tag(8L,"Salsa");
-		Tag t9 = new Tag(9L,"Clear Hall");
+		Tag t9 = new Tag(9L,"ClearHall");
 		
-		User u1 = new User("1L","","Sonya Gendelman");
+		User u1 = new User("103967014019877216822","","Sonya Gendelman");
 		User u2 = new User("2L","","Hanna-John Jadon");
 		User u3 = new User("3L","","Jim Maricondo");
 		User u4 = new User("4L","","Xin Song");

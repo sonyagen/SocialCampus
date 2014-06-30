@@ -4,6 +4,7 @@ package il.ac.technion.logic;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -24,8 +25,8 @@ public enum TagManager {
 		
 	}
 	
-	public  Set<Tag> getAllObjs() {
-		return (Set<Tag>) mData.values();
+	public  Collection<Tag> getAllObjs() {
+		return  mData.values();
 	}
 	
 	public  Set<Tag> getItemsbyIds(Set<Long> Ids) {
