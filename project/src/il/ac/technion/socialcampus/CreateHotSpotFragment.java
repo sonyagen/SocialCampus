@@ -69,7 +69,7 @@ public class CreateHotSpotFragment extends Fragment {
 	private ImageView userImage2;
 	private ImageView userImage3;
 	private boolean isEdit;
-	private static Long defHotSpotID = -1L;
+	public static Long defHotSpotID = -1L;
 	
 	private CameraPosition chosenPos;
 	
@@ -361,6 +361,7 @@ public class CreateHotSpotFragment extends Fragment {
 		if(isEdit) mTags.addAll(mCurrHotSpotData.getmTags());
 		Set<String> mUseres = new TreeSet<String>();
 		if(isEdit) mUseres.addAll(mCurrHotSpotData.getmUseres());
+		else mUseres.add(UserManager.INSTANCE.getMyID());
 		
 		return new HotSpot(mId, mTime, mEndTime, mName, lat, lon, 
 				mLocation, mdescription, mAdminId, mImageURL, mTags, mUseres);

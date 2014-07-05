@@ -19,6 +19,9 @@ import java.util.Set;
 public enum DBManager  {
 	INSTANCE;
 	
+	public User getSonya(){
+		return new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
+	}
 	private SCReturnCode resCode = SCReturnCode.SUCCESS;
 	public SCReturnCode getResult(){
 		return resCode;
@@ -39,7 +42,7 @@ public enum DBManager  {
 		Tag t8 = new Tag(8L,"Salsa");
 		Tag t9 = new Tag(9L,"ClearHall");
 		
-		User u1 = new User("103967014019877216822","","Sonya Gendelman");
+		User u1 = new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
 		User u2 = new User("2L","","Hanna-John Jadon");
 		User u3 = new User("3L","","Jim Maricondo");
 		User u4 = new User("4L","","Xin Song");

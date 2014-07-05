@@ -46,7 +46,6 @@ public class MainActivity extends FragmentActivity 	{
     @Override
 	protected void onStart() {
 		super.onStart();
-		syncDb();
 	}
 
     private void syncDb(){
@@ -71,11 +70,17 @@ public class MainActivity extends FragmentActivity 	{
 		}, new UiOnError(this));
     }
 	
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
+        if (savedInstanceState==null){
+        	syncDb();
+        }else{
+        	setUpMapIfNeeded();
+        }
         setListeners();
         hideInfoBox();
     }
@@ -103,7 +108,7 @@ public class MainActivity extends FragmentActivity 	{
         	UserManager.INSTANCE.getMyData().setUserPhoto(imgProfilePic);
         }
         hideInfoBox();
-        resetMarkers();
+        setUpMap();
     }
 
     private void resetMarkers(){
@@ -136,7 +141,7 @@ public class MainActivity extends FragmentActivity 	{
 
     private void setUpMap() {
     	if (mMap==null) return;
-    	
+    	mMap.clear();
     	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(TECHNION));
     	resetMarkers();
     }

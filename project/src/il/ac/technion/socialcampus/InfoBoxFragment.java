@@ -9,7 +9,9 @@ import il.ac.technion.logic.UserManager;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,12 +24,30 @@ import android.widget.Toast;
 
 
 public class InfoBoxFragment extends Fragment {
+	
+	public interface ButtonInteraction {
+		public void joinBtnClick();
+		public void leaveBtnClick();
+		public void pinBtnClick();
+		public void unpinBtnClick();
+		public void shareBtnClick();
+		public void editBtnClick();
+		public void discardBtnClick();
+	}
+	
+	ButtonInteraction mListener;
+	
 	protected static final String HotSpotId = "id";
 	Context mContext;
-
-	//protected HotSpot mHotSpotData;
 	protected Long mHotSpotDataId;
-//	protected OnFragmentInteractionListener mListener;
+	
+	ImageButton share ;
+	ImageButton joinLeave;
+	ImageButton pinUnpin;
+	TextView headline;
+	TextView timeStr;
+	TextView desc;
+
 	//TODO don't use mView - get an inflater instead.
 	View mView;
 	
@@ -52,13 +72,6 @@ public class InfoBoxFragment extends Fragment {
 		}
 	}
 
-	//	TODO------
-	ImageButton share ;
-	ImageButton joinLeave;
-	ImageButton pinUnpin;
-	TextView headline;
-	TextView timeStr;
-	TextView desc;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,10 +114,34 @@ public class InfoBoxFragment extends Fragment {
 	public void resetInfoBoxBtn(){
 		if (!validateHotSpot()) return;
 		
+		//if owner
+		if (HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getAdminId()
+				== UserManager.INSTANCE.getMyID()){
+			
+			//set edit btn instead of join-leave btn
+			joinLeave.setImageResource(R.drawable.ic_action_edit);
+			joinLeave.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onEditBtnClick();
+				}
+			});
+			
+			//set discard btn instead of pin-unpin
+			pinUnpin.setImageResource(R.drawable.ic_action_discard);
+			pinUnpin.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onDiscardBtnClick();
+				}
+			});
+			 
+			return;
+		}
+		
 		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
 		
 		//handle share
-		
 		share.setVisibility(View.VISIBLE);
 		share.setOnClickListener(new OnClickListener() {
 			@Override
@@ -189,6 +226,8 @@ public class InfoBoxFragment extends Fragment {
 				@Override
 				public void execute() {
 					resetInfoBoxBtn();
+					if (mListener!=null) 
+						mListener.joinBtnClick();
 				}
 			}, new UiOnError(mContext));
 	}
@@ -200,6 +239,8 @@ public class InfoBoxFragment extends Fragment {
 					@Override
 					public void execute() {
 						resetInfoBoxBtn();
+						if (mListener!=null) 
+							mListener.leaveBtnClick();
 					}
 				}, new UiOnError(mContext));
 	}
@@ -207,42 +248,60 @@ public class InfoBoxFragment extends Fragment {
 	public void onShareBtnClick() {
 		//TODO share
 		Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
+		if (mListener!=null) 
+			mListener.shareBtnClick();
 	}
+	
 	public void onPinBtnClick() {
 		HotSpotManager.INSTANCE.PinUserHotSpotToUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
 		resetInfoBoxBtn();
+		if (mListener!=null) 
+			mListener.pinBtnClick();
 	}
+	
 	public void onUnpinBtnClick() {
 		HotSpotManager.INSTANCE.UnpinUserHotSpotFromUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
 		resetInfoBoxBtn();
+		if (mListener!=null) 
+			mListener.unpinBtnClick();
 	}
 
-
-//	@Override
-//	public void onAttach(Activity activity) {
-//		super.onAttach(activity);
-//		try {
-//			mListener = (OnFragmentInteractionListener) activity;
-//		} catch (ClassCastException e) {
-//			throw new ClassCastException(activity.toString()
-//					+ " must implement OnFragmentInteractionListener");
-//		}
-//	}
-
-//	@Override
-//	public void onDetach() {
-//		super.onDetach();
-//		mListener = null;
-//	}
-
+	public void onEditBtnClick() {
+		if (mListener!=null) 
+			mListener.editBtnClick();
+		
+		startActivity(new Intent(getActivity(), CreateNewHotSpotActivity.class)
+			.putExtra(CreateNewHotSpotActivity.HotSpotId, mHotSpotDataId));
+	}
 	
-	
-//	public interface OnFragmentInteractionListener {
-//		public void onJoinBtnClick();
-//		public void onLeaveBtnClick();
-//		public void onShareBtnClick();
-//		public void onUnpinBtnClick();
-//		public void onPinBtnClick();
-//	}
+	public void onDiscardBtnClick() {
+		HotSpotManager.INSTANCE.removeHotSpot(mHotSpotDataId, new UiOnDone() {
+			
+			@Override
+			public void execute() {
+				
+				
+			}
+		}, null); 
+		if (mListener!=null) 
+			mListener.discardBtnClick();
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mListener = (ButtonInteraction) activity;
+		} catch (ClassCastException e) {
+			//throw new ClassCastException(activity.toString()
+			//		+ " must implement OnFragmentInteractionListener");
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mListener = null;
+	}
 
 }

@@ -19,14 +19,18 @@ public class HotSpotInfoActivity extends FragmentActivity implements TagsBoxFrag
 					HotSpotDetailsFragment.newInstance(getIntent().getExtras().getLong("id"));
 			getSupportFragmentManager().beginTransaction().add(R.id.frame, f).commit();
 		}
+		else{
+			((HotSpotDetailsFragment)getSupportFragmentManager().
+					findFragmentById(R.id.frame)).resetInfoBox();
+		}
 	}
 
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//((HotSpotDetailsFragment) getSupportFragmentManager().
-		//findFragmentById(R.id.HotSpotInfoFrag)).refresh(getIntent().getExtras().getLong("id"));
+		((HotSpotDetailsFragment)getSupportFragmentManager().
+				findFragmentById(R.id.frame)).resetInfoBox();
 		
 	}
 
