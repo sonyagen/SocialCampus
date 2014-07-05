@@ -26,13 +26,14 @@ import android.widget.Toast;
 public class InfoBoxFragment extends Fragment {
 	
 	public interface ButtonInteraction {
-		public void joinBtnClick();
-		public void leaveBtnClick();
-		public void pinBtnClick();
-		public void unpinBtnClick();
-		public void shareBtnClick();
-		public void editBtnClick();
-		public void discardBtnClick();
+		public void joinBtnClick(Long id);
+		public void leaveBtnClick(Long id);  
+		public void pinBtnClick(Long id);
+		public void unpinBtnClick(Long id);
+		public void shareBtnClick(Long id);
+		public void editBtnClick(Long id);
+		public void discardBtnClick(Long id);
+		
 	}
 	
 	ButtonInteraction mListener;
@@ -227,7 +228,7 @@ public class InfoBoxFragment extends Fragment {
 				public void execute() {
 					resetInfoBoxBtn();
 					if (mListener!=null) 
-						mListener.joinBtnClick();
+						mListener.joinBtnClick(mHotSpotDataId);
 				}
 			}, new UiOnError(mContext));
 	}
@@ -240,7 +241,7 @@ public class InfoBoxFragment extends Fragment {
 					public void execute() {
 						resetInfoBoxBtn();
 						if (mListener!=null) 
-							mListener.leaveBtnClick();
+							mListener.leaveBtnClick(mHotSpotDataId);
 					}
 				}, new UiOnError(mContext));
 	}
@@ -249,26 +250,26 @@ public class InfoBoxFragment extends Fragment {
 		//TODO share
 		Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
 		if (mListener!=null) 
-			mListener.shareBtnClick();
+			mListener.shareBtnClick(mHotSpotDataId);
 	}
 	
 	public void onPinBtnClick() {
 		HotSpotManager.INSTANCE.PinUserHotSpotToUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
 		resetInfoBoxBtn();
 		if (mListener!=null) 
-			mListener.pinBtnClick();
+			mListener.pinBtnClick(mHotSpotDataId);
 	}
 	
 	public void onUnpinBtnClick() {
 		HotSpotManager.INSTANCE.UnpinUserHotSpotFromUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
 		resetInfoBoxBtn();
 		if (mListener!=null) 
-			mListener.unpinBtnClick();
+			mListener.unpinBtnClick(mHotSpotDataId);
 	}
 
 	public void onEditBtnClick() {
 		if (mListener!=null) 
-			mListener.editBtnClick();
+			mListener.editBtnClick(mHotSpotDataId);
 		
 		startActivity(new Intent(getActivity(), CreateNewHotSpotActivity.class)
 			.putExtra(CreateNewHotSpotActivity.HotSpotId, mHotSpotDataId));
@@ -279,12 +280,12 @@ public class InfoBoxFragment extends Fragment {
 			
 			@Override
 			public void execute() {
-				
+				mListener.discardBtnClick(mHotSpotDataId);
 				
 			}
 		}, null); 
 		if (mListener!=null) 
-			mListener.discardBtnClick();
+			mListener.discardBtnClick(mHotSpotDataId);
 	}
 
 	@Override

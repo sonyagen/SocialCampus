@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
-public class HotSpotInfoActivity extends FragmentActivity implements TagsBoxFragment.OnTagClickListener{
+public class HotSpotInfoActivity extends FragmentActivity 
+implements TagsBoxFragment.OnTagClickListener, HotSpotDetailsFragment.ButtonInteraction{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,49 @@ public class HotSpotInfoActivity extends FragmentActivity implements TagsBoxFrag
 		Toast.makeText(this, t.getmName(), Toast.LENGTH_SHORT).show();
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public void joinBtnClick(Long id) {
+		// TODO Auto-generated method stub	
+	}
+
+
+	@Override
+	public void leaveBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void pinBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void unpinBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void shareBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void editBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void discardBtnClick(Long id) {
+		// TODO Auto-generated method stub
+		finish();
 	}
 	
 	

@@ -8,6 +8,7 @@ import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MainActivity extends FragmentActivity 	{
+public class MainActivity extends FragmentActivity implements InfoBoxFragment.ButtonInteraction	{
 	private ImageView imgProfilePic;
 	private ImageButton addNewBtn;
 	private GoogleMap mMap;
@@ -42,6 +43,7 @@ public class MainActivity extends FragmentActivity 	{
 	CameraPosition TECHNION = LocationFactury.TECHNION;
 	
 	private HashMap<String,Long> mMarkersHotSpotsTrans = new HashMap<String,Long>();
+	private HashMap<Long,Marker> mHotSpotsMarkersTrans = new HashMap<Long,Marker>();
 
     @Override
 	protected void onStart() {
@@ -115,9 +117,11 @@ public class MainActivity extends FragmentActivity 	{
     	List<HotSpot> hs = HotSpotManager.INSTANCE.getAllObjs();
     	if (mMap==null || hs==null) return; 
     	for(HotSpot h: hs){
-        	String id = mMap.addMarker(new MarkerOptions().
-        			position(new LatLng(h.getLangt(),h.getLongt()))).getId();
-        	mMarkersHotSpotsTrans.put(id, h.getmId());
+        	Marker m = mMap.addMarker(new MarkerOptions().
+        			position(new LatLng(h.getLangt(),h.getLongt())));
+
+        	mMarkersHotSpotsTrans.put(m.getId(), h.getmId());
+        	mHotSpotsMarkersTrans.put(h.getmId(), m);
     	}
     }
     
@@ -197,5 +201,41 @@ public class MainActivity extends FragmentActivity 	{
 		});
 
     }
+
+	@Override
+	public void joinBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void leaveBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void pinBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unpinBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void shareBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void editBtnClick(Long id) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void discardBtnClick(Long id) {
+		mHotSpotsMarkersTrans.get(id).remove();
+		hideInfoBox();
+	}
 
 }
