@@ -20,10 +20,7 @@ implements TagsBoxFragment.OnTagClickListener, HotSpotDetailsFragment.ButtonInte
 					HotSpotDetailsFragment.newInstance(getIntent().getExtras().getLong("id"));
 			getSupportFragmentManager().beginTransaction().add(R.id.frame, f).commit();
 		}
-		else{
-			((HotSpotDetailsFragment)getSupportFragmentManager().
-					findFragmentById(R.id.frame)).resetInfoBox();
-		}
+		
 	}
 
 
@@ -85,6 +82,24 @@ implements TagsBoxFragment.OnTagClickListener, HotSpotDetailsFragment.ButtonInte
 	public void discardBtnClick(Long id) {
 		// TODO Auto-generated method stub
 		finish();
+	}
+
+
+	@Override
+	public boolean isHotSpot() {
+		return true;
+	}
+
+
+	@Override
+	public String getUserId() {
+		return null;
+	}
+
+
+	@Override
+	public Long getHotSpotId() {
+		return getIntent().getExtras().getLong("id");
 	}
 	
 	

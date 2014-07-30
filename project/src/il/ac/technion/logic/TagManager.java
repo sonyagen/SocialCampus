@@ -13,20 +13,25 @@ import java.util.TreeSet;
 
 public enum TagManager {
 	INSTANCE;
-	
-	UserManager mUserManager = UserManager.INSTANCE;
-	HotSpotManager mHotSpotManager = HotSpotManager.INSTANCE;
-	
-	
+	static public Long defaultTagId = -1L;
 	protected HashMap<Long,Tag> mData = new HashMap<Long,Tag>();
+	protected HashMap<String,Long> mId = new HashMap<String,Long>();
 	
 	Tag getItemById(Long id){
 		return mData.get(id);
 		
 	}
 	
-	public  Collection<Tag> getAllObjs() {
+	public Collection<Tag> getAllObjs() {
 		return  mData.values();
+	}
+	
+	public Collection<String> getAllTagStrings() {
+		Collection<String> c = new ArrayList<String>();
+		for(Tag t : mData.values()){
+			c.add(t.getmName());
+		}
+		return c;
 	}
 	
 	public  Set<Tag> getItemsbyIds(Set<Long> Ids) {
@@ -40,6 +45,13 @@ public enum TagManager {
 	public  Tag getItemsbyId(long Id) {
 		return mData.get(Id);
 	}
+	
+	public  Long getIdByTagName(String tagName) {
+		Long id = mId.get(tagName);
+		if (id==null)
+			return defaultTagId;
+		return mId.get(tagName);
+	}
 
 	
 	
@@ -52,8 +64,10 @@ public enum TagManager {
 			public Void onResult(SCConnectionStatus status) {
 				if(status == SCConnectionStatus.RESULT_OK){
 					mData.clear();
+					mId.clear();
 					for (Tag h:res){
 						mData.put(h.getmId(), h);
+						mId.put(h.getmName(), h.getmId());
 					}
 					
 					if(onRes != null){
@@ -93,6 +107,7 @@ public enum TagManager {
 				}
 				//add the hotSpot with the new id to owned list
 				mData.put(tag.getmId(), tag);
+				mId.put(tag.getmName(), tag.getmId());
 				uif.execute();
 				return null;
 			}
@@ -117,7 +132,10 @@ public enum TagManager {
 					return null;
 				}
 				mData.remove(tag.getmId());
+				mId.remove(tag.getmName());
 				mData.put(tag.getmId(), tag);
+				mId.put(tag.getmName(), tag.getmId());
+				
 				uiOnDone.execute();
 				return null;
 			}
@@ -144,13 +162,14 @@ public enum TagManager {
 				}
 				Set<String> users = tag.getmUsers();
 				for(String i: users){
-					((User)mUserManager.getItemById(i)).removeTag(tag.getmId());
+					((User)UserManager.INSTANCE.getItemById(i)).removeTag(tag.getmId());
 				}
 				Set<Long> hots = tag.getmHotSpots();
 				for(Long i: hots){
-					((HotSpot)mHotSpotManager.getItemById(i)).removeTag(tag.getmId());
+					((HotSpot)HotSpotManager.INSTANCE.getItemById(i)).removeTag(tag.getmId());
 				}
 				mData.remove(tag);
+				mId.remove(tag.getmName());
 				uiOnDone.execute();
 				return null;
 			}
@@ -179,9 +198,10 @@ public enum TagManager {
 					return null;
 				}
 				//user.removeTag
-				((User)mUserManager.getItemById(uid)).removeTag(tag.getmId());
+				User usr = ((User)UserManager.INSTANCE.getItemById(uid));
+				usr.removeTag(tag.getmId());
 				//tag.removeUser
-				tag.removeUser(mUserManager.getMyID());
+				tag.removeUser(uid);
 				uiOnDone.execute();
 				return null;
 			}
@@ -195,7 +215,7 @@ public enum TagManager {
 		}.run();
 	}
 	//user - tag
-	public  void joinUserTag(final Tag tag, final String uid,
+	public  void joinUserTag(final Long tagid, final String uid,
 			final UiOnDone uiOnDone, final UiOnError uiOnError){
 		
 		new SCAsyncRequest(SCPriority.IMMEDIATELY) {
@@ -206,10 +226,11 @@ public enum TagManager {
 					uiOnError.execute();
 					return null;
 				}
+				Tag tag = getItemById(tagid);
 				//user.addTag
-				((User)mUserManager.getItemById(uid)).addTag(tag.getmId());
+				((User)UserManager.INSTANCE.getItemById(uid)).addTag(tag.getmId());
 				//tag.addUser
-				tag.addUser(mUserManager.getMyID());
+				tag.addUser(UserManager.INSTANCE.getMyID());
 		
 				uiOnDone.execute();
 				return null;
@@ -218,7 +239,7 @@ public enum TagManager {
 			@Override
 			public Void actionOnServer(Void... params) throws IOException,
 			ConnectException {
-				DBManager.INSTANCE.joinUserTag(uid, tag.getmId());
+				DBManager.INSTANCE.joinUserTag(uid, tagid);
 			return null;
 			}
 		}.run();
@@ -237,7 +258,7 @@ public enum TagManager {
 					return null;
 				}
 				//hotSpot.removeTag
-				((HotSpot)mHotSpotManager.getItemById(hsid)).removeTag(tag.getmId());
+				((HotSpot)HotSpotManager.INSTANCE.getItemById(hsid)).removeTag(tag.getmId());
 				//Tag.removeHotSpot
 				tag.leaveHotSpot(hsid);
 				
@@ -255,7 +276,7 @@ public enum TagManager {
 		}.run();
 	}
 	//hotspot - tag
-	public  void joinSpotTag(final Tag tag, final Long hsid,
+	public  void joinSpotTag(final Long tagid, final Long hsid,
 			final UiOnDone uiOnDone, final UiOnError uiOnError){
 		
 		new SCAsyncRequest(SCPriority.IMMEDIATELY) {
@@ -266,8 +287,9 @@ public enum TagManager {
 					uiOnError.execute();
 					return null;
 				}
+				Tag tag = getItemById(tagid);
 				//hotSpot.addTag
-				((HotSpot)mHotSpotManager.getItemById(hsid)).addTag(tag.getmId());
+				((HotSpot)HotSpotManager.INSTANCE.getItemById(hsid)).addTag(tag.getmId());
 				//Tag.addHotSpot
 				tag.joinHotSpot(hsid);
 				uiOnDone.execute();
@@ -277,7 +299,7 @@ public enum TagManager {
 			@Override
 			public Void actionOnServer(Void... params) throws IOException,
 			ConnectException {
-				DBManager.INSTANCE.joinSpotTag(hsid,tag.getmId());
+				DBManager.INSTANCE.joinSpotTag(hsid,tagid);
 			return null;
 			}
 		}.run();

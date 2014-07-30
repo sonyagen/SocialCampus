@@ -49,11 +49,29 @@ public enum DBManager  {
 		User u5 = new User("5L","","Victoria Bellotti");
 		User u6 = new User("","","anonym temp");
 		
+		u1.addTag(1L);
+		u1.addTag(2L);
+		u1.addTag(3L);
+		u1.addTag(4L);
+		u1.addTag(5L);
+		u1.addTag(6L);
+		u1.addTag(7L);
+		u1.addTag(8L);
+		u1.addTag(9L);
 		
-		
+		t1.addUser("103967014019877216822");
+		t2.addUser("103967014019877216822");
+		t3.addUser("103967014019877216822");
+		t4.addUser("103967014019877216822");
+		t5.addUser("103967014019877216822");
+		t6.addUser("103967014019877216822");
+		t7.addUser("103967014019877216822");
+		t8.addUser("103967014019877216822");
+		t9.addUser("103967014019877216822");
+
 		//Set<Long> mTags, Set<Long> mUseres
-		HotSpot h1 = new HotSpot(1L,0L,0L,"Ultimate Frisbee",32.777261, 35.0230416,"at taub 5","Ultimate Frisbee","1L","");
-		HotSpot h2 = new HotSpot(2L,0L,0L,"Social Campus Meeting #5",32.777929, 35.021593,"at taub 5","Social Campus Meeting #5","2L","");
+		HotSpot h1 = new HotSpot(1L,0L,0L,"Ultimate Frisbee",32.777261, 35.0230416,"at taub 5","Ultimate Frisbee","1L","http://24.media.tumblr.com/tumblr_m6vzp8nKQk1rx06nvo1_r2_500.jpg");
+		HotSpot h2 = new HotSpot(2L,0L,0L,"Social Campus Meeting #5",32.777929, 35.021593,"at taub 5","Social Campus Meeting #5","2L","http://img1.wikia.nocookie.net/__cb20120402214339/masseffect/images/d/db/Citadel_Space_Codex_Image.jpg");
 		HotSpot h3 = new HotSpot(3L,0L,0L,"Colloquium Prof Jan Vitek",32.776448, 35.022885,"at taub 5","Colloquium Prof Jan Vitek","1L","");
 		HotSpot h4 = new HotSpot(4L,0L,0L,"Cubban Salasa Party",32.776449, 35.022886,"at taub 5","Cubban Salasa Party","2L","");
 		

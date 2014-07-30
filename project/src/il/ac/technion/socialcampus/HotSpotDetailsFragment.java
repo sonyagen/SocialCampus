@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class HotSpotDetailsFragment extends InfoBoxFragment {
 
 	GoogleMap mMap;
+	TagsBoxFragment tagsBox;
 	
 	public HotSpotDetailsFragment() {
 		// Required empty public constructor
@@ -59,16 +61,24 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		headline = ((TextView) mView.findViewById(R.id.name));
 		timeStr = ((TextView)mView.findViewById(R.id.timeStr));
 		desc = ((TextView)mView.findViewById(R.id.description));
+		image = ((ImageView)mView.findViewById(R.id.image));
 		
-		TagsBoxFragment tagsBox = (TagsBoxFragment)getActivity().getSupportFragmentManager()
+		tagsBox = (TagsBoxFragment)getActivity().getSupportFragmentManager()
 				.findFragmentById(R.id.hsTagBox);
 		tagsBox.buildTags(HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getmTags());
 			
 		setView();
 		setMap();
-		return v;
-		
+		return v;	
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if(tagsBox!=null) 
+			tagsBox.buildTags(HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getmTags());
+	}
+
 	
 	private void setGoing() {
 		Set<User> u = UserManager.INSTANCE.getItemsbyIds(

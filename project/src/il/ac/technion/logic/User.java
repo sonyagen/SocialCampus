@@ -13,7 +13,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 
-public class User {
+public class User extends TagableObject{
 	private String mId;
 	private String mImage;
 	private String mName;
@@ -160,7 +160,6 @@ public class User {
 			return;
 		}
 		if(m_iconBitmap == null){
-			
 			new LoadProfileImage(bmImage).execute(this.mImage);
 		}else{
 			bmImage.setImageBitmap(m_iconBitmap); 

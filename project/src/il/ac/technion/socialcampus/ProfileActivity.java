@@ -122,6 +122,7 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		.addScope(Plus.SCOPE_PLUS_LOGIN).build();
 	}
 	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -153,6 +154,8 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if(tagsBox!=null) 
+			tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
 	}
 
 	@Override
@@ -485,6 +488,21 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 
 			});
 		}
+	}
+
+	@Override
+	public boolean isHotSpot() {
+		return false;
+	}
+
+	@Override
+	public String getUserId() {
+		return UserManager.INSTANCE.getMyID();
+	}
+
+	@Override
+	public Long getHotSpotId() {
+		return null;
 	}
 
 

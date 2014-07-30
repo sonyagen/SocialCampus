@@ -1,12 +1,21 @@
 package il.ac.technion.logic;
+import il.ac.technion.logic.User.LoadProfileImage;
+
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ImageView;
 
 
-public class HotSpot {
+
+public class HotSpot extends TagableObject{
 	private Long mId;
 	private Long mTime;
 	private Long mEndTime;
@@ -18,6 +27,7 @@ public class HotSpot {
 	private String mdescription;
 	private String mAdminId;
 	private String mImageURL;
+	private Bitmap m_iconBitmap = null;
 	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
 	private Set<String> mUsers = new TreeSet<String>();	
 
@@ -36,13 +46,14 @@ public class HotSpot {
 		  mdescription = hs.mdescription;
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
-		  mTags .addAll(hs.mTags);
-		  mUsers .addAll(hs.mUsers);
+		  m_iconBitmap = hs.m_iconBitmap;
+		  mTags.addAll(hs.mTags);
+		  mUsers.addAll(hs.mUsers);
 	
 	}	
 
-	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
-			String mLocation,String mdescription  ,String mAdminId,String mImageURL) {
+	public HotSpot(Long mId, Long mTime, Long mEndTime, String mName, Double lat, Double lon,
+			String mLocation, String mdescription, String mAdminId, String mImageURL) {
 		  this.mId = mId;
 		  this.mTime = mTime;
 		  this.mEndTime = mEndTime;
@@ -52,8 +63,10 @@ public class HotSpot {
 
 		  this.mLocation = mLocation;
 		  this.mdescription = mdescription;
-		  this. mAdminId = mAdminId;
+		  this.mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
+		  
+		  new LoadProfileImage().execute(this.mImageURL);
 	
 
 	}
@@ -74,8 +87,6 @@ public class HotSpot {
 		  this.mImageURL = mImageURL;
 		  this.mTags.addAll(mTags);
 		  this.mUsers.addAll(mUseres);
-
-
 	}
 
 	public HotSpot() {
@@ -150,6 +161,10 @@ public class HotSpot {
 	public void setImageURL(String mImageURL) {
 		this.mImageURL = mImageURL;
 	}
+	
+	public Bitmap getImage(){
+		return m_iconBitmap;
+	}
 	public void setmLocation(String mLocation) {
 		this.mLocation = mLocation;
 	}
@@ -201,16 +216,6 @@ public class HotSpot {
 		return mUsers.contains(id);
 	}
 
-//	public String getDistance() {
-//		double x = LocationManager.getLatitude() - this.m_latitude;
-//		double y = LocationManager.getLongitude() - this.m_longitude;
-//
-//		return Integer.toString((int)Math.sqrt(x*x+y*y));
-//	}
-	
-
-
-	
 
 	public void leaveHotSpot(String userId){
 		if(mUsers.contains(userId)){
@@ -230,4 +235,23 @@ public class HotSpot {
 		mTags.add(tId);
 	}
 
+	public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
+
+		protected Bitmap doInBackground(String... urls) {
+			String urldisplay = urls[0];
+			Bitmap mIcon11 = null;
+			try {
+				InputStream in = new java.net.URL(urldisplay).openStream();
+				mIcon11 = BitmapFactory.decodeStream(in);
+			} catch (Exception e) {
+				Log.e("Error", e.getMessage());
+				e.printStackTrace();
+			}
+			return mIcon11;
+		}
+
+		protected void onPostExecute(Bitmap result) {
+			m_iconBitmap = result;
+		}
+	}
 }

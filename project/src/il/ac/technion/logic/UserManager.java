@@ -16,8 +16,6 @@ import android.content.SharedPreferences;
 public enum UserManager{
 	INSTANCE;
 	public static final String anonymousUID = "";
-	TagManager mTagManager = TagManager.INSTANCE;
-	HotSpotManager mHotSpotManager = HotSpotManager.INSTANCE;
 	private User currentUser = createAnonymous();
 
 
@@ -32,9 +30,8 @@ public enum UserManager{
 		return !prefs.getString("il.ac.technion.socialcampus.LoggedIn",UserManager.anonymousUID)
 				.equals(UserManager.anonymousUID);
 	}
-	User getItemById(String id){
+	public User getItemById(String id){
 		return mData.get(id);
-
 	}
 
 	public  Set<User> getAllObjs() {
@@ -191,7 +188,7 @@ public enum UserManager{
 				}
 				Set<Long> tags = user.getmTags();
 				for(Long i: tags){
-					((Tag)mTagManager.getItemById(i)).removeUser(user.getmId());
+					((Tag)TagManager.INSTANCE.getItemById(i)).removeUser(user.getmId());
 				}
 				Set<Long> hots = user.getmHotSpots();
 				for(Long i: hots){

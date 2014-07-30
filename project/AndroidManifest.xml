@@ -40,22 +40,29 @@
         </activity>
         <activity
             android:name="il.ac.technion.socialcampus.ProfileActivity"
-            android:theme="@android:style/Theme.Holo.Light"
             android:label="@string/profile"
-              >
+            android:theme="@android:style/Theme.Holo.Light" >
         </activity>
-        <activity 
+        <activity
             android:name="il.ac.technion.socialcampus.HotSpotInfoActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
         <activity
             android:name="il.ac.technion.socialcampus.CreateNewHotSpotActivity"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
-         <activity
+        <activity
             android:name="il.ac.technion.socialcampus.MapPickerActivity"
-            android:theme="@android:style/Theme.Holo.Light.Dialog">
-         </activity>
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
+        </activity>
+        <activity
+            android:name="il.ac.technion.socialcampus.TagInfoActivity"
+            android:label="@string/title_activity_tag_info" >
+        </activity>
+        <activity
+            android:name="il.ac.technion.socialcampus.TagManagmentActivity"
+            android:label="@string/title_activity_tag_managment" >
+        </activity>
     </application>
 
 </manifest>

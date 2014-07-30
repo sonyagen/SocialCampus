@@ -18,6 +18,8 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -59,6 +61,7 @@ public class CreateHotSpotFragment extends Fragment {
 	private ImageButton ok;
 	private ImageButton cancel;
 	private EditText headline;
+	private ImageView image;
 	private EditText timeInput;
 	private EditText dateInput;
 	private EditText endTimeInput;
@@ -115,6 +118,7 @@ public class CreateHotSpotFragment extends Fragment {
 		
 		//text views
 		headline = (EditText)v.findViewById(R.id.name);
+		image = (ImageView)v.findViewById(R.id.image);
 		timeInput = (EditText)v.findViewById(R.id.timeStr);
 		dateInput = (EditText)v.findViewById(R.id.dateeStr);
 		endTimeInput = (EditText)v.findViewById(R.id.endtimeStr);
@@ -129,6 +133,7 @@ public class CreateHotSpotFragment extends Fragment {
 		
 		//init view
 		initTextFilds();
+		initImage();
 		initMap();
 		initGoing();
 		setListeners();
@@ -156,6 +161,29 @@ public class CreateHotSpotFragment extends Fragment {
 			endTimeInput.setText(TimeDateStringFactory.getTimeStr(soon));
 			endDateInput.setText(TimeDateStringFactory.getDateStr(soon));
 		}
+	}
+	
+	private void initImage(){
+		
+		image.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gotoGalery();
+			}
+		});
+		
+		if(isEdit){
+			Bitmap im = HotSpotManager.INSTANCE.getItemById(mCurrHotSpotId).getImage();
+			if (im!=null) image.setImageBitmap(im);
+		}
+	}
+	
+	int SELECT_PHOTO = 200;
+	private void gotoGalery(){
+		Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+		photoPickerIntent.setType("image/*");
+		startActivityForResult(photoPickerIntent, SELECT_PHOTO);    
+		
 	}
 	
 	private void initMap() {
@@ -303,6 +331,11 @@ public class CreateHotSpotFragment extends Fragment {
 			 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(chosenPos));
 			 mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)));
 		 }
+		if(requestCode == SELECT_PHOTO && 
+				resultCode == Activity.RESULT_OK){
+			//back from galary
+			 Uri selectedImage = data.getData();
+		}
 		 
 	 }
 

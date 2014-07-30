@@ -13,10 +13,6 @@ import java.util.TreeSet;
 public enum HotSpotManager {
 	INSTANCE;
 	
-	UserManager mUserManager = UserManager.INSTANCE;
-	TagManager mTagManager = TagManager.INSTANCE;
-
-	
 	protected HashMap<Long,HotSpot> mData = new HashMap<Long,HotSpot>();
 	
 	public HotSpot getItemById(Long id){
@@ -181,11 +177,11 @@ public enum HotSpotManager {
 				HotSpot hotSpot = getItemById(id);
 				Set<String> users = hotSpot.getmUseres();
 				for(String i: users){
-					((User)mUserManager.getItemById(i)).leaveHotSpot(hotSpot.getmId());
+					((User)UserManager.INSTANCE.getItemById(i)).leaveHotSpot(hotSpot.getmId());
 				}
 				Set<Long> tags = hotSpot.getmTags();
 				for(Long i: tags){
-					((Tag)mTagManager.getItemById(i)).leaveHotSpot(hotSpot.getmId());
+					((Tag)TagManager.INSTANCE.getItemById(i)).leaveHotSpot(hotSpot.getmId());
 				}
 				mData.remove(hotSpot.getmId());
 				if(uiOnDone!=null)uiOnDone.execute();
@@ -215,9 +211,9 @@ public enum HotSpotManager {
 					return null;
 				}
 				//user.removeHotSpot
-				((User)mUserManager.getItemById(uid)).leaveHotSpot(hotSpot.getmId());
+				((User)UserManager.INSTANCE.getItemById(uid)).leaveHotSpot(hotSpot.getmId());
 				//hotSpot.removeUser
-				hotSpot.leaveHotSpot(mUserManager.getMyID());
+				hotSpot.leaveHotSpot(UserManager.INSTANCE.getMyID());
 				if(uiOnDone!=null)uiOnDone.execute();
 				return null;
 			}
@@ -242,8 +238,8 @@ public enum HotSpotManager {
 					uiOnError.execute();
 					return null;
 				}
-				((User)mUserManager.getItemById(uid)).joinHotSpot(hotSpot.getmId());
-				hotSpot.joinHotSpot(mUserManager.getMyID());
+				((User)UserManager.INSTANCE.getItemById(uid)).joinHotSpot(hotSpot.getmId());
+				hotSpot.joinHotSpot(UserManager.INSTANCE.getMyID());
 				if(uiOnDone!=null)uiOnDone.execute();
 				return null;
 			}

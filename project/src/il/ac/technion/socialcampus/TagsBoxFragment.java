@@ -8,6 +8,7 @@ import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UserManager;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
@@ -35,6 +36,7 @@ public class TagsBoxFragment extends Fragment implements Tag.onTagClickListener{
 	private OnTagClickListener mListener;
 	private TextView tagsView;
 	private ImageButton editBtn;
+	
 	public TagsBoxFragment() {
 		// Required empty public constructor
 	}
@@ -61,14 +63,23 @@ public class TagsBoxFragment extends Fragment implements Tag.onTagClickListener{
 			@Override
 			public void onClick(View v) {
 				onEditBtnClick();
-				
 			}
 		});
 	}
 	
 	private void onEditBtnClick(){
-		Toast.makeText(getActivity(), "TODO: Manage tags..", Toast.LENGTH_LONG).show();
+		Intent intent = new Intent(getActivity(),TagManagmentActivity.class).
+				putExtra("type", isHotSpot() ? "hotspot" : "user").
+				putExtra("id", isHotSpot() ?  getHotSpotId(): getUserId());
+		 
+		startActivity(intent);
 	}
+	
+	boolean isHotSpot(){
+		return mListener.isHotSpot();
+	}
+	private Long getHotSpotId(){return mListener.getHotSpotId();}
+	private String getUserId(){return mListener.getUserId();}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -89,6 +100,12 @@ public class TagsBoxFragment extends Fragment implements Tag.onTagClickListener{
 
 	public interface OnTagClickListener {
 		public void onTagClick(long tid);
+
+		public String getUserId();
+
+		public Long getHotSpotId();
+
+		public boolean isHotSpot();
 	}
 	
 	/*
@@ -117,7 +134,7 @@ public class TagsBoxFragment extends Fragment implements Tag.onTagClickListener{
 	    }  
 	}
 	
-	private static class ClickableString extends ClickableSpan {  
+	public static class ClickableString extends ClickableSpan {  
 	    private View.OnClickListener mListener;          
 	    public ClickableString(View.OnClickListener listener) {              
 	        mListener = listener;  
@@ -132,19 +149,6 @@ public class TagsBoxFragment extends Fragment implements Tag.onTagClickListener{
 	public void buildTags(Set<Long> tagIds){
 		
 		tagsView.setText("");
-		
-	//TEMP for testing!===============================================
-		Set<Tag> tempTags = new TreeSet<Tag>();
-		tempTags.addAll(TagManager.INSTANCE.getAllObjs());
-		for(Tag t:tempTags){
-			//override of onTagClick
-			t.setListener(this);
-			SpannableString link = makeLinkSpan(t.getmName(), t);
-			tagsView.append("#");
-			tagsView.append(link);
-			tagsView.append("   ");
-		}
-	//END=============================================================
 		
 		Set<Tag> Tags = TagManager.INSTANCE.getItemsbyIds(tagIds);
 		for(Tag t:Tags){

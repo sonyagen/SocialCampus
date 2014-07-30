@@ -8,10 +8,12 @@ import il.ac.technion.logic.UserManager;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +50,7 @@ public class InfoBoxFragment extends Fragment {
 	ImageButton pinUnpin;
 	TextView headline;
 	TextView timeStr;
+	ImageView image;
 	TextView desc;
 
 	//TODO don't use mView - get an inflater instead.
@@ -87,6 +91,7 @@ public class InfoBoxFragment extends Fragment {
 		 headline = ((TextView) mView.findViewById(R.id.name));
 		 timeStr = ((TextView)mView.findViewById(R.id.timeStr));
 		 //desc = ((TextView)mView.findViewById(R.id.description));
+		 image = (ImageView)mView.findViewById(R.id.image);
 		 
 		 setView();
 		 return v;
@@ -210,10 +215,29 @@ public class InfoBoxFragment extends Fragment {
 		String name = mHotSpotData.getmName();
     	headline.setText(name);
     	
-    	Long time = mHotSpotData.getmTime();
-    	timeStr.setText(new SimpleDateFormat("HH:mm dd/MM").format(new Date(time)));
+    	Long time1 = mHotSpotData.getmTime();
+    	Long time2 = mHotSpotData.getEndTime();
     	
-    	if (desc!=null)desc.setText(mHotSpotData.getmDesc());
+    	Calendar c1 = Calendar.getInstance();
+    	c1.setTimeInMillis(time1);
+    	Calendar c2 = Calendar.getInstance();
+    	c2.setTimeInMillis(time2);
+    	
+   
+    	String s1;
+    	if( c1.get(Calendar.DATE) == c2.get(Calendar.DATE) )
+    		s1 = new SimpleDateFormat("HH:mm").format(new Date(time1));
+    	else
+    		s1 = new SimpleDateFormat("HH:mm dd/MM").format(new Date(time1));
+    	
+    	String s2 = new SimpleDateFormat("HH:mm dd/MM").format(new Date(time2));
+    	timeStr.setText(s1 + " - " + s2);
+    	
+    	Bitmap im = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getImage();
+		if (im!=null) image.setImageBitmap(im);
+		else image.setImageResource(R.drawable.wave);
+    	
+    	if (desc!=null)desc.setText("Description: " + mHotSpotData.getmDesc());
     	
     	resetInfoBoxBtn();
 	}
