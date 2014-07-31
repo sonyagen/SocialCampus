@@ -97,7 +97,7 @@ public enum DBManager  {
 		TAG.add(t8);
 		TAG.add(t9);
 		
-		joinUserHotSpot(3L,"");
+		joinUserHotSpot(3L,"103967014019877216822");
 		joinUserTag("",6L);
 		joinUserTag("",7L);
 		joinUserTag("",2L);

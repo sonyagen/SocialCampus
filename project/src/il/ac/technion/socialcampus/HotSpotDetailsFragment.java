@@ -62,6 +62,9 @@ public class HotSpotDetailsFragment extends InfoBoxFragment {
 		timeStr = ((TextView)mView.findViewById(R.id.timeStr));
 		desc = ((TextView)mView.findViewById(R.id.description));
 		image = ((ImageView)mView.findViewById(R.id.image));
+		attending1 = (ImageView)mView.findViewById(R.id.usr1);
+		attending2 = (ImageView)mView.findViewById(R.id.usr2);
+		attending3 = (ImageView)mView.findViewById(R.id.usr3);
 		
 		tagsBox = (TagsBoxFragment)getActivity().getSupportFragmentManager()
 				.findFragmentById(R.id.hsTagBox);

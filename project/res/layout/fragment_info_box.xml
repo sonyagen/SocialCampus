@@ -88,7 +88,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/profie_anonymous" />
+            android:src="@drawable/profie_anonymous" 
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/usr2"
@@ -96,7 +97,8 @@
             android:layout_height="40dp"
             android:layout_toLeftOf="@+id/usr1"
             android:layout_marginRight="3dp"
-            android:src="@drawable/profie_anonymous" />
+            android:src="@drawable/profie_anonymous" 
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/usr3"
@@ -105,7 +107,8 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/usr2"
             android:layout_marginRight="3dp"
-            android:src="@drawable/profie_anonymous" />
+            android:src="@drawable/profie_anonymous" 
+            android:visibility="gone"/>
 
     </RelativeLayout>
 		

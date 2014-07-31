@@ -10,6 +10,11 @@ import il.ac.technion.logic.UserManager;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.apache.commons.lang3.text.WordUtils;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -24,6 +29,7 @@ public class TagManagmentActivity extends FragmentActivity
 
 	private TagListAdapter adapter;
 	private ArrayList<Tag> mTagList = new ArrayList<Tag>();
+	private Context mContext = this;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,41 +92,81 @@ public class TagManagmentActivity extends FragmentActivity
 	}
 
 	@Override
-	public void addNewTag(String tagName, final Long id) {
+	public void addNewTag(String tagName, final Long tagId) {
 		// tag dosent exist in the system
-		if (id.equals(TagManager.defaultTagId)){
+		if (tagId.equals(TagManager.defaultTagId)){
 			
-			Toast.makeText(this, "new tag", Toast.LENGTH_SHORT).show();
+			//fixString
+			tagName = tagName.trim();
+			tagName = WordUtils.capitalize(tagName);
+			tagName = tagName.replaceAll("\\s+","");
 			
+			final String editedTagName = tagName;
+			
+			//dialog to approve new tagging
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	
+			 builder.setTitle("New Tag")
+			 .setMessage("The tag you're looking for dosn't exist. Press ok to create:  #"+ tagName + "\n")
+             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                 public void onClick(DialogInterface dialog, int id) {
+                	 TagManager.INSTANCE.addNewTag(new Tag(0L,editedTagName), new UiOnDone() {
+						@Override
+						public void execute() {
+							addTagToObj(TagManager.INSTANCE.getIdByTagName(editedTagName));
+						}
+					}, new UiOnError(mContext));
+                 }
+             })
+             .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                 public void onClick(DialogInterface dialog, int id) {
+                     // User cancelled the dialog
+                 }
+             });
+			 // Create the AlertDialog object and return it
+			 AlertDialog d = builder.create();
+			 d.show();
 		}
 		else{
-			//add tag id to user/hotSpot and refresh the view
-			String callerType = (String) getIntent().getExtras().get("type");
-			Long hotSpotId = callerType.equals("hotspot") ? (Long)getIntent().getExtras().get("id") : -1L;
-			
-			//if dealing with hotspot tags
-			if (callerType.equals("hotspot")){
-				TagManager.INSTANCE.joinSpotTag(id, hotSpotId, new UiOnDone() {
-					@Override
-					public void execute() {
-						mTagList.add(TagManager.INSTANCE.getItemsbyId(id));
-						adapter.notifyDataSetChanged();
-					}
-				}, new UiOnError(this));
-				
-			}
-			// dealing with user tags
-			else{
-				TagManager.INSTANCE.joinUserTag(id, UserManager.INSTANCE.getMyID(), new UiOnDone() {
-					@Override
-					public void execute() {
-						mTagList.add(TagManager.INSTANCE.getItemsbyId(id));
-						adapter.notifyDataSetChanged();
-					}
-				}, new UiOnError(this));
-			}
+			addTagToObj(tagId);
 		}
 		
+	}
+	
+	void addTagToObj(final Long tagId){
+		//add tag id to user/hotSpot and refresh the view
+		String callerType = (String) getIntent().getExtras().get("type");
+		Long hotSpotId = callerType.equals("hotspot") ? (Long)getIntent().getExtras().get("id") : -1L;
+		
+		//if dealing with hotspot tags
+		if (callerType.equals("hotspot")){
+			if(TagManager.INSTANCE.getItemsbyId(tagId).getmHotSpots().contains(hotSpotId)){
+				Toast.makeText(mContext, "Tag already attached.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			TagManager.INSTANCE.joinSpotTag(tagId, hotSpotId, new UiOnDone() {
+				@Override
+				public void execute() {
+					mTagList.add(TagManager.INSTANCE.getItemsbyId(tagId));
+					adapter.notifyDataSetChanged();
+				}
+			}, new UiOnError(this));
+			
+		}
+		// dealing with user tags
+		else{
+			if(TagManager.INSTANCE.getItemsbyId(tagId).getmUsers().contains(UserManager.INSTANCE.getMyID())){
+				Toast.makeText(mContext, "Tag already attached.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			TagManager.INSTANCE.joinUserTag(tagId, UserManager.INSTANCE.getMyID(), new UiOnDone() {
+				@Override
+				public void execute() {
+					mTagList.add(TagManager.INSTANCE.getItemsbyId(tagId));
+					adapter.notifyDataSetChanged();
+				}
+			}, new UiOnError(this));
+		}
 	}
 
 }

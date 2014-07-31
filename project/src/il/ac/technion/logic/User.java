@@ -1,4 +1,6 @@
 package il.ac.technion.logic;
+import il.ac.technion.socialcampus.LoadProfileImage;
+
 import java.io.InputStream;
 import java.util.Set;
 import java.util.TreeSet;
@@ -160,48 +162,9 @@ public class User extends TagableObject{
 			return;
 		}
 		if(m_iconBitmap == null){
-			new LoadProfileImage(bmImage).execute(this.mImage);
+			new LoadProfileImage(bmImage, this.m_iconBitmap).execute(this.mImage);
 		}else{
 			bmImage.setImageBitmap(m_iconBitmap); 
-		}
-	}
-
-
-
-
-	/**
-	 * Background Async task to load user profile picture from url
-	 * */
-	public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
-		ImageView bmImage;
-		// Profile pic image size in pixels
-		private static final int PROFILE_PIC_SIZE = 400;
-
-		public LoadProfileImage(ImageView bmImage) {
-			this.bmImage = bmImage;
-		}
-
-		protected Bitmap doInBackground(String... urls) {
-			String urldisplay = urls[0];
-			// by default the profile url gives 50x50 px image only
-			// we can replace the value with whatever dimension we want by
-			urldisplay = urldisplay.substring(0,
-					urldisplay.length() - 2)
-					+ PROFILE_PIC_SIZE;
-			Bitmap mIcon11 = null;
-			try {
-				InputStream in = new java.net.URL(urldisplay).openStream();
-				mIcon11 = BitmapFactory.decodeStream(in);
-			} catch (Exception e) {
-				Log.e("Error", e.getMessage());
-				e.printStackTrace();
-			}
-			return mIcon11;
-		}
-
-		protected void onPostExecute(Bitmap result) {
-			bmImage.setImageBitmap(result);
-			m_iconBitmap = result;
 		}
 	}
 }

@@ -8,6 +8,7 @@ import il.ac.technion.logic.UserManager;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -36,7 +37,6 @@ public class InfoBoxFragment extends Fragment {
 		public void shareBtnClick(Long id);
 		public void editBtnClick(Long id);
 		public void discardBtnClick(Long id);
-		
 	}
 	
 	ButtonInteraction mListener;
@@ -52,6 +52,9 @@ public class InfoBoxFragment extends Fragment {
 	TextView timeStr;
 	ImageView image;
 	TextView desc;
+	ImageView attending1;
+	ImageView attending2;
+	ImageView attending3;
 
 	//TODO don't use mView - get an inflater instead.
 	View mView;
@@ -92,6 +95,9 @@ public class InfoBoxFragment extends Fragment {
 		 timeStr = ((TextView)mView.findViewById(R.id.timeStr));
 		 //desc = ((TextView)mView.findViewById(R.id.description));
 		 image = (ImageView)mView.findViewById(R.id.image);
+		 attending1 = (ImageView)mView.findViewById(R.id.usr1);
+		 attending2 = (ImageView)mView.findViewById(R.id.usr2);
+		 attending3 = (ImageView)mView.findViewById(R.id.usr3);
 		 
 		 setView();
 		 return v;
@@ -222,7 +228,6 @@ public class InfoBoxFragment extends Fragment {
     	c1.setTimeInMillis(time1);
     	Calendar c2 = Calendar.getInstance();
     	c2.setTimeInMillis(time2);
-    	
    
     	String s1;
     	if( c1.get(Calendar.DATE) == c2.get(Calendar.DATE) )
@@ -238,6 +243,26 @@ public class InfoBoxFragment extends Fragment {
 		else image.setImageResource(R.drawable.wave);
     	
     	if (desc!=null)desc.setText("Description: " + mHotSpotData.getmDesc());
+    	ArrayList<String> users = new ArrayList<String>();
+    	users.addAll(HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getmUseres());
+    	attending3.setVisibility(View.GONE);
+    	attending2.setVisibility(View.GONE);
+    	attending1.setVisibility(View.GONE);
+    	switch (users.size()) {
+		
+		default:
+			attending3.setVisibility(View.VISIBLE);
+			UserManager.INSTANCE.getItemById(users.get(2)).setUserPhoto(attending3);
+		case 2:
+			attending2.setVisibility(View.VISIBLE);
+			UserManager.INSTANCE.getItemById(users.get(1)).setUserPhoto(attending2);
+		case 1:
+			attending1.setVisibility(View.VISIBLE);
+			UserManager.INSTANCE.getItemById(users.get(0)).setUserPhoto(attending1);
+		case 0:
+			break;
+
+		}
     	
     	resetInfoBoxBtn();
 	}

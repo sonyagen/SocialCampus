@@ -8,6 +8,7 @@ import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
 
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,6 +20,7 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -61,7 +63,7 @@ public class CreateHotSpotFragment extends Fragment {
 	private ImageButton ok;
 	private ImageButton cancel;
 	private EditText headline;
-	private ImageView image;
+	private ImageView imageView;
 	private EditText timeInput;
 	private EditText dateInput;
 	private EditText endTimeInput;
@@ -73,7 +75,8 @@ public class CreateHotSpotFragment extends Fragment {
 	private ImageView userImage3;
 	private boolean isEdit;
 	public static Long defHotSpotID = -1L;
-	
+	private Bitmap bitmap;
+	private String imgUriStr;
 	private CameraPosition chosenPos;
 	
   	public static CreateHotSpotFragment newInstance(Long hsid) {
@@ -118,7 +121,7 @@ public class CreateHotSpotFragment extends Fragment {
 		
 		//text views
 		headline = (EditText)v.findViewById(R.id.name);
-		image = (ImageView)v.findViewById(R.id.image);
+		imageView = (ImageView)v.findViewById(R.id.image);
 		timeInput = (EditText)v.findViewById(R.id.timeStr);
 		dateInput = (EditText)v.findViewById(R.id.dateeStr);
 		endTimeInput = (EditText)v.findViewById(R.id.endtimeStr);
@@ -151,21 +154,17 @@ public class CreateHotSpotFragment extends Fragment {
 			description.setText(mCurrHotSpotData.getmDesc());
 		}
 		else{
-			
 			Calendar now = Calendar.getInstance();
-			Calendar soon = Calendar.getInstance();
-			soon.roll(Calendar.MINUTE, 30);
-
 			timeInput.setText(TimeDateStringFactory.getTimeStr(now));
 			dateInput.setText(TimeDateStringFactory.getDateStr(now));
-			endTimeInput.setText(TimeDateStringFactory.getTimeStr(soon));
-			endDateInput.setText(TimeDateStringFactory.getDateStr(soon));
+			endTimeInput.setText(TimeDateStringFactory.getTimeStr(now));
+			endDateInput.setText(TimeDateStringFactory.getDateStr(now));
 		}
 	}
 	
 	private void initImage(){
-		
-		image.setOnClickListener(new OnClickListener() {
+		imgUriStr = null;
+		imageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				gotoGalery();
@@ -173,19 +172,12 @@ public class CreateHotSpotFragment extends Fragment {
 		});
 		
 		if(isEdit){
-			Bitmap im = HotSpotManager.INSTANCE.getItemById(mCurrHotSpotId).getImage();
-			if (im!=null) image.setImageBitmap(im);
+			imgUriStr = HotSpotManager.INSTANCE.getItemById(mCurrHotSpotId).getImageURL();
+			bitmap = HotSpotManager.INSTANCE.getItemById(mCurrHotSpotId).getImage();
+			if (bitmap!=null) imageView.setImageBitmap(bitmap);
 		}
 	}
-	
-	int SELECT_PHOTO = 200;
-	private void gotoGalery(){
-		Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-		photoPickerIntent.setType("image/*");
-		startActivityForResult(photoPickerIntent, SELECT_PHOTO);    
-		
-	}
-	
+
 	private void initMap() {
 		SupportMapFragment f = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.My_map));
 		mMap = f.getMap();
@@ -334,12 +326,51 @@ public class CreateHotSpotFragment extends Fragment {
 		if(requestCode == SELECT_PHOTO && 
 				resultCode == Activity.RESULT_OK){
 			//back from galary
-			 Uri selectedImage = data.getData();
+			Uri selectedImage = data.getData();
+			imgUriStr = selectedImage.toString();
+			try {
+				bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(selectedImage));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+            imageView.setImageBitmap(bitmap);
 		}
 		 
 	 }
 
-	//on time date selected
+	//generate obj from view
+	private HotSpot createHotSpotFromView(){
+		
+		Long mId = isEdit ? mCurrHotSpotData.getmId(): 0L;
+		Long mTime = startTime.getTimeInMillis();
+		Long mEndTime = endTime.getTimeInMillis();
+		String mLocation = place.getText().toString();
+		String mName = headline.getText().toString();
+		double lat = chosenPos.target.latitude;
+		double lon = chosenPos.target.longitude;
+		String mdescription = description.getText().toString();
+		String mAdminId = UserManager.INSTANCE.getMyID();
+		//TODO: if edit, was the picture changed? no get from mCurrHotSpotData
+		String mImageURL = imgUriStr.toString();
+		Set<Long> mTags = new TreeSet<Long>();
+		if(isEdit) mTags.addAll(mCurrHotSpotData.getmTags());
+		Set<String> mUseres = new TreeSet<String>();
+		if(isEdit) mUseres.addAll(mCurrHotSpotData.getmUseres());
+		else mUseres.add(UserManager.INSTANCE.getMyID());
+		
+		return new HotSpot(mId, mTime, mEndTime, mName, lat, lon, 
+				mLocation, mdescription, mAdminId, mImageURL, bitmap, mTags, mUseres);
+	}
+	
+	//open galary
+	int SELECT_PHOTO = 200;
+	private void gotoGalery(){
+		Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+		photoPickerIntent.setType("image/*");
+		startActivityForResult(photoPickerIntent, SELECT_PHOTO);    
+	}
+
+	// time date objects
 	Calendar startTime = Calendar.getInstance();
 	Calendar endTime = Calendar.getInstance();
 	
@@ -368,36 +399,10 @@ public class CreateHotSpotFragment extends Fragment {
         
 	}
 	class secondInnerTime implements OnTimeSetListener{
-		@Override
-		public void onTimeSet(TimePicker arg0, int hour, int minets) {
-			endTime.set(Calendar.HOUR_OF_DAY, hour);
-			endTime.set(Calendar.MINUTE, minets);
+			@Override
+			public void onTimeSet(TimePicker arg0, int hour, int minets) {
+				endTime.set(Calendar.HOUR_OF_DAY, hour);
+				endTime.set(Calendar.MINUTE, minets);
+			}
 		}
-	}
-	
-	
-	//generate obj from view
-	private HotSpot createHotSpotFromView(){
-		
-		Long mId = isEdit ? mCurrHotSpotData.getmId(): 0L;
-		Long mTime = startTime.getTimeInMillis();
-		Long mEndTime = endTime.getTimeInMillis();
-		String mLocation = place.getText().toString();
-		String mName = headline.getText().toString();
-		double lat = chosenPos.target.latitude;
-		double lon = chosenPos.target.longitude;
-		String mdescription = description.getText().toString();
-		String mAdminId = UserManager.INSTANCE.getMyID();
-		//TODO: if edit, was the picture changed? no get from mCurrHotSpotData
-		String mImageURL = isEdit ? "" : "";
-		Set<Long> mTags = new TreeSet<Long>();
-		if(isEdit) mTags.addAll(mCurrHotSpotData.getmTags());
-		Set<String> mUseres = new TreeSet<String>();
-		if(isEdit) mUseres.addAll(mCurrHotSpotData.getmUseres());
-		else mUseres.add(UserManager.INSTANCE.getMyID());
-		
-		return new HotSpot(mId, mTime, mEndTime, mName, lat, lon, 
-				mLocation, mdescription, mAdminId, mImageURL, mTags, mUseres);
-	}
-
 }

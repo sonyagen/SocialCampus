@@ -1,5 +1,5 @@
 package il.ac.technion.logic;
-import il.ac.technion.logic.User.LoadProfileImage;
+
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -27,7 +27,7 @@ public class HotSpot extends TagableObject{
 	private String mdescription;
 	private String mAdminId;
 	private String mImageURL;
-	private Bitmap m_iconBitmap = null;
+	private Bitmap mIconBitmap = null;
 	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
 	private Set<String> mUsers = new TreeSet<String>();	
 
@@ -46,7 +46,7 @@ public class HotSpot extends TagableObject{
 		  mdescription = hs.mdescription;
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
-		  m_iconBitmap = hs.m_iconBitmap;
+		  mIconBitmap = hs.mIconBitmap;
 		  mTags.addAll(hs.mTags);
 		  mUsers.addAll(hs.mUsers);
 	
@@ -66,13 +66,13 @@ public class HotSpot extends TagableObject{
 		  this.mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 		  
-		  new LoadProfileImage().execute(this.mImageURL);
+		  new LoadHotSpotImage(mIconBitmap).execute(this.mImageURL);
 	
 
 	}
 		
 	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
-			String mLocation,String mdescription ,String mAdminId,String mImageURL,
+			String mLocation,String mdescription ,String mAdminId,String mImageURL, Bitmap bitmap,
 			Set<Long> mTags, Set<String> mUseres) {
 		  this.mId = mId;
 		  this.mTime = mTime;
@@ -83,8 +83,9 @@ public class HotSpot extends TagableObject{
 
 		  this.mLocation = mLocation;
 		  this.mdescription = mdescription;
-		  this. mAdminId = mAdminId;
+		  this.mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
+		  this.mIconBitmap = bitmap;
 		  this.mTags.addAll(mTags);
 		  this.mUsers.addAll(mUseres);
 	}
@@ -163,7 +164,7 @@ public class HotSpot extends TagableObject{
 	}
 	
 	public Bitmap getImage(){
-		return m_iconBitmap;
+		return mIconBitmap;
 	}
 	public void setmLocation(String mLocation) {
 		this.mLocation = mLocation;
@@ -235,8 +236,14 @@ public class HotSpot extends TagableObject{
 		mTags.add(tId);
 	}
 
-	public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
+	public static class LoadHotSpotImage extends AsyncTask<String, Void, Bitmap> {
 
+		Bitmap iconBitmap;
+		
+		public LoadHotSpotImage(Bitmap icon){
+			iconBitmap = icon;
+		}
+		
 		protected Bitmap doInBackground(String... urls) {
 			String urldisplay = urls[0];
 			Bitmap mIcon11 = null;
@@ -251,7 +258,7 @@ public class HotSpot extends TagableObject{
 		}
 
 		protected void onPostExecute(Bitmap result) {
-			m_iconBitmap = result;
+			iconBitmap = result;
 		}
 	}
 }
