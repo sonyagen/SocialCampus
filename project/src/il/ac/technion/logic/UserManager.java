@@ -212,6 +212,7 @@ public enum UserManager{
 
 	public void logout(Context appContext) {
 		currentUser = createAnonymous();
+		
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		prefs.edit().remove("il.ac.technion.socialcampus.LoggedIn").commit();

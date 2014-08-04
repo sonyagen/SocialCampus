@@ -76,7 +76,7 @@ public class CreateHotSpotFragment extends Fragment {
 	private boolean isEdit;
 	public static Long defHotSpotID = -1L;
 	private Bitmap bitmap;
-	private String imgUriStr;
+	private String imgUriStr = "";
 	private CameraPosition chosenPos;
 	
   	public static CreateHotSpotFragment newInstance(Long hsid) {
@@ -163,7 +163,7 @@ public class CreateHotSpotFragment extends Fragment {
 	}
 	
 	private void initImage(){
-		imgUriStr = null;
+		imgUriStr = "";
 		imageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -99,6 +99,7 @@ public class MainActivity extends FragmentActivity implements InfoBoxFragment.Bu
         addNewBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				
 				startActivity(new Intent(getApplicationContext(), CreateNewHotSpotActivity.class));
 			}
 		});
@@ -108,6 +109,9 @@ public class MainActivity extends FragmentActivity implements InfoBoxFragment.Bu
         super.onResume();
         if(UserManager.getCurrentId(mContext)){
         	UserManager.INSTANCE.getMyData().setUserPhoto(imgProfilePic);
+        	addNewBtn.setVisibility(ImageButton.VISIBLE);
+        }else{
+        	addNewBtn.setVisibility(ImageButton.INVISIBLE);
         }
         hideInfoBox();
         setUpMap();

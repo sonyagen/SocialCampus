@@ -40,80 +40,7 @@ public enum DBManager  {
 	ArrayList<Tag> TAG = new ArrayList<Tag>();
 
 	DBManager(){
-		Tag t1 = new Tag(1L,"Frisbee");
-		Tag t2 = new Tag(2L,"Sports");
-		Tag t3 = new Tag(3L,"TeamSports");
-		Tag t4 = new Tag(4L,"CentralLawn");
-		Tag t5 = new Tag(5L,"Study");
-		Tag t6 = new Tag(6L,"SocialCampusProj");
-		Tag t7 = new Tag(7L,"Colloquium");
-		Tag t8 = new Tag(8L,"Salsa");
-		Tag t9 = new Tag(9L,"ClearHall");
-
-		User u1 = new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
-		User u2 = new User("2L","","Hanna-John Jadon");
-		User u3 = new User("3L","","Jim Maricondo");
-		User u4 = new User("4L","","Xin Song");
-		User u5 = new User("5L","","Victoria Bellotti");
-		User u6 = new User("","","anonym temp");
-
-		u1.addTag(1L);
-		u1.addTag(2L);
-		u1.addTag(3L);
-		u1.addTag(4L);
-		u1.addTag(5L);
-		u1.addTag(6L);
-		u1.addTag(7L);
-		u1.addTag(8L);
-		u1.addTag(9L);
-
-		t1.addUser("103967014019877216822");
-		t2.addUser("103967014019877216822");
-		t3.addUser("103967014019877216822");
-		t4.addUser("103967014019877216822");
-		t5.addUser("103967014019877216822");
-		t6.addUser("103967014019877216822");
-		t7.addUser("103967014019877216822");
-		t8.addUser("103967014019877216822");
-		t9.addUser("103967014019877216822");
-
-		//Set<Long> mTags, Set<Long> mUseres
-		HotSpot h1 = new HotSpot(1L,0L,0L,"Ultimate Frisbee",32.777261, 35.0230416,"at taub 5","Ultimate Frisbee","1L","http://24.media.tumblr.com/tumblr_m6vzp8nKQk1rx06nvo1_r2_500.jpg");
-		HotSpot h2 = new HotSpot(2L,0L,0L,"Social Campus Meeting #5",32.777929, 35.021593,"at taub 5","Social Campus Meeting #5","2L","http://img1.wikia.nocookie.net/__cb20120402214339/masseffect/images/d/db/Citadel_Space_Codex_Image.jpg");
-		HotSpot h3 = new HotSpot(3L,0L,0L,"Colloquium Prof Jan Vitek",32.776448, 35.022885,"at taub 5","Colloquium Prof Jan Vitek","1L","");
-		HotSpot h4 = new HotSpot(4L,0L,0L,"Cubban Salasa Party",32.776449, 35.022886,"at taub 5","Cubban Salasa Party","2L","");
-
-		HS.add(h1);
-		HS.add(h2);
-		HS.add(h3);
-		HS.add(h4);
-
-		USR.add(u1);
-		USR.add(u2);
-		USR.add(u3);
-		USR.add(u4);
-		USR.add(u5);
-		USR.add(u6);
-
-		TAG.add(t1);
-		TAG.add(t2);
-		TAG.add(t3);
-		TAG.add(t4);
-		TAG.add(t5);
-		TAG.add(t6);
-		TAG.add(t7);
-		TAG.add(t8);
-		TAG.add(t9);
-
-		joinUserHotSpot(3L,"103967014019877216822");
-		joinUserTag("",6L);
-		joinUserTag("",7L);
-		joinUserTag("",2L);
-		joinUserTag("",1L);
-		joinUserTag("",3L);
-		joinUserTag("",4L);
-		joinUserTag("",5L);
-
+		
 
 	}
 	//get by id
@@ -145,7 +72,7 @@ public enum DBManager  {
 		try {
 			APIRequest req = new APIRequest();
 			req.setRequestType(RequestType.GET);
-			req.setRequestUrl("/hotsopt");
+			req.setRequestUrl("/hotspot");
 			String str =  Communicator.execute(req);
 
 		
@@ -241,8 +168,39 @@ public enum DBManager  {
 		TAG.add(tag);
 		return tag;
 	}
-	HotSpot addHotSpot(HotSpot h){
-		HS.add(h);
+	HotSpot addHotSpot(HotSpot hotspot){
+		HotSpot h = new HotSpot();
+		try {
+			APIRequest req = new APIRequest();
+			req.addRequestParameter("mTime", String.valueOf(hotspot.getmTime()));
+			req.addRequestParameter("mEndTime", String.valueOf(hotspot.getEndTime()));
+			req.addRequestParameter("mName",hotspot.getmName());
+			req.addRequestParameter("mLong", String.valueOf(hotspot.getLongt()));
+			req.addRequestParameter("mLat", String.valueOf(hotspot.getLangt()));
+			req.addRequestParameter("mLocation", hotspot.getmLocation());
+			req.addRequestParameter("mDescription", hotspot.getmDesc());
+			req.addRequestParameter("mAdminId", String.valueOf(hotspot.getAdminId()));
+			req.addRequestParameter("mImageURL", hotspot.getImageURL());
+			
+			req.setRequestType(RequestType.POST);
+			
+			req.setRequestUrl("/hotspot");
+			String str = Communicator.execute(req);
+			h = new Gson().fromJson(str, HotSpot.class);
+			if (h == null){
+				resCode =  SCReturnCode.FAILURE;
+			}else{
+				resCode = SCReturnCode.SUCCESS;
+			}
+
+		} catch (JsonSyntaxException e) {
+			resCode = SCReturnCode.BAD_PARAM;
+			e.printStackTrace();
+		} catch (IOException e) {
+			resCode = SCReturnCode.BAD_CONNECTION;
+			e.printStackTrace();
+		}
+
 		return h;
 	}
 	//TODO:
@@ -254,9 +212,10 @@ public enum DBManager  {
 			req.addRequestParameter("mName", user.getmName());
 			req.addRequestParameter("mImage", user.getmImage());
 			req.setRequestType(RequestType.POST);
-			req.setRequestUrl("?");
-			Log.e("adding new user res:", Communicator.execute(req));
-			//u = new Gson().fromJson(Communicator.execute(req), User.class);
+			
+			req.setRequestUrl("/user");
+			String str = Communicator.execute(req);
+			u = new Gson().fromJson(str, User.class);
 			if (u == null){
 				resCode =  SCReturnCode.FAILURE;
 			}else{
