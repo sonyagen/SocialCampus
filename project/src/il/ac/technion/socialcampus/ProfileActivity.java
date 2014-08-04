@@ -137,7 +137,7 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	protected void onStart() {
 		super.onStart();
 
-		if(!UserManager.isLoggedIn(mContext)){
+		if(!UserManager.getCurrentId(mContext)){
 			mGoogleApiClient.connect();
 		}else{
 			updateUI(true);

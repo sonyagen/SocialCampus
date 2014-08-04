@@ -40,7 +40,7 @@ public class MainActivity extends FragmentActivity implements InfoBoxFragment.Bu
 	private GoogleMap mMap;
 	private final Context mContext = this;
 	
-	CameraPosition TECHNION = LocationFactury.TECHNION;
+	CameraPosition cameraPos = LocationFactury.TECHNION;
 	
 	private HashMap<String,Long> mMarkersHotSpotsTrans = new HashMap<String,Long>();
 	private HashMap<Long,Marker> mHotSpotsMarkersTrans = new HashMap<Long,Marker>();
@@ -106,7 +106,7 @@ public class MainActivity extends FragmentActivity implements InfoBoxFragment.Bu
     @Override
     protected void onResume() {
         super.onResume();
-        if(UserManager.isLoggedIn(mContext)){
+        if(UserManager.getCurrentId(mContext)){
         	UserManager.INSTANCE.getMyData().setUserPhoto(imgProfilePic);
         }
         hideInfoBox();
@@ -146,7 +146,13 @@ public class MainActivity extends FragmentActivity implements InfoBoxFragment.Bu
     private void setUpMap() {
     	if (mMap==null) return;
     	mMap.clear();
-    	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(TECHNION));
+    	LocationFactury myLocation =  new LocationFactury(mContext);
+    	
+    	if(myLocation.canGetLocation()){
+    		cameraPos = LocationFactury.buildCameraPosition(myLocation.getLatitude(), myLocation.getLongitude());
+    	}
+    	myLocation.stopUsingGPS();
+    	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
     	resetMarkers();
     }
     

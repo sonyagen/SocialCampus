@@ -18,6 +18,7 @@ import android.provider.Settings;
 
 public class LocationFactury extends Service implements LocationListener {
 
+	
 	static public final CameraPosition TECHNION =
             new CameraPosition.Builder().target(new LatLng(32.776778,35.023127))
                     .zoom(17f).bearing(300).tilt(50).build();

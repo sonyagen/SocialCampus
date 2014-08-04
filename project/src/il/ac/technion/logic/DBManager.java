@@ -1,10 +1,18 @@
 package il.ac.technion.logic;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 //import com.google.gson.Gson;
 //import com.google.gson.JsonSyntaxException;
@@ -18,19 +26,19 @@ import java.util.Set;
  */
 public enum DBManager  {
 	INSTANCE;
-	
-	public User getSonya(){
-		return new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
-	}
+
+//	public User getSonya(){
+//		return new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
+//	}
 	private SCReturnCode resCode = SCReturnCode.SUCCESS;
 	public SCReturnCode getResult(){
 		return resCode;
 	}
-	
+
 	ArrayList<HotSpot> HS = new ArrayList<HotSpot>();
 	ArrayList<User> USR = new ArrayList<User>();
 	ArrayList<Tag> TAG = new ArrayList<Tag>();
-	
+
 	DBManager(){
 		Tag t1 = new Tag(1L,"Frisbee");
 		Tag t2 = new Tag(2L,"Sports");
@@ -41,14 +49,14 @@ public enum DBManager  {
 		Tag t7 = new Tag(7L,"Colloquium");
 		Tag t8 = new Tag(8L,"Salsa");
 		Tag t9 = new Tag(9L,"ClearHall");
-		
+
 		User u1 = new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
 		User u2 = new User("2L","","Hanna-John Jadon");
 		User u3 = new User("3L","","Jim Maricondo");
 		User u4 = new User("4L","","Xin Song");
 		User u5 = new User("5L","","Victoria Bellotti");
 		User u6 = new User("","","anonym temp");
-		
+
 		u1.addTag(1L);
 		u1.addTag(2L);
 		u1.addTag(3L);
@@ -58,7 +66,7 @@ public enum DBManager  {
 		u1.addTag(7L);
 		u1.addTag(8L);
 		u1.addTag(9L);
-		
+
 		t1.addUser("103967014019877216822");
 		t2.addUser("103967014019877216822");
 		t3.addUser("103967014019877216822");
@@ -74,12 +82,12 @@ public enum DBManager  {
 		HotSpot h2 = new HotSpot(2L,0L,0L,"Social Campus Meeting #5",32.777929, 35.021593,"at taub 5","Social Campus Meeting #5","2L","http://img1.wikia.nocookie.net/__cb20120402214339/masseffect/images/d/db/Citadel_Space_Codex_Image.jpg");
 		HotSpot h3 = new HotSpot(3L,0L,0L,"Colloquium Prof Jan Vitek",32.776448, 35.022885,"at taub 5","Colloquium Prof Jan Vitek","1L","");
 		HotSpot h4 = new HotSpot(4L,0L,0L,"Cubban Salasa Party",32.776449, 35.022886,"at taub 5","Cubban Salasa Party","2L","");
-		
+
 		HS.add(h1);
 		HS.add(h2);
 		HS.add(h3);
 		HS.add(h4);
-		
+
 		USR.add(u1);
 		USR.add(u2);
 		USR.add(u3);
@@ -96,7 +104,7 @@ public enum DBManager  {
 		TAG.add(t7);
 		TAG.add(t8);
 		TAG.add(t9);
-		
+
 		joinUserHotSpot(3L,"103967014019877216822");
 		joinUserTag("",6L);
 		joinUserTag("",7L);
@@ -105,8 +113,8 @@ public enum DBManager  {
 		joinUserTag("",3L);
 		joinUserTag("",4L);
 		joinUserTag("",5L);
-		
-		
+
+
 	}
 	//get by id
 	private Tag getTag(Long id){
@@ -130,21 +138,104 @@ public enum DBManager  {
 		}
 		return null;
 	}
-	
+
 	//sync
 	public List<HotSpot> getAllHotSpots() {
-		return HS;
+		List<HotSpot>  list = new LinkedList<HotSpot>();
+		try {
+			APIRequest req = new APIRequest();
+			req.setRequestType(RequestType.GET);
+			req.setRequestUrl("/hotsopt");
+			String str =  Communicator.execute(req);
+
+		
+			Type listType = new TypeToken<List<HotSpot>>() {}.getType();
+			 list = new Gson().fromJson(str, listType);
+			
+			if (list == null){
+				resCode =  SCReturnCode.FAILURE;
+			}else{
+				resCode = SCReturnCode.SUCCESS;
+			}
+
+		} catch (JsonSyntaxException e) {
+			resCode = SCReturnCode.BAD_PARAM;
+			e.printStackTrace();
+		} catch (IOException e) {
+			resCode = SCReturnCode.BAD_CONNECTION;
+			e.printStackTrace();
+		} catch(Exception e){
+			Log.e(null, "failureeeeee");
+		}
+
+		return list;
 	}
 	List<HotSpot> getHotSpotsByRadios(double latitude,double lontitude, double radios){
 		return HS;
 	}
+	
 	List<User> getUsers(){
-		return USR;
-	}
-	List<Tag> getTags(){
-		return TAG;
+		List<User>  list = new LinkedList<User>();
+		try {
+			APIRequest req = new APIRequest();
+			req.setRequestType(RequestType.GET);
+			req.setRequestUrl("/user");
+			String str =  Communicator.execute(req);
+
+		
+			Type listType = new TypeToken<List<User>>() {}.getType();
+			 list = new Gson().fromJson(str, listType);
+			
+			if (list == null){
+				resCode =  SCReturnCode.FAILURE;
+			}else{
+				resCode = SCReturnCode.SUCCESS;
+			}
+
+		} catch (JsonSyntaxException e) {
+			resCode = SCReturnCode.BAD_PARAM;
+			e.printStackTrace();
+		} catch (IOException e) {
+			resCode = SCReturnCode.BAD_CONNECTION;
+			e.printStackTrace();
+		} catch(Exception e){
+			Log.e(null, "failureeeeee");
+		}
+
+		return list;
 	}
 	
+	List<Tag> getTags(){
+		List<Tag>  list = new LinkedList<Tag>();
+		try {
+			APIRequest req = new APIRequest();
+			req.setRequestType(RequestType.GET);
+			req.setRequestUrl("/tag");
+			String str =  Communicator.execute(req);
+
+		
+			Type listType = new TypeToken<List<Tag>>() {}.getType();
+			 list = new Gson().fromJson(str, listType);
+			
+			if (list == null){
+				resCode =  SCReturnCode.FAILURE;
+			}else{
+				resCode = SCReturnCode.SUCCESS;
+			}
+
+		} catch (JsonSyntaxException e) {
+			resCode = SCReturnCode.BAD_PARAM;
+			e.printStackTrace();
+		} catch (IOException e) {
+			resCode = SCReturnCode.BAD_CONNECTION;
+			e.printStackTrace();
+		} catch(Exception e){
+			Log.e(null, "failureeeeee");
+		}
+
+		return list;
+	}
+
 	//add
 	Tag addTag(Tag tag){
 		TAG.add(tag);
@@ -154,11 +245,35 @@ public enum DBManager  {
 		HS.add(h);
 		return h;
 	}
-	User addUser(User u){
-		USR.add(u);
+	//TODO:
+	public User addUser(User user) {
+		User u = new User();
+		try {
+			APIRequest req = new APIRequest();
+			req.addRequestParameter("mId", user.getmId());
+			req.addRequestParameter("mName", user.getmName());
+			req.addRequestParameter("mImage", user.getmImage());
+			req.setRequestType(RequestType.POST);
+			req.setRequestUrl("?");
+			Log.e("adding new user res:", Communicator.execute(req));
+			//u = new Gson().fromJson(Communicator.execute(req), User.class);
+			if (u == null){
+				resCode =  SCReturnCode.FAILURE;
+			}else{
+				resCode = SCReturnCode.SUCCESS;
+			}
+
+		} catch (JsonSyntaxException e) {
+			resCode = SCReturnCode.BAD_PARAM;
+			e.printStackTrace();
+		} catch (IOException e) {
+			resCode = SCReturnCode.BAD_CONNECTION;
+			e.printStackTrace();
+		}
+
 		return u;
 	}
-	
+
 	//remove
 	void removeTag(Tag tag){
 		TAG.remove(tag);
@@ -172,15 +287,15 @@ public enum DBManager  {
 
 	//update
 	void updateHotSpot(HotSpot hotSpot){
-		
+
 	}
 	void updateTag(Tag t){
-		
+
 	}
 	void updateUser(User u){
-		
+
 	}
-	
+
 	//join/break 
 	void breakUserHotSpot(Long hid, String uid){
 		getSpot(hid).getmUsers().remove(uid);
@@ -190,7 +305,7 @@ public enum DBManager  {
 		getSpot(hid).getmUsers().add(uid);
 		getUser(uid).getmHotSpots().add(hid);
 	}
-	
+
 	void breakUserTag(String uid, Long tid){
 		getTag(tid).getmUsers().remove(uid);
 		getUser(uid).getmTags().remove(tid);
@@ -199,7 +314,7 @@ public enum DBManager  {
 		getTag(tid).getmUsers().add(uid);
 		getUser(uid).getmTags().add(tid);
 	}
-	
+
 	void breakSpotTag(Long hid, Long tid){
 		getSpot(hid).getmTags().remove(tid);
 		getTag(tid).getmHotSpots().remove(hid);
@@ -210,543 +325,543 @@ public enum DBManager  {
 	}
 
 
-	
-////////////////////////////////	
-// 	Old file
-////////////////////////////////
-//
-//	private final String servletName = "LetsEatServlet";
-//	private final String operation = "function";
-//	private SCReturnCode resCode ;
-//
-//	public SCReturnCode getResult(){
-//		return resCode;
-//	}
-//
-//	
-//	public User addUser(User user) {
-//		User u = null;
-//		try {
-//			u = new Gson().fromJson(Communicator.execute(servletName,
-//					operation, LetsEatFunctions.ADD_USER.toString(), "user",
-//					new Gson().toJson(user)), User.class);
-//			if (u == null){
-//				resCode =  SCReturnCode.FAILURE;
-//			}else{
-//				resCode = SCReturnCode.SUCCESS;
-//			}
-//
-//		} catch (JsonSyntaxException e) {
-//			resCode = SCReturnCode.BAD_PARAM;
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			resCode = SCReturnCode.BAD_CONNECTION;
-//			e.printStackTrace();
-//		}
-//	
-//		return u;
-//	}
-//
-//
-//	
-//	public User updateUser(User user) {
-//		User u = null;
-//		try {
-//			u = new Gson().fromJson(Communicator.execute(servletName,
-//					operation, LetsEatFunctions.UPDATE_USER.toString(), "user",
-//					new Gson().toJson(user)), User.class);
-//			if (u == null){
-//				resCode =  SCReturnCode.FAILURE;
-//			} else{
-//				resCode = SCReturnCode.SUCCESS;
-//			}
-//
-//		} catch (JsonSyntaxException e) {
-//			resCode = SCReturnCode.BAD_PARAM;
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			resCode = SCReturnCode.BAD_CONNECTION;
-//			e.printStackTrace();
-//		}
-//		
-//		return u;
-//	}
-//
-//	
-////	public SCReturnCode removeUser(Long userID) {
-////		try {
-////			return new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.REMOVE_USER.toString(), "userID",
-////					new Gson().toJson(userID)), SCReturnCode.class);
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return resCode;
-////
-////	}
-//
-//	
-////	public User getUser(Long userID) {
-////		User u = null;
-////		try {
-////			u = new Gson().fromJson(Communicator.execute(servletName, "query",
-////			        "yes", operation, LetsEatFunctions.GET_USER.toString(), "userID",
-////					new Gson().toJson(userID)), User.class);
-////			if (u == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return u;
-////	}
-//
-//	
-////	public SCReturnCode updateUserLocation(Long userID, Double latitude,
-////			Double longitude, Long timeStamp) {
-////		try{
-////			return new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.UPDATE_USER_LOCATION.toString(), 
-////					"userID", new Gson().toJson(userID),
-////					"latitude", new Gson().toJson(latitude),
-////					"longitude", new Gson().toJson(longitude),
-////					"timeStamp", new Gson().toJson(timeStamp)), SCReturnCode.class);
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return resCode;
-////	}
-//
-//	
-////	public List<User> getUsersByRadios(Double latitude, Double longitude,
-////			Double radios) {
-////		List<User> l = null;
-////		try {
-////			l =  new Gson().fromJson(Communicator.execute(servletName, "query",
-////				        "yes", operation, LetsEatFunctions.GET_USERS_BY_RADIOS.toString(),
-////				        "latitude", new Gson().toJson(latitude),
-////				        "longitude", new Gson().toJson(longitude),
-////				        "radios", new Gson().toJson(radios)), new TypeToken<List<User>>() {}.getType());
-////			if (l == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////			
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return l;
-////		
-////	}
-//	
-////	public Restaurant addRestaurant(Restaurant restaurant) {
-////		Restaurant r = null;
-////		try {
-////			r = new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.ADD_RESTAURANT.toString(), "restaurant",
-////			        new Gson().toJson(restaurant)), Restaurant.class);
-////			if (r == null){
-////				resCode= SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_PARAM;
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_CONNECTION;
-////		}
-////		return r;
-////	}
-//
-//
-//	
-////	public Restaurant updateRestaurant(Restaurant restaurant) {
-////		Restaurant r = null;
-////		try {
-////			r = new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.UPDATE_RESTAURANT.toString(), "restaurant",
-////			        new Gson().toJson(restaurant)), Restaurant.class);
-////			if (r == null){
-////				resCode= SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_PARAM;
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_CONNECTION;
-////		}
-////		return r;
-////	}
-//
-//	
-////	public SCReturnCode removeRestaurant(Long restaurantID) {
-////		try {
-////			return new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.REMOVE_RESTAURANT.toString(), "restaurantID",
-////			        new Gson().toJson(restaurantID)), SCReturnCode.class);
-////
-////		} catch (JsonSyntaxException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_PARAM;
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_CONNECTION;
-////		}
-////		return resCode;
-////	}
-//
-//	
-////	public Restaurant getRestaurant(Long restaurantID) {
-////		Restaurant r = null;
-////		try {
-////			r = new Gson().fromJson(Communicator.execute(servletName, "query",
-////			        "yes", operation, LetsEatFunctions.GET_RESTAURANT.toString(), "restaurantID",
-////					new Gson().toJson(restaurantID)), Restaurant.class);
-////			if (r == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return r;
-////	}
-//
-//	
-////	public HotSpot addHotSpot(HotSpot delivery) {
-////		HotSpot d = null;
-////		try {
-////			d = new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.ADD_DELIVERY.toString(), "delivery",
-////			        new Gson().toJson(delivery)), HotSpot.class);
-////			if (d == null){
-////				resCode= SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_PARAM;
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_CONNECTION;
-////		}
-////		return d;
-////	}
-//
-//	
-////	public HotSpot updateHotSpot(HotSpot delivery) {
-////		HotSpot d = null;
-////		try {
-////			d = new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.UPDATE_DELIVERY.toString(), "delivery",
-////			        new Gson().toJson(delivery)), HotSpot.class);
-////			if (d == null){
-////				resCode= SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_PARAM;
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_CONNECTION;
-////		}
-////		return d;
-////	}
-//
-//	
-////	public SCReturnCode removeHotSpot(Long deliveryID) {
-////		try {
-////			return new Gson().fromJson(Communicator.execute(servletName,
-////					operation, LetsEatFunctions.REMOVE_DELIVERY.toString(), "deliveryID",
-////			        new Gson().toJson(deliveryID)), SCReturnCode.class);
-////		} catch (JsonSyntaxException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_PARAM;
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			resCode= SCReturnCode.BAD_CONNECTION;
-////		}
-////		return resCode;
-////	}
-//
-//	
-////	public HotSpot getHotSpot(Long deliveryID) {
-////		HotSpot d = null;
-////		try {
-////			d = new Gson().fromJson(Communicator.execute(servletName, "query",
-////			        "yes", operation, LetsEatFunctions.GET_DELIVERY.toString(), "deliveryID",
-////					new Gson().toJson(deliveryID)), HotSpot.class);
-////			if (d == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return d;
-////	}
-//
-//	
-////	public List<HotSpot> getHotSpotsByRadios(Double latitude,
-////			Double longitude, Double radios) {
-////		List<HotSpot> l = null;
-////		try {
-////			l = new Gson().fromJson(Communicator.execute(servletName, "query",
-////				        "yes", operation,
-////				        LetsEatFunctions.GET_DELIVERIES_BY_RADIOS.toString(),
-////				        "latitude", new Gson().toJson(latitude),
-////				        "longitude", new Gson().toJson(longitude),
-////				        "radios", new Gson().toJson(radios)), new TypeToken<List<HotSpot>>() {}.getType());
-////			if (l == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////			
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return l;
-////	}
-//
-//	
-////	public List<HotSpot> getDeliveriesByOwner(Long ownerID) {
-////		List<HotSpot> l = null;
-////		try {
-////			l = new Gson().fromJson(Communicator.execute(servletName, "query",
-////				        "yes", operation, LetsEatFunctions.GET_DELIVERIES_BY_OWNER.toString(),
-////				        "ownerID", new Gson().toJson(ownerID)), 
-////				        new TypeToken<List<HotSpot>>() {}.getType());
-////			
-////			if (l == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			} else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////			
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return l;
-////	}
-////
-////	
-////	public void joinHotSpot(Long hotSpotID, Long UserId) {
-////
-////		try {
-////			new Gson().fromJson(Communicator.execute(servletName, "query",
-////				        "yes", operation, LetsEatFunctions.JOIN_DELIVERY.toString(),
-////				        "deliveryID", new Gson().toJson(hotSpotID),
-////				        "UserId", new Gson().toJson(UserId)), Order.class);
-////			if (or == null){
-////				resCode =  SCReturnCode.FAILURE;
-////			}else{
-////				resCode = SCReturnCode.SUCCESS;
-////			}
-////	
-////		} catch (JsonSyntaxException e) {
-////			resCode = SCReturnCode.BAD_PARAM;
-////			e.printStackTrace();
-////		} catch (IOException e) {
-////			resCode = SCReturnCode.BAD_CONNECTION;
-////			e.printStackTrace();
-////		}
-////		return or;
-////	}
-//
-//	
-//	public SCReturnCode leaveHotSpot(Long deliveryID, Long UserID) {
-//		try {
-//			return new Gson().fromJson(Communicator.execute(servletName, "query",
-//				        "yes", operation, LetsEatFunctions.LEAVE_DELIVERY.toString(),
-//				        "deliveryID",  new Gson().toJson(deliveryID),
-//				        "UserID",  new Gson().toJson(UserID)), 
-//				        SCReturnCode.class);
-//	
-//		} catch (JsonSyntaxException e) {
-//			resCode = SCReturnCode.BAD_PARAM;
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			resCode = SCReturnCode.BAD_CONNECTION;
-//			e.printStackTrace();
-//		}
-//		return resCode;
-//	}
-//
-//	
-//	public List<Order> getOrders(Long deliveryID) {
-//		List<Order> l = null;
-//		try {
-//			l = new Gson().fromJson(Communicator.execute(servletName, "query",
-//				        "yes", operation, LetsEatFunctions.GET_ORDERS.toString(),
-//				        "deliveryID", new Gson().toJson(deliveryID)), 
-//				        new TypeToken<List<Order>>() {}.getType());
-//			
-//			if (l == null){
-//				resCode =  SCReturnCode.FAILURE;
-//			} else{
-//				resCode = SCReturnCode.SUCCESS;
-//			}
-//			
-//		} catch (JsonSyntaxException e) {
-//			resCode = SCReturnCode.BAD_PARAM;
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			resCode = SCReturnCode.BAD_CONNECTION;
-//			e.printStackTrace();
-//		}
-//		return l;
-//	}
-//
-//
-//	public List<BaseObj> getTagsByRadios(Double latitude,
-//			Double lontitude, Double radios) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//
-//	public Tag addTag(Tag hotSpot) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//
-//	public void updateTag(Tag mTag) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void removeTag(Long getmId) {
-//		// TODO Auto-generated method stub
-//		
-//		
-//	}
-//
-//
-//	public void leaveTag(Long getmId, Long uid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void joinTag(Long getmId, Long uid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void joinTag2(Long getmId, Long hsid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void breakUserHotSpot(Long getmId, Long uid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void joinUserHotSpot(Long getmId, Long uid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void breakUserTag(Long getmId, Long uid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void joinUserTag(Long getmId, Long uid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void breakSpotTag(Long getmId, Long hsid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public void joinSpotTag(Long getmId, Long hsid) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//
-//	public Collection<? extends User> getUsers() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//
-//	public Collection<? extends Tag> getTags() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//
-//	DBManager.INSTANCE.getAllHotSpots() Collection<? extends HotSpot> getAllHotSpots() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	
+
+	////////////////////////////////	
+	// 	Old file
+	////////////////////////////////
+	//
+	//	private final String servletName = "LetsEatServlet";
+	//	private final String operation = "function";
+	//	private SCReturnCode resCode ;
+	//
+	//	public SCReturnCode getResult(){
+	//		return resCode;
+	//	}
+	//
+	//	
+	//	public User addUser(User user) {
+	//		User u = null;
+	//		try {
+	//			u = new Gson().fromJson(Communicator.execute(servletName,
+	//					operation, LetsEatFunctions.ADD_USER.toString(), "user",
+	//					new Gson().toJson(user)), User.class);
+	//			if (u == null){
+	//				resCode =  SCReturnCode.FAILURE;
+	//			}else{
+	//				resCode = SCReturnCode.SUCCESS;
+	//			}
+	//
+	//		} catch (JsonSyntaxException e) {
+	//			resCode = SCReturnCode.BAD_PARAM;
+	//			e.printStackTrace();
+	//		} catch (IOException e) {
+	//			resCode = SCReturnCode.BAD_CONNECTION;
+	//			e.printStackTrace();
+	//		}
+	//	
+	//		return u;
+	//	}
+	//
+	//
+	//	
+	//	public User updateUser(User user) {
+	//		User u = null;
+	//		try {
+	//			u = new Gson().fromJson(Communicator.execute(servletName,
+	//					operation, LetsEatFunctions.UPDATE_USER.toString(), "user",
+	//					new Gson().toJson(user)), User.class);
+	//			if (u == null){
+	//				resCode =  SCReturnCode.FAILURE;
+	//			} else{
+	//				resCode = SCReturnCode.SUCCESS;
+	//			}
+	//
+	//		} catch (JsonSyntaxException e) {
+	//			resCode = SCReturnCode.BAD_PARAM;
+	//			e.printStackTrace();
+	//		} catch (IOException e) {
+	//			resCode = SCReturnCode.BAD_CONNECTION;
+	//			e.printStackTrace();
+	//		}
+	//		
+	//		return u;
+	//	}
+	//
+	//	
+	////	public SCReturnCode removeUser(Long userID) {
+	////		try {
+	////			return new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.REMOVE_USER.toString(), "userID",
+	////					new Gson().toJson(userID)), SCReturnCode.class);
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return resCode;
+	////
+	////	}
+	//
+	//	
+	////	public User getUser(Long userID) {
+	////		User u = null;
+	////		try {
+	////			u = new Gson().fromJson(Communicator.execute(servletName, "query",
+	////			        "yes", operation, LetsEatFunctions.GET_USER.toString(), "userID",
+	////					new Gson().toJson(userID)), User.class);
+	////			if (u == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return u;
+	////	}
+	//
+	//	
+	////	public SCReturnCode updateUserLocation(Long userID, Double latitude,
+	////			Double longitude, Long timeStamp) {
+	////		try{
+	////			return new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.UPDATE_USER_LOCATION.toString(), 
+	////					"userID", new Gson().toJson(userID),
+	////					"latitude", new Gson().toJson(latitude),
+	////					"longitude", new Gson().toJson(longitude),
+	////					"timeStamp", new Gson().toJson(timeStamp)), SCReturnCode.class);
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return resCode;
+	////	}
+	//
+	//	
+	////	public List<User> getUsersByRadios(Double latitude, Double longitude,
+	////			Double radios) {
+	////		List<User> l = null;
+	////		try {
+	////			l =  new Gson().fromJson(Communicator.execute(servletName, "query",
+	////				        "yes", operation, LetsEatFunctions.GET_USERS_BY_RADIOS.toString(),
+	////				        "latitude", new Gson().toJson(latitude),
+	////				        "longitude", new Gson().toJson(longitude),
+	////				        "radios", new Gson().toJson(radios)), new TypeToken<List<User>>() {}.getType());
+	////			if (l == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////			
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return l;
+	////		
+	////	}
+	//	
+	////	public Restaurant addRestaurant(Restaurant restaurant) {
+	////		Restaurant r = null;
+	////		try {
+	////			r = new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.ADD_RESTAURANT.toString(), "restaurant",
+	////			        new Gson().toJson(restaurant)), Restaurant.class);
+	////			if (r == null){
+	////				resCode= SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_PARAM;
+	////		} catch (IOException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_CONNECTION;
+	////		}
+	////		return r;
+	////	}
+	//
+	//
+	//	
+	////	public Restaurant updateRestaurant(Restaurant restaurant) {
+	////		Restaurant r = null;
+	////		try {
+	////			r = new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.UPDATE_RESTAURANT.toString(), "restaurant",
+	////			        new Gson().toJson(restaurant)), Restaurant.class);
+	////			if (r == null){
+	////				resCode= SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_PARAM;
+	////		} catch (IOException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_CONNECTION;
+	////		}
+	////		return r;
+	////	}
+	//
+	//	
+	////	public SCReturnCode removeRestaurant(Long restaurantID) {
+	////		try {
+	////			return new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.REMOVE_RESTAURANT.toString(), "restaurantID",
+	////			        new Gson().toJson(restaurantID)), SCReturnCode.class);
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_PARAM;
+	////		} catch (IOException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_CONNECTION;
+	////		}
+	////		return resCode;
+	////	}
+	//
+	//	
+	////	public Restaurant getRestaurant(Long restaurantID) {
+	////		Restaurant r = null;
+	////		try {
+	////			r = new Gson().fromJson(Communicator.execute(servletName, "query",
+	////			        "yes", operation, LetsEatFunctions.GET_RESTAURANT.toString(), "restaurantID",
+	////					new Gson().toJson(restaurantID)), Restaurant.class);
+	////			if (r == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return r;
+	////	}
+	//
+	//	
+	////	public HotSpot addHotSpot(HotSpot delivery) {
+	////		HotSpot d = null;
+	////		try {
+	////			d = new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.ADD_DELIVERY.toString(), "delivery",
+	////			        new Gson().toJson(delivery)), HotSpot.class);
+	////			if (d == null){
+	////				resCode= SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_PARAM;
+	////		} catch (IOException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_CONNECTION;
+	////		}
+	////		return d;
+	////	}
+	//
+	//	
+	////	public HotSpot updateHotSpot(HotSpot delivery) {
+	////		HotSpot d = null;
+	////		try {
+	////			d = new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.UPDATE_DELIVERY.toString(), "delivery",
+	////			        new Gson().toJson(delivery)), HotSpot.class);
+	////			if (d == null){
+	////				resCode= SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_PARAM;
+	////		} catch (IOException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_CONNECTION;
+	////		}
+	////		return d;
+	////	}
+	//
+	//	
+	////	public SCReturnCode removeHotSpot(Long deliveryID) {
+	////		try {
+	////			return new Gson().fromJson(Communicator.execute(servletName,
+	////					operation, LetsEatFunctions.REMOVE_DELIVERY.toString(), "deliveryID",
+	////			        new Gson().toJson(deliveryID)), SCReturnCode.class);
+	////		} catch (JsonSyntaxException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_PARAM;
+	////		} catch (IOException e) {
+	////			e.printStackTrace();
+	////			resCode= SCReturnCode.BAD_CONNECTION;
+	////		}
+	////		return resCode;
+	////	}
+	//
+	//	
+	////	public HotSpot getHotSpot(Long deliveryID) {
+	////		HotSpot d = null;
+	////		try {
+	////			d = new Gson().fromJson(Communicator.execute(servletName, "query",
+	////			        "yes", operation, LetsEatFunctions.GET_DELIVERY.toString(), "deliveryID",
+	////					new Gson().toJson(deliveryID)), HotSpot.class);
+	////			if (d == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return d;
+	////	}
+	//
+	//	
+	////	public List<HotSpot> getHotSpotsByRadios(Double latitude,
+	////			Double longitude, Double radios) {
+	////		List<HotSpot> l = null;
+	////		try {
+	////			l = new Gson().fromJson(Communicator.execute(servletName, "query",
+	////				        "yes", operation,
+	////				        LetsEatFunctions.GET_DELIVERIES_BY_RADIOS.toString(),
+	////				        "latitude", new Gson().toJson(latitude),
+	////				        "longitude", new Gson().toJson(longitude),
+	////				        "radios", new Gson().toJson(radios)), new TypeToken<List<HotSpot>>() {}.getType());
+	////			if (l == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////			
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return l;
+	////	}
+	//
+	//	
+	////	public List<HotSpot> getDeliveriesByOwner(Long ownerID) {
+	////		List<HotSpot> l = null;
+	////		try {
+	////			l = new Gson().fromJson(Communicator.execute(servletName, "query",
+	////				        "yes", operation, LetsEatFunctions.GET_DELIVERIES_BY_OWNER.toString(),
+	////				        "ownerID", new Gson().toJson(ownerID)), 
+	////				        new TypeToken<List<HotSpot>>() {}.getType());
+	////			
+	////			if (l == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			} else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////			
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return l;
+	////	}
+	////
+	////	
+	////	public void joinHotSpot(Long hotSpotID, Long UserId) {
+	////
+	////		try {
+	////			new Gson().fromJson(Communicator.execute(servletName, "query",
+	////				        "yes", operation, LetsEatFunctions.JOIN_DELIVERY.toString(),
+	////				        "deliveryID", new Gson().toJson(hotSpotID),
+	////				        "UserId", new Gson().toJson(UserId)), Order.class);
+	////			if (or == null){
+	////				resCode =  SCReturnCode.FAILURE;
+	////			}else{
+	////				resCode = SCReturnCode.SUCCESS;
+	////			}
+	////	
+	////		} catch (JsonSyntaxException e) {
+	////			resCode = SCReturnCode.BAD_PARAM;
+	////			e.printStackTrace();
+	////		} catch (IOException e) {
+	////			resCode = SCReturnCode.BAD_CONNECTION;
+	////			e.printStackTrace();
+	////		}
+	////		return or;
+	////	}
+	//
+	//	
+	//	public SCReturnCode leaveHotSpot(Long deliveryID, Long UserID) {
+	//		try {
+	//			return new Gson().fromJson(Communicator.execute(servletName, "query",
+	//				        "yes", operation, LetsEatFunctions.LEAVE_DELIVERY.toString(),
+	//				        "deliveryID",  new Gson().toJson(deliveryID),
+	//				        "UserID",  new Gson().toJson(UserID)), 
+	//				        SCReturnCode.class);
+	//	
+	//		} catch (JsonSyntaxException e) {
+	//			resCode = SCReturnCode.BAD_PARAM;
+	//			e.printStackTrace();
+	//		} catch (IOException e) {
+	//			resCode = SCReturnCode.BAD_CONNECTION;
+	//			e.printStackTrace();
+	//		}
+	//		return resCode;
+	//	}
+	//
+	//	
+	//	public List<Order> getOrders(Long deliveryID) {
+	//		List<Order> l = null;
+	//		try {
+	//			l = new Gson().fromJson(Communicator.execute(servletName, "query",
+	//				        "yes", operation, LetsEatFunctions.GET_ORDERS.toString(),
+	//				        "deliveryID", new Gson().toJson(deliveryID)), 
+	//				        new TypeToken<List<Order>>() {}.getType());
+	//			
+	//			if (l == null){
+	//				resCode =  SCReturnCode.FAILURE;
+	//			} else{
+	//				resCode = SCReturnCode.SUCCESS;
+	//			}
+	//			
+	//		} catch (JsonSyntaxException e) {
+	//			resCode = SCReturnCode.BAD_PARAM;
+	//			e.printStackTrace();
+	//		} catch (IOException e) {
+	//			resCode = SCReturnCode.BAD_CONNECTION;
+	//			e.printStackTrace();
+	//		}
+	//		return l;
+	//	}
+	//
+	//
+	//	public List<BaseObj> getTagsByRadios(Double latitude,
+	//			Double lontitude, Double radios) {
+	//		// TODO Auto-generated method stub
+	//		return null;
+	//	}
+	//
+	//
+	//	public Tag addTag(Tag hotSpot) {
+	//		// TODO Auto-generated method stub
+	//		return null;
+	//	}
+	//
+	//
+	//	public void updateTag(Tag mTag) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void removeTag(Long getmId) {
+	//		// TODO Auto-generated method stub
+	//		
+	//		
+	//	}
+	//
+	//
+	//	public void leaveTag(Long getmId, Long uid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void joinTag(Long getmId, Long uid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void joinTag2(Long getmId, Long hsid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void breakUserHotSpot(Long getmId, Long uid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void joinUserHotSpot(Long getmId, Long uid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void breakUserTag(Long getmId, Long uid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void joinUserTag(Long getmId, Long uid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void breakSpotTag(Long getmId, Long hsid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public void joinSpotTag(Long getmId, Long hsid) {
+	//		// TODO Auto-generated method stub
+	//		
+	//	}
+	//
+	//
+	//	public Collection<? extends User> getUsers() {
+	//		// TODO Auto-generated method stub
+	//		return null;
+	//	}
+	//
+	//
+	//	public Collection<? extends Tag> getTags() {
+	//		// TODO Auto-generated method stub
+	//		return null;
+	//	}
+	//
+	//
+	//	DBManager.INSTANCE.getAllHotSpots() Collection<? extends HotSpot> getAllHotSpots() {
+	//		// TODO Auto-generated method stub
+	//		return null;
+	//	}
+	//
+	//	
 }

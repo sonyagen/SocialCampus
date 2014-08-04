@@ -1,49 +1,57 @@
 package il.ac.technion.logic;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Scanner;
 
-import javax.net.ssl.HttpsURLConnection;
 
 
 public class Communicator {
 
-	public static String execute(String... strs) throws IOException {
+	public static String execute(APIRequest req) throws IOException {
+
 		String $ = "";
 
-		URL url = new URL("https://android-236504.appspot.com/" + strs[0]);
-		String param = encodeParams(strs);
-		HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-		con.setDoOutput(true);
-		con.setRequestMethod("POST");
-		con.setFixedLengthStreamingMode(param.getBytes().length);
-		con.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-		con.addRequestProperty("Auth", "123");
-		PrintWriter out = new PrintWriter(con.getOutputStream());
-		out.print(param);
-		out.close();
-		Scanner inStream = new Scanner(con.getInputStream());
-		while (inStream.hasNextLine())
-			$ += (inStream.nextLine());
-		inStream.close();
+		InputStream in;
+
+
+		URL url = req.getRequestUrl();//new URL(arg0.getStringExtra(URL));
+
+		HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+		urlConnection.setRequestMethod(req.getRequestType().value());
+		in = new BufferedInputStream(urlConnection.getInputStream());
+
+		$ = readStream(in);
+		in.close();
 
 		return $;
 	}
 
-	private static String encodeParams(String[] strs)
-			throws UnsupportedEncodingException {
-		String $ = "";
-		int len = strs.length;
-		for (int i = 1; i < len; i += 2) {
-			$ += $ + strs[i] + "=" + URLEncoder.encode(strs[i + 1], "UTF-8");
-			$ = len > i + 2 ? $ + "&" : $;
+	private static String readStream(InputStream is) {
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+		} catch (IOException e) {
+			//TODO: handle connection errorLog.e("something bad", "IOException", e);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				//TODO: handle connection error Log.e("something bad", "IOException", e);
+			}
 		}
-		return $;
+		return sb.toString();
 	}
+
 
 }

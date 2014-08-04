@@ -91,7 +91,7 @@ public class DBTools extends SQLiteOpenHelper {
 	}
 	/**
 	 *   a class describes the userHotSpotRelation table, used for sorting the elements
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum HotspotTagRelationFeilds{
@@ -114,7 +114,7 @@ public class DBTools extends SQLiteOpenHelper {
 	}
 	/**
 	 *   a class describes the userHotSpotRelation table, used for sorting the elements
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum UserHotspotRelationFeilds{
@@ -137,7 +137,7 @@ public class DBTools extends SQLiteOpenHelper {
 	}
 	/**
 	 *   a class describes the userTagRelation table, used for sorting the elements
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum UserTagRelationFeilds{
@@ -160,7 +160,7 @@ public class DBTools extends SQLiteOpenHelper {
 	}
 	/**
 	 *   a class describes the hotspots table, used for sorting the elements
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum HotspotsFeilds{
@@ -185,7 +185,7 @@ public class DBTools extends SQLiteOpenHelper {
 	}
 	/**
 	 *   a class describes the users table, used for sorting the elements
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum UsersFeilds{
@@ -209,7 +209,7 @@ public class DBTools extends SQLiteOpenHelper {
 	
 	/**
 	 *   a class describes the tags table, used for sorting the elements
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum TagFeilds{
@@ -231,7 +231,7 @@ public class DBTools extends SQLiteOpenHelper {
 
 	/**
 	 *   a class describes the order of the required items
-	 * @author Hanna John Jadon
+	 * @author Hanna-John Jadon
 	 *
 	 */
 	public enum Order{

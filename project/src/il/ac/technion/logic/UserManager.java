@@ -24,7 +24,7 @@ public enum UserManager{
 	public  boolean isLoggedIn(){
 		return !currentUser.getmId().equals(anonymousUID);
 	}
-	public static boolean isLoggedIn(Context appContext){
+	public static boolean getCurrentId(Context appContext){
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		return !prefs.getString("il.ac.technion.socialcampus.LoggedIn",UserManager.anonymousUID)
@@ -119,6 +119,7 @@ public enum UserManager{
 
 				return null;
 			}
+			
 		};
 		r.run();
 		return;

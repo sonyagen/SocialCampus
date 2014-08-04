@@ -24,7 +24,7 @@ public class HotSpot extends TagableObject{
 	private double mLat;
 
 	private String mLocation;
-	private String mdescription;
+	private String mDescription;
 	private String mAdminId;
 	private String mImageURL;
 	private Bitmap mIconBitmap = null;
@@ -43,7 +43,7 @@ public class HotSpot extends TagableObject{
 		  mLat = hs.mLat;
 
 		  mLocation = hs.mLocation;
-		  mdescription = hs.mdescription;
+		  mDescription = hs.mDescription;
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
 		  mIconBitmap = hs.mIconBitmap;
@@ -62,7 +62,7 @@ public class HotSpot extends TagableObject{
 		  this.mLat = lat;
 
 		  this.mLocation = mLocation;
-		  this.mdescription = mdescription;
+		  this.mDescription = mdescription;
 		  this.mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 		  
@@ -82,7 +82,7 @@ public class HotSpot extends TagableObject{
 		  this.mLat = lat;
 
 		  this.mLocation = mLocation;
-		  this.mdescription = mdescription;
+		  this.mDescription = mdescription;
 		  this.mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 		  this.mIconBitmap = bitmap;
@@ -179,11 +179,11 @@ public class HotSpot extends TagableObject{
 	}
 	
 	public String getmDesc() {
-		return mdescription;
+		return mDescription;
 	}
 
 	public void setmDesc(String mdescription) {
-		this.mdescription = mdescription;
+		this.mDescription = mdescription;
 	}
 
 

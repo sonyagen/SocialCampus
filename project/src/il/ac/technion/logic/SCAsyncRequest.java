@@ -53,7 +53,7 @@ import android.os.AsyncTask;
 public abstract class SCAsyncRequest
 {
 
-	private final class LEAsyncWorker extends AsyncTask<Void, Void, SCConnectionStatus> {
+	private final class SCAsyncWorker extends AsyncTask<Void, Void, SCConnectionStatus> {
 		@Override
 		final protected SCConnectionStatus doInBackground(Void... params) {
 			
@@ -92,6 +92,7 @@ public abstract class SCAsyncRequest
 			onProgress(values);
 			
 		}
+		
 
 		public void publish()
 		{
@@ -100,14 +101,14 @@ public abstract class SCAsyncRequest
 	}
 
 	SCPriority mPriority;
-	private  LEAsyncWorker mAsyncTask;
+	private  SCAsyncWorker mAsyncTask;
 
 	public SCAsyncRequest(SCPriority priority)
 	{
 		
 		mPriority = priority;
 		mPriority = SCPriority.IMMEDIATELY;
-		mAsyncTask = new LEAsyncWorker();
+		mAsyncTask = new SCAsyncWorker();
 	}
 	
 
@@ -117,6 +118,7 @@ public abstract class SCAsyncRequest
 	public Void onProgress(Void... values){
 		return null;
 	}
+	
 	
 	public void run()
 	{
