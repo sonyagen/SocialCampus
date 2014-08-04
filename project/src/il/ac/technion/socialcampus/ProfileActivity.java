@@ -129,7 +129,9 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		getMenuInflater().inflate(R.menu.profile, menu);
 		btnSignOut = menu.findItem(R.id.signout);
 		btnRevokeAccess = menu.findItem( R.id.revoke);
-		
+		if(btnSignOut!=null) btnSignOut.setVisible(false);
+		if(btnRevokeAccess!=null) btnRevokeAccess.setVisible(false);
+	
 		//onPrepare(menu);
 		return true;
 	}
@@ -305,7 +307,8 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		} else {
 			btnSignIn.setVisibility(View.VISIBLE);
 			all.setVisibility(View.GONE);
-
+			if(btnSignOut!=null) btnSignOut.setVisible(false);
+			if(btnRevokeAccess!=null) btnRevokeAccess.setVisible(false);
 		}
 	}
 	
