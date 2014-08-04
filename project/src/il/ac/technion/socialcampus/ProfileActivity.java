@@ -171,14 +171,16 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 			Intent intent) {
 		if (requestCode == RC_SIGN_IN) {
 			if (responseCode != RESULT_OK) {
-
+				
 				// If the error resolution was successful we should continue
 				// processing errors.
 				mSignInProgress = STATE_SIGN_IN;
 				mSignInClicked = false;
+				progressDialog.dismiss();
 			} else {
 				// If the error resolution was not successful or the user canceled,
 				// we should stop processing errors.
+				
 				mSignInProgress = STATE_DEFAULT;
 			}
 
