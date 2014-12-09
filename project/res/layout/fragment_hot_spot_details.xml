@@ -78,7 +78,8 @@
 	    android:id="@+id/description"
 	    android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:textSize="16sp" />
 	
 	<fragment 
 	        android:id="@+id/hsTagBox"
@@ -137,14 +138,16 @@
 	<fragment 
 		android:id="@+id/My_map"
 	  	android:layout_width="match_parent"
-	 	android:layout_height="120dp"
+	 	android:layout_height="150dp"
 	  	class="com.google.android.gms.maps.SupportMapFragment"
 	  	android:layout_marginBottom="20dp" />
 	
 	 <RelativeLayout
+	    android:id="@+id/goingStrip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" >
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp" >
         
 	    <TextView 
 		    android:layout_width="match_parent"
@@ -152,29 +155,56 @@
 		 	android:text="Going:"
 		 	android:textSize="18sp" 		/>
 	     
-        <ImageView
-            android:id="@+id/usr1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/profie_anonymous" />
+         <ImageView
+                android:id="@+id/dots1"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/circ_dark" />
 
-        <ImageView
-            android:id="@+id/usr2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/usr1"
-            android:layout_marginRight="3dp"
-            android:src="@drawable/profie_anonymous" />
+            <ImageView
+                android:id="@+id/dots2"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/dots1"
+                android:src="@drawable/circ_dark" />
 
-        <ImageView
-            android:id="@+id/usr3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/usr2"
-            android:layout_marginRight="3dp"
-            android:src="@drawable/profie_anonymous" />
+            <ImageView
+                android:id="@+id/dots3"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/dots2"
+                android:src="@drawable/circ_dark" />
+
+            <ImageView
+                android:id="@+id/usr1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/dots3"
+                android:src="@drawable/profie_anonymous" />
+
+            <ImageView
+                android:id="@+id/usr2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/usr1"
+                android:src="@drawable/profie_anonymous" />
+
+            <ImageView
+                android:id="@+id/usr3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/usr2"
+                android:src="@drawable/profie_anonymous" />
     </RelativeLayout>
     
 </LinearLayout>

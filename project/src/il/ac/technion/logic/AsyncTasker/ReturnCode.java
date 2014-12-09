@@ -1,5 +1,5 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.AsyncTasker;
 
-public enum SCReturnCode {
+public enum ReturnCode {
   BAD_PARAM, SUCCESS, ENTITY_NOT_EXISTS, FAILURE, DOES_NOT_EXIST, BAD_CONNECTION;
 }

@@ -1,6 +1,6 @@
 package il.ac.technion.socialcampus;
 
-import il.ac.technion.logic.TagManager;
+import il.ac.technion.logic.DataBase.LocalDBManager;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -53,7 +54,6 @@ public class TagSearchFragment extends Fragment {
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 		
-		
 		View v = inflater.inflate(R.layout.fragment_tag_search, container, false);
 		ImageButton addBtn = (ImageButton)v.findViewById(R.id.addBtn);
 		addBtn.setOnClickListener(new OnClickListener() {
@@ -68,12 +68,14 @@ public class TagSearchFragment extends Fragment {
 		
 		//set auto complete adapter
 		final ArrayList<String> tagStrings = new ArrayList<String>();
-		tagStrings.addAll(TagManager.INSTANCE.getAllTagStrings());
+		tagStrings.addAll(LocalDBManager.INSTANCE.TagDB.getAllTagStrings());
 		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, tagStrings);
 		
 		restName.setAdapter(adapter);
+		
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		
 		return v;
 	}
@@ -81,7 +83,8 @@ public class TagSearchFragment extends Fragment {
 	public void onAddBtnClick() {
 		if (mListener != null) {
 			String tagName = getTagFromView();
-			mListener.addNewTag(tagName, TagManager.INSTANCE.getIdByTagName(tagName));
+			Long id = LocalDBManager.INSTANCE.TagDB.getIdByTagName(tagName);
+			mListener.addNewTag(tagName, id);
 		}
 	}
 

@@ -1,4 +1,4 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.ServerCommunication;
 
 /**
  * Enumeration of request types.
@@ -7,8 +7,9 @@ public enum RequestType
 {
 	GET("GET"),
 	POST("POST"),
-	UPDATE("UPDATE"),
+	PUT("PUT"),
 	DELETE("DELETE");
+	
 
 	private final String value;
 

@@ -1,6 +1,5 @@
 package il.ac.technion.socialcampus;
 
-import il.ac.technion.socialcampus.TagsBoxFragment.ClickableString;
 import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.view.View;

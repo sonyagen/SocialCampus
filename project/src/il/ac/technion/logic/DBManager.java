@@ -1,5 +1,9 @@
 package il.ac.technion.logic;
 
+import il.ac.technion.logic.Objects.HotSpot;
+import il.ac.technion.logic.Objects.Tag;
+import il.ac.technion.logic.Objects.User;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -30,10 +34,10 @@ public enum DBManager  {
 //	public User getSonya(){
 //		return new User("103967014019877216822","https://lh6.googleusercontent.com/-ajL_apwzsJ4/AAAAAAAAAAI/AAAAAAAADK0/RmYXAMzxYOo/photo.jpg?sz=50","Sonya Gendelman");
 //	}
-	private SCReturnCode resCode = SCReturnCode.SUCCESS;
-	public SCReturnCode getResult(){
-		return resCode;
-	}
+//	private SCReturnCode resCode = SCReturnCode.SUCCESS;
+//	public SCReturnCode getResult(){
+//		return resCode;
+//	}
 
 	ArrayList<HotSpot> HS = new ArrayList<HotSpot>();
 	ArrayList<User> USR = new ArrayList<User>();
@@ -53,7 +57,7 @@ public enum DBManager  {
 	}
 	private User getUser(String id){
 		for(User t:USR){
-			if (t.getmId().equals(id))
+			if (t.getStringId().equals(id))
 				return t;
 		}
 		return null;
@@ -67,221 +71,221 @@ public enum DBManager  {
 	}
 
 	//sync
-	public List<HotSpot> getAllHotSpots() {
-		List<HotSpot>  list = new LinkedList<HotSpot>();
-		try {
-			APIRequest req = new APIRequest();
-			req.setRequestType(RequestType.GET);
-			req.setRequestUrl("/hotspot");
-			String str =  Communicator.execute(req);
+//	public List<HotSpot> getAllHotSpots() {
+//		List<HotSpot>  list = new LinkedList<HotSpot>();
+//		try {
+//			APIRequest req = new APIRequest();
+//			req.setRequestType(RequestType.GET);
+//			req.setRequestUrl("/hotspot");
+//			String str =  Communicator.execute(req);
+//
+//		
+//			Type listType = new TypeToken<List<HotSpot>>() {}.getType();
+//			 list = new Gson().fromJson(str, listType);
+//			
+//			if (list == null){
+//				resCode =  SCReturnCode.FAILURE;
+//			}else{
+//				resCode = SCReturnCode.SUCCESS;
+//			}
+//
+//		} catch (JsonSyntaxException e) {
+//			resCode = SCReturnCode.BAD_PARAM;
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			resCode = SCReturnCode.BAD_CONNECTION;
+//			e.printStackTrace();
+//		} catch(Exception e){
+//			Log.e(null, "failureeeeee");
+//		}
+//
+//		return list;
+//	}
+//	List<HotSpot> getHotSpotsByRadios(double latitude,double lontitude, double radios){
+//		return HS;
+//	}
+//	
+//	List<User> getUsers(){
+//		List<User>  list = new LinkedList<User>();
+//		try {
+//			APIRequest req = new APIRequest();
+//			req.setRequestType(RequestType.GET);
+//			req.setRequestUrl("/user");
+//			String str =  Communicator.execute(req);
+//
+//		
+//			Type listType = new TypeToken<List<User>>() {}.getType();
+//			 list = new Gson().fromJson(str, listType);
+//			
+//			if (list == null){
+//				resCode =  SCReturnCode.FAILURE;
+//			}else{
+//				resCode = SCReturnCode.SUCCESS;
+//			}
+//
+//		} catch (JsonSyntaxException e) {
+//			resCode = SCReturnCode.BAD_PARAM;
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			resCode = SCReturnCode.BAD_CONNECTION;
+//			e.printStackTrace();
+//		} catch(Exception e){
+//			Log.e(null, "failureeeeee");
+//		}
+//
+//		return list;
+//	}
+//	
+//	List<Tag> getTags(){
+//		List<Tag>  list = new LinkedList<Tag>();
+//		try {
+//			APIRequest req = new APIRequest();
+//			req.setRequestType(RequestType.GET);
+//			req.setRequestUrl("/tag");
+//			String str =  Communicator.execute(req);
+//
+//		
+//			Type listType = new TypeToken<List<Tag>>() {}.getType();
+//			 list = new Gson().fromJson(str, listType);
+//			
+//			if (list == null){
+//				resCode =  SCReturnCode.FAILURE;
+//			}else{
+//				resCode = SCReturnCode.SUCCESS;
+//			}
+//
+//		} catch (JsonSyntaxException e) {
+//			resCode = SCReturnCode.BAD_PARAM;
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			resCode = SCReturnCode.BAD_CONNECTION;
+//			e.printStackTrace();
+//		} catch(Exception e){
+//			Log.e(null, "failureeeeee");
+//		}
+//
+//		return list;
+//	}
+//
+//	//add
+//	Tag addTag(Tag tag){
+//		TAG.add(tag);
+//		return tag;
+//	}
+//	HotSpot addHotSpot(HotSpot hotspot){
+//		HotSpot h = new HotSpot();
+//		try {
+//			APIRequest req = new APIRequest();
+//			req.addRequestParameter("mTime", String.valueOf(hotspot.getmTime()));
+//			req.addRequestParameter("mEndTime", String.valueOf(hotspot.getEndTime()));
+//			req.addRequestParameter("mName",hotspot.getmName());
+//			req.addRequestParameter("mLong", String.valueOf(hotspot.getLongt()));
+//			req.addRequestParameter("mLat", String.valueOf(hotspot.getLangt()));
+//			req.addRequestParameter("mLocation", hotspot.getmLocation());
+//			req.addRequestParameter("mDescription", hotspot.getmDesc());
+//			req.addRequestParameter("mAdminId", String.valueOf(hotspot.getAdminId()));
+//			req.addRequestParameter("mImageURL", hotspot.getImageURL());
+//			
+//			req.setRequestType(RequestType.POST);
+//			
+//			req.setRequestUrl("/hotspot");
+//			String str = Communicator.execute(req);
+//			h = new Gson().fromJson(str, HotSpot.class);
+//			if (h == null){
+//				resCode =  SCReturnCode.FAILURE;
+//			}else{
+//				resCode = SCReturnCode.SUCCESS;
+//			}
+//
+//		} catch (JsonSyntaxException e) {
+//			resCode = SCReturnCode.BAD_PARAM;
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			resCode = SCReturnCode.BAD_CONNECTION;
+//			e.printStackTrace();
+//		}
+//
+//		return h;
+//	}
+//	//TODO:
+//	public User addUser(User user) {
+//		User u = new User();
+//		try {
+//			APIRequest req = new APIRequest();
+//			req.addRequestParameter("mId", user.getmId());
+//			req.addRequestParameter("mName", user.getmName());
+//			req.addRequestParameter("mImage", user.getmImage());
+//			req.setRequestType(RequestType.POST);
+//			
+//			req.setRequestUrl("/user");
+//			String str = Communicator.execute(req);
+//			u = new Gson().fromJson(str, User.class);
+//			if (u == null){
+//				resCode =  SCReturnCode.FAILURE;
+//			}else{
+//				resCode = SCReturnCode.SUCCESS;
+//			}
+//
+//		} catch (JsonSyntaxException e) {
+//			resCode = SCReturnCode.BAD_PARAM;
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			resCode = SCReturnCode.BAD_CONNECTION;
+//			e.printStackTrace();
+//		}
+//
+//		return u;
+//	}
+//
+//	//remove
+//	void removeTag(Tag tag){
+//		TAG.remove(tag);
+//	}
+//	void removeHotSpot(HotSpot h){
+//		HS.remove(h);
+//	}
+//	void removeUser(User u){
+//		USR.remove(u);
+//	}
+//
+//	//update
+//	void updateHotSpot(HotSpot hotSpot){
+//
+//	}
+//	void updateTag(Tag t){
+//
+//	}
+//	void updateUser(User u){
+//
+//	}
 
-		
-			Type listType = new TypeToken<List<HotSpot>>() {}.getType();
-			 list = new Gson().fromJson(str, listType);
-			
-			if (list == null){
-				resCode =  SCReturnCode.FAILURE;
-			}else{
-				resCode = SCReturnCode.SUCCESS;
-			}
-
-		} catch (JsonSyntaxException e) {
-			resCode = SCReturnCode.BAD_PARAM;
-			e.printStackTrace();
-		} catch (IOException e) {
-			resCode = SCReturnCode.BAD_CONNECTION;
-			e.printStackTrace();
-		} catch(Exception e){
-			Log.e(null, "failureeeeee");
-		}
-
-		return list;
-	}
-	List<HotSpot> getHotSpotsByRadios(double latitude,double lontitude, double radios){
-		return HS;
-	}
-	
-	List<User> getUsers(){
-		List<User>  list = new LinkedList<User>();
-		try {
-			APIRequest req = new APIRequest();
-			req.setRequestType(RequestType.GET);
-			req.setRequestUrl("/user");
-			String str =  Communicator.execute(req);
-
-		
-			Type listType = new TypeToken<List<User>>() {}.getType();
-			 list = new Gson().fromJson(str, listType);
-			
-			if (list == null){
-				resCode =  SCReturnCode.FAILURE;
-			}else{
-				resCode = SCReturnCode.SUCCESS;
-			}
-
-		} catch (JsonSyntaxException e) {
-			resCode = SCReturnCode.BAD_PARAM;
-			e.printStackTrace();
-		} catch (IOException e) {
-			resCode = SCReturnCode.BAD_CONNECTION;
-			e.printStackTrace();
-		} catch(Exception e){
-			Log.e(null, "failureeeeee");
-		}
-
-		return list;
-	}
-	
-	List<Tag> getTags(){
-		List<Tag>  list = new LinkedList<Tag>();
-		try {
-			APIRequest req = new APIRequest();
-			req.setRequestType(RequestType.GET);
-			req.setRequestUrl("/tag");
-			String str =  Communicator.execute(req);
-
-		
-			Type listType = new TypeToken<List<Tag>>() {}.getType();
-			 list = new Gson().fromJson(str, listType);
-			
-			if (list == null){
-				resCode =  SCReturnCode.FAILURE;
-			}else{
-				resCode = SCReturnCode.SUCCESS;
-			}
-
-		} catch (JsonSyntaxException e) {
-			resCode = SCReturnCode.BAD_PARAM;
-			e.printStackTrace();
-		} catch (IOException e) {
-			resCode = SCReturnCode.BAD_CONNECTION;
-			e.printStackTrace();
-		} catch(Exception e){
-			Log.e(null, "failureeeeee");
-		}
-
-		return list;
-	}
-
-	//add
-	Tag addTag(Tag tag){
-		TAG.add(tag);
-		return tag;
-	}
-	HotSpot addHotSpot(HotSpot hotspot){
-		HotSpot h = new HotSpot();
-		try {
-			APIRequest req = new APIRequest();
-			req.addRequestParameter("mTime", String.valueOf(hotspot.getmTime()));
-			req.addRequestParameter("mEndTime", String.valueOf(hotspot.getEndTime()));
-			req.addRequestParameter("mName",hotspot.getmName());
-			req.addRequestParameter("mLong", String.valueOf(hotspot.getLongt()));
-			req.addRequestParameter("mLat", String.valueOf(hotspot.getLangt()));
-			req.addRequestParameter("mLocation", hotspot.getmLocation());
-			req.addRequestParameter("mDescription", hotspot.getmDesc());
-			req.addRequestParameter("mAdminId", String.valueOf(hotspot.getAdminId()));
-			req.addRequestParameter("mImageURL", hotspot.getImageURL());
-			
-			req.setRequestType(RequestType.POST);
-			
-			req.setRequestUrl("/hotspot");
-			String str = Communicator.execute(req);
-			h = new Gson().fromJson(str, HotSpot.class);
-			if (h == null){
-				resCode =  SCReturnCode.FAILURE;
-			}else{
-				resCode = SCReturnCode.SUCCESS;
-			}
-
-		} catch (JsonSyntaxException e) {
-			resCode = SCReturnCode.BAD_PARAM;
-			e.printStackTrace();
-		} catch (IOException e) {
-			resCode = SCReturnCode.BAD_CONNECTION;
-			e.printStackTrace();
-		}
-
-		return h;
-	}
-	//TODO:
-	public User addUser(User user) {
-		User u = new User();
-		try {
-			APIRequest req = new APIRequest();
-			req.addRequestParameter("mId", user.getmId());
-			req.addRequestParameter("mName", user.getmName());
-			req.addRequestParameter("mImage", user.getmImage());
-			req.setRequestType(RequestType.POST);
-			
-			req.setRequestUrl("/user");
-			String str = Communicator.execute(req);
-			u = new Gson().fromJson(str, User.class);
-			if (u == null){
-				resCode =  SCReturnCode.FAILURE;
-			}else{
-				resCode = SCReturnCode.SUCCESS;
-			}
-
-		} catch (JsonSyntaxException e) {
-			resCode = SCReturnCode.BAD_PARAM;
-			e.printStackTrace();
-		} catch (IOException e) {
-			resCode = SCReturnCode.BAD_CONNECTION;
-			e.printStackTrace();
-		}
-
-		return u;
-	}
-
-	//remove
-	void removeTag(Tag tag){
-		TAG.remove(tag);
-	}
-	void removeHotSpot(HotSpot h){
-		HS.remove(h);
-	}
-	void removeUser(User u){
-		USR.remove(u);
-	}
-
-	//update
-	void updateHotSpot(HotSpot hotSpot){
-
-	}
-	void updateTag(Tag t){
-
-	}
-	void updateUser(User u){
-
-	}
-
-	//join/break 
-	void breakUserHotSpot(Long hid, String uid){
-		getSpot(hid).getmUsers().remove(uid);
-		getUser(uid).getmHotSpots().remove(hid);
-	}
-	void joinUserHotSpot(Long hid, String uid){
-		getSpot(hid).getmUsers().add(uid);
-		getUser(uid).getmHotSpots().add(hid);
-	}
-
-	void breakUserTag(String uid, Long tid){
-		getTag(tid).getmUsers().remove(uid);
-		getUser(uid).getmTags().remove(tid);
-	}
-	void joinUserTag(String uid, Long tid){
-		getTag(tid).getmUsers().add(uid);
-		getUser(uid).getmTags().add(tid);
-	}
-
-	void breakSpotTag(Long hid, Long tid){
-		getSpot(hid).getmTags().remove(tid);
-		getTag(tid).getmHotSpots().remove(hid);
-	}
-	void joinSpotTag(Long hid, Long tid){
-		getSpot(hid).getmTags().add(tid);
-		getTag(tid).getmHotSpots().add(hid);
-	}
+//	//join/break 
+//	void breakUserHotSpot(Long hid, String uid){
+//		getSpot(hid).getmUsers().remove(uid);
+//		getUser(uid).getmHotSpots().remove(hid);
+//	}
+//	void joinUserHotSpot(Long hid, String uid){
+//		getSpot(hid).getmUsers().add(uid);
+//		getUser(uid).getmHotSpots().add(hid);
+//	}
+//
+//	void breakUserTag(String uid, Long tid){
+//		getTag(tid).getmUsers().remove(uid);
+//		getUser(uid).getmTags().remove(tid);
+//	}
+//	void joinUserTag(String uid, Long tid){
+//		getTag(tid).getmUsers().add(uid);
+//		getUser(uid).getmTags().add(tid);
+//	}
+//
+//	void breakSpotTag(Long hid, Long tid){
+//		getSpot(hid).getmTags().remove(tid);
+//		getTag(tid).getmHotSpots().remove(hid);
+//	}
+//	void joinSpotTag(Long hid, Long tid){
+//		getSpot(hid).getmTags().add(tid);
+//		getTag(tid).getmHotSpots().add(hid);
+//	}
 
 
 

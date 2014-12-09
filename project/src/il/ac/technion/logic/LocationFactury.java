@@ -1,5 +1,7 @@
 package il.ac.technion.logic;
 
+import il.ac.technion.socialcampus.MyApplication;
+
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -23,12 +25,40 @@ public class LocationFactury extends Service implements LocationListener {
             new CameraPosition.Builder().target(new LatLng(32.776778,35.023127))
                     .zoom(17f).bearing(300).tilt(50).build();
 	
-	static public CameraPosition buildCameraPosition(double lat, double lng){
-		return new CameraPosition.Builder().target(new LatLng(lat,lng)).zoom(17f)
-                .bearing(300).tilt(50).build();
+	static public final CameraPosition CORNELL =
+            new CameraPosition.Builder().target(new LatLng(40.741894,-74.004396))
+                    .zoom(17f).bearing(300).tilt(50).build();
+	
+	static public CameraPosition buildCameraPositionWithoutZoom(double lat, double lng){
+		return new CameraPosition.Builder().target(new LatLng(lat,lng)).build();
+	}
+	
+	static public CameraPosition buildCameraPositionWithoutZoom(LatLng ll){
+		return new CameraPosition.Builder().target(ll).build();
 	}
 	
 	
+	static public CameraPosition buildCameraPosition(double lat, double lng){
+		return new CameraPosition.Builder().target(new LatLng(lat,lng)).zoom(17f)//.bearing(300)
+				.tilt(50).build();
+	}
+	
+	static public CameraPosition buildCameraPosition(LatLng ll){
+		return buildCameraPosition( ll.latitude, ll.longitude);
+	}
+	
+	static public CameraPosition currentPositionOrCornellTeach(){
+		LocationFactury myLocation =  new LocationFactury(MyApplication.getAppContext());
+    	
+    	CameraPosition cameraPos;
+		if(myLocation.canGetLocation()){
+    		cameraPos = LocationFactury.buildCameraPosition(myLocation.getLatitude(), myLocation.getLongitude());
+    	}else{
+    		cameraPos = LocationFactury.CORNELL;
+    	}
+    	myLocation.stopUsingGPS();
+    	return cameraPos;
+	}
 	private final Context mContext;
  
     // flag for GPS status

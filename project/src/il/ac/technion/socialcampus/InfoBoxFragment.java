@@ -1,10 +1,11 @@
 package il.ac.technion.socialcampus;
 
-import il.ac.technion.logic.HotSpot;
-import il.ac.technion.logic.HotSpotManager;
 import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
+import il.ac.technion.logic.DataBase.LocalDBManager;
+import il.ac.technion.logic.Objects.HotSpot;
+import il.ac.technion.logic.ServerCommunication.ServerRequestManager;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ public class InfoBoxFragment extends Fragment {
 		public void shareBtnClick(Long id);
 		public void editBtnClick(Long id);
 		public void discardBtnClick(Long id);
+		public int getRequestCodeForEditHotSpot();
 	}
 	
 	ButtonInteraction mListener;
@@ -52,6 +55,7 @@ public class InfoBoxFragment extends Fragment {
 	TextView timeStr;
 	ImageView image;
 	TextView desc;
+	TextView place;
 	ImageView attending1;
 	ImageView attending2;
 	ImageView attending3;
@@ -79,8 +83,8 @@ public class InfoBoxFragment extends Fragment {
 			mHotSpotDataId = getArguments().getLong(HotSpotId);
 		}
 	}
-
 	
+	RelativeLayout goingStrip;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -94,41 +98,48 @@ public class InfoBoxFragment extends Fragment {
 		 headline = ((TextView) mView.findViewById(R.id.name));
 		 timeStr = ((TextView)mView.findViewById(R.id.timeStr));
 		 //desc = ((TextView)mView.findViewById(R.id.description));
+		 place = ((TextView)mView.findViewById(R.id.place));
 		 image = (ImageView)mView.findViewById(R.id.image);
 		 attending1 = (ImageView)mView.findViewById(R.id.usr1);
 		 attending2 = (ImageView)mView.findViewById(R.id.usr2);
 		 attending3 = (ImageView)mView.findViewById(R.id.usr3);
-		 
+		 goingStrip = (RelativeLayout)mView.findViewById(R.id.goingStrip);
+		 goingStrip.setOnClickListener(new OnClickListener() {	
+				@Override
+				public void onClick(View v) {
+					startActivity(new Intent(getActivity(),GoingUsersActivity.class).putExtra("id",mHotSpotDataId));
+				}
+			});
 		 setView();
 		 return v;
 	}
 
 	public HotSpot getCurrHotSpot(){
-		return HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+		return LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId);
 	}
 	
 	public Long getCurrHotSpotId(){
 		return mHotSpotDataId;
+	}
+
+	protected boolean validateHotSpot(){
+		if (mHotSpotDataId == null) return false;
+		HotSpot mHotSpotData = LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId);
+		if (mHotSpotData == null) return false;
+		
+		return true;
 	}
 	
 	public void resetInfoBox(){
 		setView();
 	}
 	
-	protected boolean validateHotSpot(){
-		if (mHotSpotDataId == null) return false;
-		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
-		if (mHotSpotData == null) return false;
-		
-		return true;
-	}
-	
 	public void resetInfoBoxBtn(){
 		if (!validateHotSpot()) return;
 		
 		//if owner
-		if (HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getAdminId()
-				== UserManager.INSTANCE.getMyID()){
+		if (LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId).getAdminId()
+				.equals( UserManager.INSTANCE.getMyID()) ){
 			
 			//set edit btn instead of join-leave btn
 			joinLeave.setImageResource(R.drawable.ic_action_edit);
@@ -151,10 +162,10 @@ public class InfoBoxFragment extends Fragment {
 			return;
 		}
 		
-		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+		HotSpot mHotSpotData = LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId);
 		
 		//handle share
-		share.setVisibility(View.VISIBLE);
+		//share.setVisibility(View.VISIBLE);
 		share.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -163,7 +174,9 @@ public class InfoBoxFragment extends Fragment {
 		});
     	
 		//handle join-leave
-		if (UserManager.INSTANCE.getMyData().isJoined(mHotSpotData.getmId())){
+		Long hid = mHotSpotData.getmId();
+		String uid = UserManager.INSTANCE.getMyID();
+		if(LocalDBManager.INSTANCE.UserHotSpot.isCombined(uid, hid)){
 			joinLeave.setImageResource(R.drawable.leave);
 			joinLeave.setOnClickListener(new OnClickListener() {
 				@Override
@@ -183,7 +196,8 @@ public class InfoBoxFragment extends Fragment {
     	}
 		
 		//handle pin-unpin
-		if (UserManager.INSTANCE.getMyData().isPinned(mHotSpotData.getmId())){
+		//TODO PIN
+		if (UserManager.INSTANCE.isPinned(mHotSpotData.getmId())){
 			pinUnpin.setImageResource(R.drawable.ic_pinned);
 			pinUnpin.setOnClickListener(new OnClickListener() {
 				@Override
@@ -204,15 +218,15 @@ public class InfoBoxFragment extends Fragment {
 	}
 	
 	public void resetInfoBox(Long newId){
-		if(HotSpotManager.INSTANCE.getItemById(newId) == null) return;
-		//mHotSpotData = HotSpotManager.INSTANCE.getItemById(newId);
+		if(LocalDBManager.INSTANCE.HotSpotDB.getItemById(newId) == null) return;
+		//mHotSpotData = MyDB.INSTANCE.HotSpotDB.getItemById(newId);
 		mHotSpotDataId = newId;
 		resetInfoBox();
 	}
 	
 	protected void setView() {
 		if (mHotSpotDataId == null) return;
-		HotSpot mHotSpotData = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId);
+		HotSpot mHotSpotData = LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId);
 		if (mHotSpotData == null) return;
 		
 		//TODO: get the inflater instead using mView
@@ -220,31 +234,41 @@ public class InfoBoxFragment extends Fragment {
 		
 		String name = mHotSpotData.getmName();
     	headline.setText(name);
-    	
+    	   	
     	Long time1 = mHotSpotData.getmTime();
-    	Long time2 = mHotSpotData.getEndTime();
-    	
     	Calendar c1 = Calendar.getInstance();
     	c1.setTimeInMillis(time1);
+    	
+    	Long time2 = mHotSpotData.getEndTime();
     	Calendar c2 = Calendar.getInstance();
     	c2.setTimeInMillis(time2);
    
-    	String s1;
-    	if( c1.get(Calendar.DATE) == c2.get(Calendar.DATE) )
-    		s1 = new SimpleDateFormat("HH:mm").format(new Date(time1));
-    	else
-    		s1 = new SimpleDateFormat("HH:mm dd/MM").format(new Date(time1));
+    	if( c1.get(Calendar.DATE) == c2.get(Calendar.DATE) ){
+    		String timeStart = new SimpleDateFormat("HH:mm").format(new Date(time1));
+    		String timeEnd = new SimpleDateFormat("HH:mm").format(new Date(time2));
+    		String Date = new SimpleDateFormat("dd/MM").format(new Date(time2));
+    		timeStr.setText(timeStart + "-" + timeEnd + ", " + Date);
+    	}else{
+    		String timeStart = new SimpleDateFormat("HH:mm").format(new Date(time1));
+    		String timeEnd = new SimpleDateFormat("HH:mm").format(new Date(time2));
+    		String DateStart = new SimpleDateFormat("dd/MM").format(new Date(time1));
+    		String DateEnd = new SimpleDateFormat("dd/MM").format(new Date(time2));
+    		timeStr.setText(timeStart+ " " + DateStart + " - " + timeEnd+ " " + DateEnd );
+    	}
     	
-    	String s2 = new SimpleDateFormat("HH:mm dd/MM").format(new Date(time2));
-    	timeStr.setText(s1 + " - " + s2);
+    	String location = mHotSpotData.getmLocation();
+    	place.setText(location);
     	
-    	Bitmap im = HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getImage();
+    	HotSpot hs = LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId);
+    	Bitmap im = hs.getImage();
 		if (im!=null) image.setImageBitmap(im);
-		else image.setImageResource(R.drawable.wave);
+		else new LoadProfileImage(hs, image, im, false).execute(hs.getImageURL());
+		//image.setImageResource(R.drawable.wave);
     	
-    	if (desc!=null)desc.setText("Description: " + mHotSpotData.getmDesc());
+    	if (desc!=null)desc.setText(mHotSpotData.getmDesc());
+    	
     	ArrayList<String> users = new ArrayList<String>();
-    	users.addAll(HotSpotManager.INSTANCE.getItemById(mHotSpotDataId).getmUseres());
+    	users.addAll(LocalDBManager.INSTANCE.UserHotSpot.getUsersFromHotSpot(mHotSpotDataId));
     	attending3.setVisibility(View.GONE);
     	attending2.setVisibility(View.GONE);
     	attending1.setVisibility(View.GONE);
@@ -252,13 +276,13 @@ public class InfoBoxFragment extends Fragment {
 		
 		default:
 			attending3.setVisibility(View.VISIBLE);
-			UserManager.INSTANCE.getItemById(users.get(2)).setUserPhoto(attending3);
+			LocalDBManager.INSTANCE.UserDB.getItemById(users.get(2)).setUserPhoto(attending3);
 		case 2:
 			attending2.setVisibility(View.VISIBLE);
-			UserManager.INSTANCE.getItemById(users.get(1)).setUserPhoto(attending2);
+			LocalDBManager.INSTANCE.UserDB.getItemById(users.get(1)).setUserPhoto(attending2);
 		case 1:
 			attending1.setVisibility(View.VISIBLE);
-			UserManager.INSTANCE.getItemById(users.get(0)).setUserPhoto(attending1);
+			LocalDBManager.INSTANCE.UserDB.getItemById(users.get(0)).setUserPhoto(attending1);
 		case 0:
 			break;
 
@@ -267,12 +291,11 @@ public class InfoBoxFragment extends Fragment {
     	resetInfoBoxBtn();
 	}
 	
-
 	public void onJoinBtnClick() {
 		
 		HotSpot mCurrSpot = getCurrHotSpot();
-		HotSpotManager.INSTANCE.joinUserHotSpot(mCurrSpot, 
-			UserManager.INSTANCE.getMyID(), new UiOnDone() {
+		ServerRequestManager.INSTANCE.JoinUserHotSpot(
+			UserManager.INSTANCE.getMyID(), mCurrSpot.getId(),new UiOnDone() {
 				@Override
 				public void execute() {
 					resetInfoBoxBtn();
@@ -284,8 +307,8 @@ public class InfoBoxFragment extends Fragment {
 	
 	public void onLeaveBtnClick() {
 		HotSpot mCurrSpot = getCurrHotSpot();
-		HotSpotManager.INSTANCE.breakUserHotSpot(mCurrSpot, 
-				UserManager.INSTANCE.getMyID(), new UiOnDone() {
+		ServerRequestManager.INSTANCE.BreakUserHotSpot( 
+				UserManager.INSTANCE.getMyID(), mCurrSpot.getId(), new UiOnDone() {
 					@Override
 					public void execute() {
 						resetInfoBoxBtn();
@@ -303,29 +326,41 @@ public class InfoBoxFragment extends Fragment {
 	}
 	
 	public void onPinBtnClick() {
-		HotSpotManager.INSTANCE.PinUserHotSpotToUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
+		
+		UserManager.INSTANCE.pinHotSpot(mHotSpotDataId);
 		resetInfoBoxBtn();
-		if (mListener!=null) 
-			mListener.pinBtnClick(mHotSpotDataId);
+		mListener.pinBtnClick(mHotSpotDataId);
+		
+//		MyDB.INSTANCE.HotSpotDB.PinUserHotSpotToUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
+//		resetInfoBoxBtn();
+//		if (mListener!=null) 
+//			mListener.pinBtnClick(mHotSpotDataId);
 	}
 	
 	public void onUnpinBtnClick() {
-		HotSpotManager.INSTANCE.UnpinUserHotSpotFromUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
+		
+		UserManager.INSTANCE.unPinHotSpot(mHotSpotDataId);
 		resetInfoBoxBtn();
-		if (mListener!=null) 
-			mListener.unpinBtnClick(mHotSpotDataId);
+		mListener.unpinBtnClick(mHotSpotDataId);
+		
+//		MyDB.INSTANCE.HotSpotDB.UnpinUserHotSpotFromUser(getCurrHotSpotId(), UserManager.INSTANCE.getMyID());
+//		resetInfoBoxBtn();
+//		if (mListener!=null) 
+//			mListener.unpinBtnClick(mHotSpotDataId);
 	}
 
 	public void onEditBtnClick() {
-		if (mListener!=null) 
+		if (mListener!=null){ 
 			mListener.editBtnClick(mHotSpotDataId);
-		
-		startActivity(new Intent(getActivity(), CreateNewHotSpotActivity.class)
-			.putExtra(CreateNewHotSpotActivity.HotSpotId, mHotSpotDataId));
+
+			startActivityForResult((new Intent(getActivity(), CreateNewHotSpotActivity.class)
+				.putExtra(CreateNewHotSpotActivity.HotSpotId, mHotSpotDataId)), mListener.getRequestCodeForEditHotSpot());
+		}
 	}
 	
 	public void onDiscardBtnClick() {
-		HotSpotManager.INSTANCE.removeHotSpot(mHotSpotDataId, new UiOnDone() {
+		ServerRequestManager.INSTANCE.removeHotSpots(
+				LocalDBManager.INSTANCE.HotSpotDB.getItemById(mHotSpotDataId), new UiOnDone() {
 			
 			@Override
 			public void execute() {
@@ -333,8 +368,6 @@ public class InfoBoxFragment extends Fragment {
 				
 			}
 		}, null); 
-		if (mListener!=null) 
-			mListener.discardBtnClick(mHotSpotDataId);
 	}
 
 	@Override
@@ -343,8 +376,8 @@ public class InfoBoxFragment extends Fragment {
 		try {
 			mListener = (ButtonInteraction) activity;
 		} catch (ClassCastException e) {
-			//throw new ClassCastException(activity.toString()
-			//		+ " must implement OnFragmentInteractionListener");
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnFragmentInteractionListener");
 		}
 	}
 

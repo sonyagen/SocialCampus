@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EventAdminBoardFrag"
+      android:orientation="vertical"  >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"  >
+	    <TextView 
+	        android:id="@+id/headline"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content" 
+		    android:textSize="20sp"
+		    android:layout_marginBottom="10dp" />
+	    
+	    <ImageButton
+            android:id="@+id/createEventBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/circ"
+            android:contentDescription="add new event"
+            android:src="@drawable/ic_action_new" />
+    </RelativeLayout>
+    <ScrollView 
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+       
+	    <LinearLayout 
+		    android:id="@+id/infoAdminBoxesHolder"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:background="@drawable/hot_spot_info_box_backround_dark"
+		    android:padding="10dp" >
+	        
+	         <TextView 
+		        android:id="@+id/errMsg"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" 
+			    android:visibility="gone" />
+	        
+	        
+	    </LinearLayout>
+	</ScrollView>     
+	
+</LinearLayout>
+

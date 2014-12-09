@@ -1,4 +1,4 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.ServerCommunication;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -6,23 +6,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import android.util.Log;
-
-/**
- * Request object.
- */
-public class APIRequest
-{
-
-    public static final String JSON_DATA = "JSON_DATA";
+public abstract class RequestDetails {
+	
+	public static final String JSON_DATA = "JSON_DATA";
 
     private String baseRequestUrl = "http://api.social-campus.org/v1.0/event";
 
     private RequestType requestType;
-    private String requestUrl;
+    protected String requestUrl;
     private Map<String, String> requestParametersMap = new HashMap<String, String>();
 
-    public APIRequest() {
+    public RequestDetails() {
     }
 
     /**
@@ -65,7 +59,6 @@ public class APIRequest
      */
     public URL getRequestUrl()
     {
-
         String requestUrl = this.requestUrl;
 
         Iterator<String> keySetIterator = getRequestParametersMap().keySet().iterator();
@@ -77,12 +70,15 @@ public class APIRequest
             requestUrl = requestUrl.replaceAll(regex, getRequestParametersMap().get(key));
         }
 
-
         URL url;
         try
         {
-            url = new URL(baseRequestUrl.concat(requestUrl));
-
+        	////////DLELETE!!!
+        	//requestUrl = "/tag/1/hotspot/8";
+            /////////////////////////
+            url = new URL(baseRequestUrl.concat(requestUrl)); 
+            
+           
         }
         catch (MalformedURLException e)
         {
@@ -97,7 +93,7 @@ public class APIRequest
      *
      * @param requestUrl The API url.
      */
-    public void setRequestUrl(String requestUrl)
+    protected void setRequestUrl(String requestUrl)
     {
         this.requestUrl = requestUrl;
     }
@@ -108,7 +104,7 @@ public class APIRequest
      * @param parameterName Name of the parameter.
      * @param parameterValue The value of the parameter.
      */
-    public void addRequestParameter (String parameterName, String parameterValue)
+    protected void addRequestParameter (String parameterName, String parameterValue)
     {
         getRequestParametersMap().put(parameterName, parameterValue);
     }
@@ -120,6 +116,22 @@ public class APIRequest
      */
     public Map<String, String> getRequestParametersMap()
     {
+//    	//TEMP!!!!!!
+//    	
+//    	 Map<String, String> requestParametersMap2 = new HashMap<String, String>();
+//    	 
+//    	 requestParametersMap2.put("hotspotid", "8");
+//    	 requestParametersMap2.put("tagid", "1");
+//    	 return requestParametersMap2;
+//    	
+//    	////////////////////////
         return requestParametersMap;
     }
+    
+    public abstract void buildeAddRequestParameter();
+    public abstract void buildeRemoveRequestParameter();
+    public abstract void buildeUpdateRequestParameter();
+    
+
+
 }

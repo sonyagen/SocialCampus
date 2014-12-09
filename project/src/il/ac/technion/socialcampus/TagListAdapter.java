@@ -1,10 +1,10 @@
 package il.ac.technion.socialcampus;
 
-import il.ac.technion.logic.Tag;
-import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
+import il.ac.technion.logic.Objects.Tag;
+import il.ac.technion.logic.ServerCommunication.ServerRequestManager;
 
 import java.util.ArrayList;
 
@@ -70,7 +70,7 @@ public class TagListAdapter extends ArrayAdapter<Tag> {
 			@Override
 			public void onClick(View arg0) {
 				if(mIsHotSpot){
-					TagManager.INSTANCE.breakSpotTag(t, mHotSpotId, new UiOnDone() {
+					ServerRequestManager.INSTANCE.BreakHotSpotTag(mHotSpotId, t.getId(), new UiOnDone() {
 						
 						@Override
 						public void execute() {
@@ -80,19 +80,16 @@ public class TagListAdapter extends ArrayAdapter<Tag> {
 						}
 					}, new UiOnError(mContext));
 				}else{
-					TagManager.INSTANCE.breakUserTag(t, UserManager.INSTANCE.getMyID(), new UiOnDone() {
+					ServerRequestManager.INSTANCE.BreakUserTag(UserManager.INSTANCE.getMyID(),
+							t.getId(), new UiOnDone() {
 						
 						@Override
 						public void execute() {
-							Toast.makeText(mContext, "delete", Toast.LENGTH_SHORT).show();
 							mTags.remove(position);
 							mThis.notifyDataSetChanged();
 						}
 					}, new UiOnError(mContext));
-					
 				}
-				
-				
 			}
 		});
 		

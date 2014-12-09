@@ -1,14 +1,14 @@
 package il.ac.technion.socialcampus;
 
-import il.ac.technion.logic.HotSpotManager;
-import il.ac.technion.logic.Tag;
-import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
 import il.ac.technion.logic.UserManager;
+import il.ac.technion.logic.DataBase.LocalDBManager;
+import il.ac.technion.logic.Objects.Tag;
+import il.ac.technion.logic.ServerCommunication.ServerRequestManager;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -67,20 +67,24 @@ public class TagManagmentActivity extends FragmentActivity
 	private ArrayList<Tag> getTagsListFromCaller(){
 		String type = (String) getIntent().getExtras().get("type");
 		
-		Set<Long> Ids;
+		List<Long> Ids;
 		
-		if(type.equals("hotspot"))
-			Ids = HotSpotManager.INSTANCE.
-			getItemById((Long)getIntent().getExtras().get("id")).getmTags();
-		else if(type.equals("user"))
-			Ids = UserManager.INSTANCE.
-			getItemById((String)getIntent().getExtras().get("id")).getmTags();
+		if(type.equals("hotspot")){
+			Long hId = (Long)getIntent().getExtras().get("id");
+			Ids = LocalDBManager.INSTANCE.TagHotSpot.getTagsFromHotSpot(hId);
+		}
+			
+		else if(type.equals("user")){
+			String uId = (String)getIntent().getExtras().get("id");
+			Ids = LocalDBManager.INSTANCE.UserTag.getTagsFromUser(uId);
+		}
+		
 		else
 			return null;
 		
 		
 		mTagList.clear();
-		mTagList.addAll(TagManager.INSTANCE.getItemsbyIds(Ids));
+		mTagList.addAll(LocalDBManager.INSTANCE.TagDB.getItemsbyIds(Ids));
 		return mTagList;
 	}
 
@@ -93,8 +97,8 @@ public class TagManagmentActivity extends FragmentActivity
 
 	@Override
 	public void addNewTag(String tagName, final Long tagId) {
-		// tag dosent exist in the system
-		if (tagId.equals(TagManager.defaultTagId)){
+		// tag dosen't exist in the system
+		if (tagId.equals(-1L)){
 			
 			//fixString
 			tagName = tagName.trim();
@@ -107,13 +111,14 @@ public class TagManagmentActivity extends FragmentActivity
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	
 			 builder.setTitle("New Tag")
-			 .setMessage("The tag you're looking for dosn't exist. Press ok to create:  #"+ tagName + "\n")
+			 .setMessage("Creating new Tag:  #"+ tagName + "\n")
              .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                  public void onClick(DialogInterface dialog, int id) {
-                	 TagManager.INSTANCE.addNewTag(new Tag(0L,editedTagName), new UiOnDone() {
+                	 final Tag toAdd = new Tag(0L,editedTagName);
+                	 ServerRequestManager.INSTANCE.addTag(toAdd, new UiOnDone() {
 						@Override
 						public void execute() {
-							addTagToObj(TagManager.INSTANCE.getIdByTagName(editedTagName));
+							addTagToObj(toAdd.getmId());
 						}
 					}, new UiOnError(mContext));
                  }
@@ -140,14 +145,14 @@ public class TagManagmentActivity extends FragmentActivity
 		
 		//if dealing with hotspot tags
 		if (callerType.equals("hotspot")){
-			if(TagManager.INSTANCE.getItemsbyId(tagId).getmHotSpots().contains(hotSpotId)){
+			if(LocalDBManager.INSTANCE.TagHotSpot.isCombined(tagId, hotSpotId)){
 				Toast.makeText(mContext, "Tag already attached.", Toast.LENGTH_SHORT).show();
 				return;
 			}
-			TagManager.INSTANCE.joinSpotTag(tagId, hotSpotId, new UiOnDone() {
+			ServerRequestManager.INSTANCE.JoinHotSpotTag(hotSpotId, tagId, new UiOnDone() {
 				@Override
 				public void execute() {
-					mTagList.add(TagManager.INSTANCE.getItemsbyId(tagId));
+					mTagList.add(LocalDBManager.INSTANCE.TagDB.getItemById(tagId));
 					adapter.notifyDataSetChanged();
 				}
 			}, new UiOnError(this));
@@ -155,14 +160,14 @@ public class TagManagmentActivity extends FragmentActivity
 		}
 		// dealing with user tags
 		else{
-			if(TagManager.INSTANCE.getItemsbyId(tagId).getmUsers().contains(UserManager.INSTANCE.getMyID())){
+			if(LocalDBManager.INSTANCE.UserTag.isCombined(UserManager.INSTANCE.getMyID(), tagId)){
 				Toast.makeText(mContext, "Tag already attached.", Toast.LENGTH_SHORT).show();
 				return;
 			}
-			TagManager.INSTANCE.joinUserTag(tagId, UserManager.INSTANCE.getMyID(), new UiOnDone() {
+			ServerRequestManager.INSTANCE.JoinUserTag(UserManager.INSTANCE.getMyID(), tagId, new UiOnDone() {
 				@Override
 				public void execute() {
-					mTagList.add(TagManager.INSTANCE.getItemsbyId(tagId));
+					mTagList.add(LocalDBManager.INSTANCE.TagDB.getItemById(tagId));
 					adapter.notifyDataSetChanged();
 				}
 			}, new UiOnError(this));

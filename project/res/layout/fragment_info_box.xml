@@ -18,6 +18,7 @@
 	    	android:src="@drawable/wave" 
 	    	android:background="@drawable/Gray"
 	    	android:layout_centerVertical="true"	/>
+		
 		<RelativeLayout
 		    android:layout_width="wrap_content"
 	   	 	android:layout_height="wrap_content"
@@ -56,7 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp" >
-		 <ImageButton
+
+        <ImageButton
             android:id="@+id/shareImgBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -64,15 +66,15 @@
             android:background="@drawable/circ"
             android:contentDescription="share with friends!"
             android:src="@drawable/ic_action_share" />
-		 
+
         <ImageButton
             android:id="@+id/joinImgBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_toRightOf="@+id/shareImgBtn"
             android:background="@drawable/circ"
-            android:contentDescription="join the event" 
-            android:src="@drawable/join"/>
+            android:contentDescription="join the event"
+            android:src="@drawable/join" />
 
         <ImageButton
             android:id="@+id/pinImgBtn"
@@ -83,33 +85,65 @@
             android:contentDescription="pin to profile!"
             android:src="@drawable/ic_pin" />
 
-        <ImageView
-            android:id="@+id/usr1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <RelativeLayout
+            android:id="@+id/goingStrip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/pinImgBtn"
             android:layout_alignParentRight="true"
-            android:src="@drawable/profie_anonymous" 
-            android:visibility="gone"/>
+            android:layout_centerVertical="true" >
 
-        <ImageView
-            android:id="@+id/usr2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/usr1"
-            android:layout_marginRight="3dp"
-            android:src="@drawable/profie_anonymous" 
-            android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/dots1"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/circ_dark" />
 
-        <ImageView
-            android:id="@+id/usr3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/usr2"
-            android:layout_marginRight="3dp"
-            android:src="@drawable/profie_anonymous" 
-            android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/dots2"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/dots1"
+                android:src="@drawable/circ_dark" />
 
+            <ImageView
+                android:id="@+id/dots3"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/dots2"
+                android:src="@drawable/circ_dark" />
+
+            <ImageView
+                android:id="@+id/usr1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/dots3"
+                android:src="@drawable/profie_anonymous" />
+
+            <ImageView
+                android:id="@+id/usr2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/usr1"
+                android:src="@drawable/profie_anonymous" />
+
+            <ImageView
+                android:id="@+id/usr3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="3dp"
+                android:layout_toLeftOf="@+id/usr2"
+                android:src="@drawable/profie_anonymous" />
+        </RelativeLayout>
     </RelativeLayout>
 		
 </LinearLayout>

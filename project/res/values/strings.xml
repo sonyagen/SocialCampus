@@ -15,7 +15,20 @@
     <string name="revoke">revoke</string>
     <string name="signout">sign out</string>
     <string name="profile">Profile</string>
-    <string name="title_activity_tag_info">TagInfoActivity</string>
-    <string name="title_activity_tag_managment">TagManagmentActivity</string>
+
+    <!-- titles -->
+    <string name="title_activity_create">Create Event</string>
+    <string name="title_activity_tag_info">Tag</string>
+    <string name="title_activity_hotspot_info">Event Details</string>
+    <string name="title_activity_tag_managment">Manage Tags</string>
+    <string name="title_activity_server_connection_test">ServerConnectionTest</string>
+
+    <!-- menu profile -->
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_base_login">BaseLoginActivity</string>
+    <string name="title_activity_profile_tab">Profile</string>
+    <string name="title_activity_going_users">Going:</string>
+    <string name="title_activity_tag_view">Tag</string>
 
 </resources>

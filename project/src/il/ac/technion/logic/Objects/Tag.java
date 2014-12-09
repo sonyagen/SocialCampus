@@ -1,37 +1,35 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.Objects;
 import java.util.Calendar;
 import java.util.Set;
 import java.util.TreeSet;
 
-import android.location.Location;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 
-public class Tag implements OnClickListener,Comparable<Tag>{
+public class Tag extends IdiableObj 
+implements OnClickListener,Comparable<Tag>{
 	private Long mId;
 	private String mName;
 	private Long mTime;
-	private Set<String> mUsers = new TreeSet<String>(); 
-	private Set<Long> mHotSpots = new TreeSet<Long>();
-
-
+	
+	@Override
+	public Long getId(){
+		return mId;
+	}
+	
 	public Tag(Tag hs) {
 		this.mId = hs.mId;
 		this.mName = hs.mName;
 		this.mTime = hs.mTime;
-		this.mUsers.addAll(hs.mUsers);
-		this.mHotSpots.addAll( hs.mHotSpots);
 	}	
 
 	public Tag(Long mId, String mName,
-			Set<String> mUsers, Set<Long> mSpots) {
+			Set<Long> mUsers, Set<Long> mSpots) {
 		super();
 		this.mTime = Calendar.getInstance().getTimeInMillis();
 		this.mId = mId;
 		this.mName = mName;
-		this.mUsers.addAll(mUsers);
-		this.mHotSpots.addAll(mSpots);
 	}
 	
 	public Tag(Long mId, String mName,Long mTime) {
@@ -73,45 +71,6 @@ public class Tag implements OnClickListener,Comparable<Tag>{
 		return mTime;
 	}
 
-
-	public Set<String> getmUsers() {
-		return mUsers;
-	}
-
-	public void setmUsers(Set<String> mUsers) {
-		this.mUsers = mUsers;
-	}
-
-	public Set<Long> getmHotSpots() {
-		return mHotSpots;
-	}
-
-	public void setmHotSpots(Set<Long> mHotSpots) {
-		this.mHotSpots = mHotSpots;
-	}
-
-	public Boolean IsUserJoined(Long id){
-		return mHotSpots.contains(id);
-	}
-
-
-	public void leaveHotSpot(long hsId){
-		if(mHotSpots.contains(hsId)){
-			mHotSpots.remove(hsId);
-		}
-	}
-	public void joinHotSpot(long userId){
-		mHotSpots.add(userId);
-	}
-	
-	public void removeUser(String tId){
-		if(mUsers.contains(tId)){
-			mUsers.remove(tId);
-		}
-	}
-	public void addUser(String tId){
-		mUsers.add(tId);
-	}
 
 	@Override
 	public void onClick(View v) {

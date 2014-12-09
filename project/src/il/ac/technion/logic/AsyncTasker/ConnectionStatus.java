@@ -1,5 +1,5 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.AsyncTasker;
 
-public enum SCConnectionStatus {
+public enum ConnectionStatus {
 	RESULT_OK, INTERNET_CONNECTION_FAILED, SERVER_IS_UNREACHABLE, RESULT_FAIL;
 }

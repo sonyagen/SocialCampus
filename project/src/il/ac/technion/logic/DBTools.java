@@ -1,5 +1,9 @@
 package il.ac.technion.logic;
 
+import il.ac.technion.logic.Objects.HotSpot;
+import il.ac.technion.logic.Objects.Tag;
+import il.ac.technion.logic.Objects.User;
+
 import java.util.LinkedList;
 import java.util.List;
 import android.content.ContentValues;
@@ -398,7 +402,7 @@ public class DBTools extends SQLiteOpenHelper {
 	 * @param values
 	 */
 	private void setUserData(User u, ContentValues values) {
-		values.put(UsersFeilds.ID.value(), u.getmId());
+		values.put(UsersFeilds.ID.value(), u.getStringId());
 		values.put(UsersFeilds.NAME.value(), u.getmName());
 		values.put(UsersFeilds.IMAGEURL.value(), u.getmImage());
 	}
@@ -436,7 +440,7 @@ public class DBTools extends SQLiteOpenHelper {
 
 		setUserData(u, values);
 		int res =  database.update("users", values, " "+UsersFeilds.ID.value() + " = ?",
-				new String[] { String.valueOf(u.getmId())});
+				new String[] { String.valueOf(u.getStringId())});
 		database.close();
 		return res;
 	}

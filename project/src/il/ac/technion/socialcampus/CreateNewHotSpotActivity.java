@@ -1,6 +1,5 @@
 package il.ac.technion.socialcampus;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -14,7 +13,7 @@ public class CreateNewHotSpotActivity extends FragmentActivity {
 		setContentView(R.layout.activity_create_new_hot_spot);
 		
 		if(savedInstanceState==null){
-			Long id = (Long) getIntent().getLongExtra(HotSpotId,CreateHotSpotFragment.defHotSpotID);
+			Long id = (Long) getIntent().getLongExtra(HotSpotId, CreateHotSpotFragment.defHotSpotID);
 			CreateHotSpotFragment f = (CreateHotSpotFragment) 
 					CreateHotSpotFragment.newInstance(id);
 			
@@ -23,10 +22,4 @@ public class CreateNewHotSpotActivity extends FragmentActivity {
 		
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.create_new_hot_spot, menu);
-		return true;
-	}
 }

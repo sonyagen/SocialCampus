@@ -1,11 +1,11 @@
 package il.ac.technion.socialcampus;
 
-import java.util.Set;
-import java.util.TreeSet;
+import il.ac.technion.logic.DataBase.LocalDBManager;
+import il.ac.technion.logic.Objects.Tag;
 
-import il.ac.technion.logic.Tag;
-import il.ac.technion.logic.TagManager;
-import il.ac.technion.logic.UserManager;
+import java.util.List;
+import java.util.Set;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +21,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Activities that
@@ -146,11 +145,11 @@ public class TagsBoxFragment extends Fragment implements Tag.onTagClickListener{
 	}
 
 
-	public void buildTags(Set<Long> tagIds){
+	public void buildTags(List<Long> tagIds){
 		
 		tagsView.setText("");
 		
-		Set<Tag> Tags = TagManager.INSTANCE.getItemsbyIds(tagIds);
+		List<Tag> Tags = LocalDBManager.INSTANCE.TagDB.getItemsbyIds(tagIds);
 		for(Tag t:Tags){
 			//override of onTagClick
 			t.setListener(this);

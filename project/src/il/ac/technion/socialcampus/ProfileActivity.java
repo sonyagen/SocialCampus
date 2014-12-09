@@ -1,13 +1,15 @@
 package il.ac.technion.socialcampus;
 
 
-import il.ac.technion.logic.Tag;
-import il.ac.technion.logic.TagManager;
 import il.ac.technion.logic.UiOnDone;
 import il.ac.technion.logic.UiOnError;
-import il.ac.technion.logic.User;
 import il.ac.technion.logic.UserManager;
+import il.ac.technion.logic.DataBase.LocalDBManager;
+import il.ac.technion.logic.Objects.Tag;
+import il.ac.technion.logic.Objects.User;
+import il.ac.technion.logic.ServerCommunication.ServerRequestManager;
 
+import java.util.List;
 import java.util.Set;
 
 import android.app.ProgressDialog;
@@ -22,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -121,7 +122,7 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		.addOnConnectionFailedListener(this).addApi(Plus.API)
 		.addScope(Plus.SCOPE_PLUS_LOGIN).build();
 	}
-	
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -139,7 +140,7 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	protected void onStart() {
 		super.onStart();
 
-		if(!UserManager.getCurrentId(mContext)){
+		if(!UserManager.INSTANCE.isLoggedIn()){
 			mGoogleApiClient.connect();
 		}else{
 			updateUI(true);
@@ -156,8 +157,12 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(tagsBox!=null) 
-			tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
+		setResult(RESULT_OK, new Intent());
+		if(tagsBox!=null) {
+			//tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
+			String uId = UserManager.INSTANCE.getMyID();
+			tagsBox.buildTags(LocalDBManager.INSTANCE.UserTag.getTagsFromUser(uId));
+		}
 	}
 
 	@Override
@@ -201,39 +206,22 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 		final User u = getProfileInformation();
 		//Get the currently logged in user
 
-		if(UserManager.INSTANCE.isRegistered(u.getmId())){
-			//Set the current logged user
-			//in case of illegal ID the current user will stay the anonymous
-			UserManager.INSTANCE.setCurrentUser(u.getmId());
-			UserManager.setLoggedIn(mContext, u.getmId());
-			if(progressDialog!=null){
+		UserManager.INSTANCE.loginUser(u, new UiOnDone() {
+
+			@Override public void execute() {
+				updateUI(true);
+				// Indicate that the sign in process is complete.
+				mSignInProgress = STATE_DEFAULT;
+			}
+			
+		},new UiOnError(getApplicationContext()){
+			@Override
+			public void execute() {
+				super.execute();
+				signOutFromGplus();
 				progressDialog.dismiss();
 			}
-			updateUI(true);
-		}else {
-			UserManager.INSTANCE.addNewUser(u,  new UiOnDone() {
-
-				@Override
-				public void execute() {
-
-					// Update the UI after signin
-					UserManager.INSTANCE.setCurrentUser(u.getmId());
-					UserManager.setLoggedIn(mContext, u.getmId());
-					updateUI(true);
-
-					// Indicate that the sign in process is complete.
-					mSignInProgress = STATE_DEFAULT;
-					progressDialog.dismiss();
-				}
-			},new UiOnError(getApplicationContext()){
-				@Override
-				public void execute() {
-					super.execute();
-					signOutFromGplus();
-					progressDialog.dismiss();
-				}
-			});
-		}
+		});
 	}
 
 	@Override
@@ -300,7 +288,8 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	
 			txtName.setText(currentU.getmName());
 			currentU.setUserPhoto(imgProfilePic);
-			tagsBox.buildTags(UserManager.INSTANCE.getMyData().getmTags());
+			String me = UserManager.INSTANCE.getMyID();
+			tagsBox.buildTags(LocalDBManager.INSTANCE.UserTag.getTagsFromUser(me));
 			inflateBoard();
 			
 
@@ -315,8 +304,9 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	private void inflateBoard(){
 		LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
-		Set<Long> joinIds = UserManager.INSTANCE.getMyData().getmHotSpots();
-		Set<Long> pinIds = UserManager.INSTANCE.getMyData().getmPinnedSpots();
+		String me = UserManager.INSTANCE.getMyID();
+		List<Long> joinIds = LocalDBManager.INSTANCE.UserHotSpot.getHotSpotsFromUser(me); 
+		List<Long> pinIds = UserManager.INSTANCE.getPinned();
 		
 		if(joinIds.size()==0 && pinIds.size()==0){
 			myBoard.setVisibility(View.GONE);
@@ -386,7 +376,7 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 	
 	@Override
 	public void onTagClick(long tid) {
-		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
+		Tag t = LocalDBManager.INSTANCE.TagDB.getItemById(tid);
 		//TODO intent to View Tag activity
 		Toast.makeText(mContext, t.getmName(), Toast.LENGTH_SHORT).show();
 		
@@ -422,7 +412,7 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 			// Signout button clicked
 			progressDialog.setMessage(this.getResources().getString(R.string.log_out_msg));
 			progressDialog.show();
-			UserManager.INSTANCE.logout(mContext);
+			UserManager.INSTANCE.logout();
 			signOutFromGplus();
 			progressDialog.dismiss();
 			return true;
@@ -430,13 +420,13 @@ ConnectionCallbacks, OnConnectionFailedListener, TagsBoxFragment.OnTagClickListe
 			// Revoke access button clicked
 			progressDialog.setMessage(this.getResources().getString(R.string.revoke_access_msg));
 			progressDialog.show();
-			UserManager.INSTANCE.removeUser( 
+			ServerRequestManager.INSTANCE.removeUser( 
 					UserManager.INSTANCE.getMyData(),
 					new UiOnDone() {
 						@Override
 						public void execute() {
 							revokeGplusAccess();
-							UserManager.INSTANCE.logout(mContext);
+							UserManager.INSTANCE.logout();
 
 						}
 					}, new UiOnError(getApplicationContext()){

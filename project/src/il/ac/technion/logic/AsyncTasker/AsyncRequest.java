@@ -1,4 +1,4 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.AsyncTasker;
 import java.io.IOException;
 import java.net.ConnectException;
 
@@ -50,12 +50,13 @@ import android.os.AsyncTask;
  * 
  */
 
-public abstract class SCAsyncRequest
+public abstract class AsyncRequest
 {
 
-	private final class SCAsyncWorker extends AsyncTask<Void, Void, SCConnectionStatus> {
+	private final class SCAsyncWorker extends AsyncTask<Void, Void, ConnectionStatus> {
+		
 		@Override
-		final protected SCConnectionStatus doInBackground(Void... params) {
+		final protected ConnectionStatus doInBackground(Void... params) {
 			
 			try{
 				actionOnServer(params);
@@ -63,25 +64,23 @@ public abstract class SCAsyncRequest
 			
 			catch(ConnectException tx){
 				
-				return SCConnectionStatus.INTERNET_CONNECTION_FAILED;
+				return ConnectionStatus.INTERNET_CONNECTION_FAILED;
 			} 
 			
 			catch(IOException t){
 				
-				return SCConnectionStatus.SERVER_IS_UNREACHABLE;
+				return ConnectionStatus.SERVER_IS_UNREACHABLE;
 			}
 			catch(Throwable th){
-				
-				return SCConnectionStatus.RESULT_FAIL;
+				//com.google.gson.internal.LinkedTreeMap cannot be cast to il.ac.technion.logic.Objects.IdiableObj
+				return ConnectionStatus.RESULT_FAIL;
 			} 
-		
-			
-		
-			return SCConnectionStatus.RESULT_OK;
+
+			return ConnectionStatus.RESULT_OK;
 		}
 
 		@Override
-		protected void onPostExecute(SCConnectionStatus status) {
+		protected void onPostExecute(ConnectionStatus status) {
 			onResult(status);
 			super.onPostExecute(status);
 		}
@@ -92,36 +91,28 @@ public abstract class SCAsyncRequest
 			onProgress(values);
 			
 		}
-		
 
-		public void publish()
-		{
+		public void publish(){
 			publishProgress();
 		}
 	}
 
-	SCPriority mPriority;
+	Priority mPriority;
 	private  SCAsyncWorker mAsyncTask;
 
-	public SCAsyncRequest(SCPriority priority)
-	{
-		
+	public AsyncRequest(Priority priority){
 		mPriority = priority;
-		mPriority = SCPriority.IMMEDIATELY;
+		mPriority = Priority.IMMEDIATELY;
 		mAsyncTask = new SCAsyncWorker();
 	}
 	
-
-	
 	abstract public Void actionOnServer(Void... params) throws IOException,ConnectException;
-	abstract public Void onResult(SCConnectionStatus status);
+	abstract public Void onResult(ConnectionStatus status);
 	public Void onProgress(Void... values){
 		return null;
 	}
-	
-	
-	public void run()
-	{
+
+	public void run(){
 		mAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 

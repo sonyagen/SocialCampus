@@ -1,4 +1,5 @@
-package il.ac.technion.logic;
+package il.ac.technion.logic.Objects;
+
 
 
 import java.io.InputStream;
@@ -11,11 +12,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
 
 
 
-public class HotSpot extends TagableObject{
+public class HotSpot extends TagableObject implements BitmapDisplayer{
 	private Long mId;
 	private Long mTime;
 	private Long mEndTime;
@@ -28,10 +28,11 @@ public class HotSpot extends TagableObject{
 	private String mAdminId;
 	private String mImageURL;
 	private Bitmap mIconBitmap = null;
-	private Set<Long> mTags = new TreeSet<Long>();//tag ids 
-	private Set<String> mUsers = new TreeSet<String>();	
-
 	
+	@Override
+	public Long getId(){
+		return mId;
+	}
 
 	
 	public HotSpot(HotSpot hs) {
@@ -47,8 +48,6 @@ public class HotSpot extends TagableObject{
 		  mAdminId = hs.mAdminId;
 		  mImageURL = hs.mImageURL;
 		  mIconBitmap = hs.mIconBitmap;
-		  mTags.addAll(hs.mTags);
-		  mUsers.addAll(hs.mUsers);
 	
 	}	
 
@@ -73,7 +72,7 @@ public class HotSpot extends TagableObject{
 		
 	public HotSpot(Long mId, Long mTime,Long mEndTime,String mName,Double lat, Double lon ,
 			String mLocation,String mdescription ,String mAdminId,String mImageURL, Bitmap bitmap,
-			Set<Long> mTags, Set<String> mUseres) {
+			Set<Long> mTags, Set<Long> mUseres) {
 		  this.mId = mId;
 		  this.mTime = mTime;
 		  this.mEndTime = mEndTime;
@@ -86,8 +85,6 @@ public class HotSpot extends TagableObject{
 		  this.mAdminId = mAdminId;
 		  this.mImageURL = mImageURL;
 		  this.mIconBitmap = bitmap;
-		  this.mTags.addAll(mTags);
-		  this.mUsers.addAll(mUseres);
 	}
 
 	public HotSpot() {
@@ -95,13 +92,6 @@ public class HotSpot extends TagableObject{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Set<String> getmUsers() {
-		return mUsers;
-	}
-
-	public void setmUsers(Set<String> mUsers) {
-		this.mUsers = mUsers;
-	}
 
 	public double getLongt() {
 		return mLong;
@@ -187,53 +177,9 @@ public class HotSpot extends TagableObject{
 	}
 
 
-	public Set<Long> getmTags() {
-		return mTags;
-	}
-
-	public void setmTags(Set<Long> mTags) {
-		this.mTags = mTags;
-	}
-
-	public Set<String> getmUseres() {
-		return mUsers;
-	}
-
-	public void setmUseres(Set<String> mUseres) {
-		this.mUsers = mUseres;
-	}
-
-	
-
-
 	public String getTimeStr(){
 		//return (DateFormat.getTimeInstance()).format(new Date(m_orderingTime));
         return (new SimpleDateFormat("HH:mm").format(new Date(mTime)));
-	}
-	
-
-	
-	public Boolean IsUserJoined(Long id){
-		return mUsers.contains(id);
-	}
-
-
-	public void leaveHotSpot(String userId){
-		if(mUsers.contains(userId)){
-			mUsers.remove(userId);
-		}
-	}
-	public void joinHotSpot(String userId){
-		mUsers.add(userId);
-	}
-	
-	public void removeTag(long tId){
-		if(mTags.contains(tId)){
-			mTags.remove(tId);
-		}
-	}
-	public void addTag(long tId){
-		mTags.add(tId);
 	}
 
 	public static class LoadHotSpotImage extends AsyncTask<String, Void, Bitmap> {
@@ -260,5 +206,10 @@ public class HotSpot extends TagableObject{
 		protected void onPostExecute(Bitmap result) {
 			iconBitmap = result;
 		}
+	}
+
+	@Override
+	public void setBitmap(Bitmap bitmap) {
+		mIconBitmap = bitmap;
 	}
 }

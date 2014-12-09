@@ -1,8 +1,8 @@
 package il.ac.technion.socialcampus;
 
-import il.ac.technion.logic.Tag;
-import il.ac.technion.logic.TagManager;
-import il.ac.technion.logic.UserManager;
+import il.ac.technion.logic.DataBase.LocalDBManager;
+import il.ac.technion.logic.Objects.Tag;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
@@ -27,6 +27,9 @@ implements TagsBoxFragment.OnTagClickListener, HotSpotDetailsFragment.ButtonInte
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		setResult(RESULT_OK, new Intent());
+		
 		((HotSpotDetailsFragment)getSupportFragmentManager().
 				findFragmentById(R.id.frame)).resetInfoBox();
 		
@@ -35,10 +38,9 @@ implements TagsBoxFragment.OnTagClickListener, HotSpotDetailsFragment.ButtonInte
 
 	@Override
 	public void onTagClick(long tid) {
-		Tag t = TagManager.INSTANCE.getItemsbyId(tid);
-		Toast.makeText(this, t.getmName(), Toast.LENGTH_SHORT).show();
-		// TODO Auto-generated method stub
-		
+//		Tag t = LocalDBManager.INSTANCE.TagDB.getItemById(tid);
+//		Toast.makeText(this, t.getmName(), Toast.LENGTH_SHORT).show();
+		startActivity(new Intent(this,TagViewActivity.class).putExtra("id", tid));
 	}
 
 
@@ -100,6 +102,14 @@ implements TagsBoxFragment.OnTagClickListener, HotSpotDetailsFragment.ButtonInte
 	@Override
 	public Long getHotSpotId() {
 		return getIntent().getExtras().getLong("id");
+	}
+
+
+	
+	int EDIT = 500;
+	@Override
+	public int getRequestCodeForEditHotSpot() {
+		return EDIT;
 	}
 	
 	
