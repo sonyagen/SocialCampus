@@ -1,6 +1,6 @@
 package il.ac.technion.logic;
 
-import il.ac.technion.socialcampus.MyApplication;
+import il.ac.technion.socialcampus.SociaCampusApplication;
 
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,14 +29,10 @@ public class LocationFactury extends Service implements LocationListener {
             new CameraPosition.Builder().target(new LatLng(40.741894,-74.004396))
                     .zoom(17f).bearing(300).tilt(50).build();
 	
-	static public CameraPosition buildCameraPositionWithoutZoom(double lat, double lng){
-		return new CameraPosition.Builder().target(new LatLng(lat,lng)).build();
+	static public CameraPosition buildCameraPosition(double lat, double lng, Long zoom, int bearing){
+		return new CameraPosition.Builder().target(new LatLng(lat,lng)).zoom(zoom).bearing(bearing)
+				.tilt(50).build();
 	}
-	
-	static public CameraPosition buildCameraPositionWithoutZoom(LatLng ll){
-		return new CameraPosition.Builder().target(ll).build();
-	}
-	
 	
 	static public CameraPosition buildCameraPosition(double lat, double lng){
 		return new CameraPosition.Builder().target(new LatLng(lat,lng)).zoom(17f)//.bearing(300)
@@ -48,7 +44,7 @@ public class LocationFactury extends Service implements LocationListener {
 	}
 	
 	static public CameraPosition currentPositionOrCornellTeach(){
-		LocationFactury myLocation =  new LocationFactury(MyApplication.getAppContext());
+		LocationFactury myLocation =  new LocationFactury(SociaCampusApplication.getAppContext());
     	
     	CameraPosition cameraPos;
 		if(myLocation.canGetLocation()){

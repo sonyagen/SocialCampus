@@ -9,7 +9,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class TagLocalDB extends LocalDB<Tag>{
+public class TagLocalDB extends BaseObjectDB<Tag>{
 	
 	@Override
 	protected List<Tag> toList(String str) {

@@ -2,7 +2,7 @@ package il.ac.technion.logic.DataBase;
 
 import java.util.List;
 
-public class Relations<T1,T2> {
+public class BaseRelationsDB<T1,T2> {
 	
 	IdMap<T1,T2> AToBList = new IdMap<T1,T2>();
 	IdMap<T2,T1> BToAList = new IdMap<T2,T1>();

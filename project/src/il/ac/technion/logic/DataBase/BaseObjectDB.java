@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public abstract class LocalDB<T extends IdiableObj> implements ILocalDB {
+public abstract class BaseObjectDB<T extends IdiableObj> implements ILocalDB {
 	
 	protected boolean completeSync = false;
 	

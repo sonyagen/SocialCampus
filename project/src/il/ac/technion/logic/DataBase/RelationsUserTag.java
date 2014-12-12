@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class RelationsUserTag extends Relations<String, Long> {
+public class RelationsUserTag extends BaseRelationsDB<String, Long> {
 	
 	private class UT {
 		Long id;

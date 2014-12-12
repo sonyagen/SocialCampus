@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class RelationsTagHotSpot extends Relations<Long, Long>{
+public class RelationsTagHotSpot extends BaseRelationsDB<Long, Long>{
 
 	class THS {
 		Long id;

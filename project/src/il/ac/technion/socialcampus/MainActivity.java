@@ -44,7 +44,7 @@ public class MainActivity extends BaseLoginActivity implements InfoBoxFragment.B
 	private ImageButton addNewBtn;
 	private GoogleMap mMap;
 	private final Context mContext = this;
-	private CameraPosition cameraPos = LocationFactury.currentPositionOrCornellTeach();;
+	private CameraPosition cameraPos = LocationFactury.currentPositionOrCornellTeach();
 	private HashMap<String,Long> mMarkersHotSpotsTrans = new HashMap<String,Long>();
 	private HashMap<Long,Marker> mHotSpotsMarkersTrans = new HashMap<Long,Marker>();
 	
@@ -54,19 +54,10 @@ public class MainActivity extends BaseLoginActivity implements InfoBoxFragment.B
 	}
 	
     @Override
-	protected void onStart() {
-		super.onStart();
-	}
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        if (savedInstanceState==null){
-        	syncDb();
-        }else{
-        	setUpMapIfNeeded();
-        }
+        setUpMapIfNeeded();
         setListeners();
         hideInfoBox();
     }
@@ -85,7 +76,14 @@ public class MainActivity extends BaseLoginActivity implements InfoBoxFragment.B
         focusMapOnHotSpot(currHotSpotOnDisplay);
     }
     
+
     @Override
+	protected void onPause() {
+		super.onPause();
+		cameraPos = mMap.getCameraPosition();
+	}
+
+	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
     	super.onActivityResult(requestCode,resultCode,data);
@@ -111,24 +109,7 @@ public class MainActivity extends BaseLoginActivity implements InfoBoxFragment.B
     	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
     	ShowInfoBox(hid);
     }
-    
-    private void syncDb(){
     	
-    	ServerRequestManager.INSTANCE.syncHotSpots(new UiOnDone() {
-			@Override
-			public void execute() {
-				setUpMapIfNeeded();
-			}
-		}, new UiOnError(this));
-    	ServerRequestManager.INSTANCE.syncUsers(null, new UiOnError(this));
-    	ServerRequestManager.INSTANCE.syncTags(null, new UiOnError(this));
-    
-    	ServerRequestManager.INSTANCE.syncRelationsTagHotSpot(null,null);
-    	ServerRequestManager.INSTANCE.syncRelationsUserTag(null,null);
-    	ServerRequestManager.INSTANCE.syncRelationsHotSpotUser(null,null);
-
-    }
-	
     private void setListeners(){
     	imgProfilePic = (ImageView) findViewById(R.id.ProfilePic);
         imgProfilePic.setOnClickListener(new OnClickListener() {

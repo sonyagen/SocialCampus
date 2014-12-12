@@ -14,9 +14,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    
     <application
-        android:name="il.ac.technion.socialcampus.MyApplication"
+        android:name="il.ac.technion.socialcampus.SociaCampusApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -39,11 +38,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
         <activity
             android:name="il.ac.technion.socialcampus.ProfileActivity"
@@ -98,6 +93,17 @@
         <activity
             android:name="il.ac.technion.socialcampus.TagViewActivity"
             android:label="@string/title_activity_tag_view" >
+        </activity>
+        <activity
+            android:name="il.ac.technion.socialcampus.BlankStartActivity"
+            android:label="@string/title_activity_blank_start"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

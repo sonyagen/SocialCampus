@@ -10,7 +10,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class UserLocalDB extends LocalDB<User>{
+public class UserLocalDB extends BaseObjectDB<User>{
 
 	protected Map<String,Long> idMAp = new HashMap<String, Long>();
 	

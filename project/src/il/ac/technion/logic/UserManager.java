@@ -4,7 +4,7 @@ import il.ac.technion.logic.DataBase.DBNotSynced;
 import il.ac.technion.logic.DataBase.LocalDBManager;
 import il.ac.technion.logic.Objects.User;
 import il.ac.technion.logic.ServerCommunication.ServerRequestManager;
-import il.ac.technion.socialcampus.MyApplication;
+import il.ac.technion.socialcampus.SociaCampusApplication;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,7 +50,7 @@ public enum UserManager{
 	}
 
 	public void initializeUserManager(){
-		if(isSavedInPrefs(MyApplication.getAppContext())){
+		if(isSavedInPrefs(SociaCampusApplication.getAppContext())){
 			
 			//TODO: when you have a local DB, save in prefs only the Long id and get 
 			//the object from DB instead of creating new instance
@@ -58,7 +58,7 @@ public enum UserManager{
 			// when local DB done syncing, rebuild this object in case user was revoked or the
 			//name or picture was edited.
 		
-			SharedPreferences prefs = MyApplication.getAppContext().getSharedPreferences(
+			SharedPreferences prefs = SociaCampusApplication.getAppContext().getSharedPreferences(
 					"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 			Long lId = prefs.getLong("il.ac.technion.socialcampus.LoggedInLongId",-1L);
 			String id = prefs.getString("il.ac.technion.socialcampus.LoggedIn",anonymousUID);
@@ -109,7 +109,7 @@ public enum UserManager{
 			registrated = UserManager.INSTANCE.isRegistered(u.getStringId());
 		} catch (DBNotSynced e) {
 			e.printStackTrace();
-			Toast.makeText(MyApplication.getAppContext(), "slow connection. please try again", Toast.LENGTH_SHORT).show();
+			Toast.makeText(SociaCampusApplication.getAppContext(), "slow connection. please try again", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
@@ -133,7 +133,7 @@ public enum UserManager{
 	}
 	
 	private static void setLoggedIn(User u){
-		Context appContext = MyApplication.getAppContext();
+		Context appContext = SociaCampusApplication.getAppContext();
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		prefs.edit().putLong("il.ac.technion.socialcampus.LoggedInLongId", u.getId());
@@ -146,7 +146,7 @@ public enum UserManager{
 
 	public void logout() {
 		
-		Context appContext = MyApplication.getAppContext();
+		Context appContext = SociaCampusApplication.getAppContext();
 		currentUser = createAnonymous();
 		
 		SharedPreferences prefs = appContext.getSharedPreferences(
@@ -162,7 +162,7 @@ public enum UserManager{
 	
 	public void pinHotSpot(Long hId){
 	
-		Context appContext = MyApplication.getAppContext();
+		Context appContext = SociaCampusApplication.getAppContext();
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		
@@ -172,7 +172,7 @@ public enum UserManager{
 	}
 	
 	public void unPinHotSpot(Long hId){
-		Context appContext = MyApplication.getAppContext();
+		Context appContext = SociaCampusApplication.getAppContext();
 		SharedPreferences prefs = appContext.getSharedPreferences(
 				"il.ac.technion.socialcampus", Context.MODE_PRIVATE);
 		

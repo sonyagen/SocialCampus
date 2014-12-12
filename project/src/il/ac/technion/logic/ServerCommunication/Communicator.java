@@ -1,6 +1,6 @@
 package il.ac.technion.logic.ServerCommunication;
 
-import il.ac.technion.socialcampus.MyApplication;
+import il.ac.technion.socialcampus.SociaCampusApplication;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -139,7 +139,7 @@ public class Communicator {
 	static public String uploadFile(Uri uri) {
 		int serverResponseCode = 0;
 
-		String s = getRealPathFromURI(MyApplication.getAppContext(),uri);
+		String s = getRealPathFromURI(SociaCampusApplication.getAppContext(),uri);
 		
 		String sourceFileUri = s;
 		

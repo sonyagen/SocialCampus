@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
-public class RelationsUserHotSpot extends Relations<String, Long> {
+public class RelationsUserHotSpot extends BaseRelationsDB<String, Long> {
 	
 	private class UHS {
 		Long id;

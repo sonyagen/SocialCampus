@@ -30,5 +30,6 @@
     <string name="title_activity_profile_tab">Profile</string>
     <string name="title_activity_going_users">Going:</string>
     <string name="title_activity_tag_view">Tag</string>
+    <string name="title_activity_blank_start">BlankStartActivity</string>
 
 </resources>

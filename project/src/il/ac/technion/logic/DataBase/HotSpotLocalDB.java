@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import il.ac.technion.logic.Objects.HotSpot;
 import il.ac.technion.logic.Objects.Tag;
 
-public class HotSpotLocalDB extends LocalDB<HotSpot>{
+public class HotSpotLocalDB extends BaseObjectDB<HotSpot>{
 
 	@Override
 	public List<HotSpot> toList(String str) {
